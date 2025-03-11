@@ -49,8 +49,11 @@ function updateIceCandidates(candidates: any, options: { preferIpv6Server: boole
             continue;
         }
 
-        const groups: { [index: string]: string | number } = pattern.exec(item.candidate)!.groups!;
-        lst.push(groups);
+        const match = pattern.exec(item.candidate);
+        if (match && match.groups) {
+            const groups: { [index: string]: string | number } = match.groups;
+            lst.push(groups);
+        }
     }
 
     if (options.preferIpv6Server) {

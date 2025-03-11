@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.4.5
+// @version      6.4.6-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -192,7 +192,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.4.5", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.4.6-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -8490,6 +8490,9 @@ class RemotePlayManager {
     Authorization: `Bearer ${this.XHOME_TOKEN}`
    }
   };
+  this.regions.sort((a, b) => {
+   return a.isDefault ? -1 : 0;
+  });
   for (let region of this.regions)
    try {
     let request = new Request(`${region.baseUri}/v6/servers/home?mr=50`, options), json = await (await fetch(request)).json();
@@ -9068,17 +9071,20 @@ function clearAllLogs() {
  clearApplicationInsightsBuffers(), clearDbLogs("StreamClientLogHandler", "logs"), clearDbLogs("XCloudAppLogs", "logs");
 }
 function updateIceCandidates(candidates, options) {
- let pattern = new RegExp(/a=candidate:(?<foundation>\d+) (?<component>\d+) UDP (?<priority>\d+) (?<ip>[^\s]+) (?<port>\d+) (?<the_rest>.*)/), lst = [];
+ let pattern = new RegExp(/a=candidate:(?<foundation>\d+) (?<component>\d+) UDP (?<priority>\d+) (?<ip>[^\s]+) (?<port>\d+) (?<the_rest>.*)/), newCandidates = [], lst = [];
  for (let item2 of candidates) {
   if (item2.candidate == "a=end-of-candidates") continue;
-  let groups = pattern.exec(item2.candidate).groups;
-  lst.push(groups);
+  let match = pattern.exec(item2.candidate);
+  if (match && match.groups) {
+   let groups = match.groups;
+   lst.push(groups);
+  }
  }
  if (options.preferIpv6Server) lst.sort((a, b) => {
    let firstIp = a.ip, secondIp = b.ip;
    return !firstIp.includes(":") && secondIp.includes(":") ? 1 : -1;
   });
- let newCandidates = [], foundation = 1, newCandidate = (candidate) => {
+ let foundation = 1, newCandidate = (candidate) => {
   return {
    candidate,
    messageType: "iceCandidate",

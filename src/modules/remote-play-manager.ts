@@ -156,6 +156,11 @@ export class RemotePlayManager {
                 },
             };
 
+        // Start with "isDefault" = true first
+        this.regions.sort((a: RemotePlayRegion, b: RemotePlayRegion) => {
+            return a.isDefault ? -1 : 0;
+        })
+
         // Test servers one by one
         for (const region of this.regions) {
             try {
