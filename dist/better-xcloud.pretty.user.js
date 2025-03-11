@@ -2693,11 +2693,12 @@ function setPref(prefKey, value, origin) {
 }
 function checkForUpdate() {
  if (SCRIPT_VERSION.includes("beta")) return;
+ fetch("https://api.github.com/repos/redphx/better-xcloud/releases/latest").then((response) => response.json()).then((json) => {
+  setGlobalPref("version.latest", json.tag_name.substring(1), "direct"), setGlobalPref("version.current", SCRIPT_VERSION, "direct");
+ });
  let CHECK_INTERVAL_SECONDS = 7200, currentVersion = getGlobalPref("version.current"), lastCheck = getGlobalPref("version.lastCheck"), now = Math.round(+new Date / 1000);
  if (currentVersion === SCRIPT_VERSION && now - lastCheck < CHECK_INTERVAL_SECONDS) return;
- setGlobalPref("version.lastCheck", now, "direct"), fetch("https://api.github.com/repos/redphx/better-xcloud/releases/latest").then((response) => response.json()).then((json) => {
-  setGlobalPref("version.latest", json.tag_name.substring(1), "direct"), setGlobalPref("version.current", SCRIPT_VERSION, "direct");
- }), Translations.updateTranslations(currentVersion === SCRIPT_VERSION);
+ setGlobalPref("version.lastCheck", now, "direct"), Translations.updateTranslations(currentVersion === SCRIPT_VERSION);
 }
 function disablePwa() {
  if (!(window.navigator.orgUserAgent || window.navigator.userAgent || "").toLowerCase()) return;
