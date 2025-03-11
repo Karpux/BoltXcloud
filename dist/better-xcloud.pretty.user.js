@@ -382,6 +382,7 @@ class GhPagesUtils {
 var SUPPORTED_LANGUAGES = {
  "en-US": "English (US)",
  "ca-CA": "Català",
+ "cs-CZ": "čeština",
  "da-DK": "dansk",
  "de-DE": "Deutsch",
  "en-ID": "Bahasa Indonesia",
@@ -571,6 +572,7 @@ var SUPPORTED_LANGUAGES = {
  "new-version-available": [
   e => `Version ${e.version} available`,
   e => `Versió ${e.version} disponible`,
+  e => `Verze ${e.version} dostupná`,
   ,
   e => `Version ${e.version} verfügbar`,
   e => `Versi ${e.version} tersedia`,
@@ -616,6 +618,7 @@ var SUPPORTED_LANGUAGES = {
  "press-key-to-toggle-mkb": [
   e => `Press ${e.key} to toggle this feature`,
   e => `Premeu ${e.key} per alternar aquesta funció`,
+  e => `Zmáčknete ${e.key} pro přepnutí této funkce`,
   e => `Tryk på ${e.key} for at slå denne funktion til`,
   e => `${e.key}: Funktion an-/ausschalten`,
   e => `Tekan ${e.key} untuk mengaktifkan fitur ini`,
@@ -640,6 +643,7 @@ var SUPPORTED_LANGUAGES = {
  "recommended-settings-for-device": [
   e => `Recommended settings for ${e.device}`,
   e => `Configuració recomanada per a ${e.device}`,
+  ,
   ,
   e => `Empfohlene Einstellungen für ${e.device}`,
   e => `Rekomendasi pengaturan untuk ${e.device}`,
@@ -751,6 +755,7 @@ var SUPPORTED_LANGUAGES = {
  "touch-control-layout-by": [
   e => `Touch control layout by ${e.name}`,
   e => `Format del control tàctil per ${e.name}`,
+  e => `Rozložení dotykového ovládání ${e.name}`,
   e => `Touch-kontrol layout af ${e.name}`,
   e => `Touch-Steuerungslayout von ${e.name}`,
   e => `Tata letak Sentuhan layar oleh ${e.name}`,
@@ -9071,7 +9076,7 @@ function clearAllLogs() {
  clearApplicationInsightsBuffers(), clearDbLogs("StreamClientLogHandler", "logs"), clearDbLogs("XCloudAppLogs", "logs");
 }
 function updateIceCandidates(candidates, options) {
- let pattern = new RegExp(/a=candidate:(?<foundation>\d+) (?<component>\d+) UDP (?<priority>\d+) (?<ip>[^\s]+) (?<port>\d+) (?<the_rest>.*)/), newCandidates = [], lst = [];
+ let pattern = new RegExp(/a=candidate:(?<foundation>\d+) (?<component>\d+) UDP (?<priority>\d+) (?<ip>[^\s]+) (?<port>\d+) (?<the_rest>.*)/), lst = [];
  for (let item2 of candidates) {
   if (item2.candidate == "a=end-of-candidates") continue;
   let match = pattern.exec(item2.candidate);
@@ -9084,7 +9089,7 @@ function updateIceCandidates(candidates, options) {
    let firstIp = a.ip, secondIp = b.ip;
    return !firstIp.includes(":") && secondIp.includes(":") ? 1 : -1;
   });
- let foundation = 1, newCandidate = (candidate) => {
+ let newCandidates = [], foundation = 1, newCandidate = (candidate) => {
   return {
    candidate,
    messageType: "iceCandidate",

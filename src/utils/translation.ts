@@ -7,6 +7,7 @@ export const SUPPORTED_LANGUAGES = {
     'en-US': 'English (US)',
 
     'ca-CA': 'Català',
+    'cs-CZ': 'čeština',
     'da-DK': 'dansk',
     'de-DE': 'Deutsch',
     'en-ID': 'Bahasa Indonesia',
@@ -198,6 +199,7 @@ const Texts = {
     "new-version-available": [
         (e: any) => `Version ${e.version} available`,
         (e: any) => `Versió ${e.version} disponible`,
+        (e: any) => `Verze ${e.version} dostupná`,
         ,
         (e: any) => `Version ${e.version} verfügbar`,
         (e: any) => `Versi ${e.version} tersedia`,
@@ -243,6 +245,7 @@ const Texts = {
     "press-key-to-toggle-mkb": [
         (e: any) => `Press ${e.key} to toggle this feature`,
         (e: any) => `Premeu ${e.key} per alternar aquesta funció`,
+        (e: any) => `Zmáčknete ${e.key} pro přepnutí této funkce`,
         (e: any) => `Tryk på ${e.key} for at slå denne funktion til`,
         (e: any) => `${e.key}: Funktion an-/ausschalten`,
         (e: any) => `Tekan ${e.key} untuk mengaktifkan fitur ini`,
@@ -267,6 +270,7 @@ const Texts = {
     "recommended-settings-for-device": [
         (e: any) => `Recommended settings for ${e.device}`,
         (e: any) => `Configuració recomanada per a ${e.device}`,
+        ,
         ,
         (e: any) => `Empfohlene Einstellungen für ${e.device}`,
         (e: any) => `Rekomendasi pengaturan untuk ${e.device}`,
@@ -378,6 +382,7 @@ const Texts = {
     "touch-control-layout-by": [
         (e: any) => `Touch control layout by ${e.name}`,
         (e: any) => `Format del control tàctil per ${e.name}`,
+        (e: any) => `Rozložení dotykového ovládání ${e.name}`,
         (e: any) => `Touch-kontrol layout af ${e.name}`,
         (e: any) => `Touch-Steuerungslayout von ${e.name}`,
         (e: any) => `Tata letak Sentuhan layar oleh ${e.name}`,
