@@ -5186,7 +5186,7 @@ remotePlayServerId: (window.BX_REMOTE_PLAY_CONFIG && window.BX_REMOTE_PLAY_CONFI
  remotePlayDisableAchievementToast(str) {
   let text = ".AchievementUnlock:{";
   if (!str.includes(text)) return !1;
-  let newCode = "if (!!window.BX_REMOTE_PLAY_CONFIG) return;";
+  let newCode = "if (window.location.pathname.includes('/consoles/launch/')) return;";
   return str.replace(text, text + newCode);
  },
  blockWebRtcStatsCollector(str) {

@@ -133,7 +133,7 @@ remotePlayServerId: (window.BX_REMOTE_PLAY_CONFIG && window.BX_REMOTE_PLAY_CONFI
             return false;
         }
 
-        const newCode = `if (!!window.BX_REMOTE_PLAY_CONFIG) return;`;
+        const newCode = `if (window.location.pathname.includes('/consoles/launch/')) return;`;
         return str.replace(text, text + newCode);
     },
 
