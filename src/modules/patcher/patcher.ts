@@ -1546,11 +1546,13 @@ export class PatcherCache {
 
         // Get client.js's hash
         let webVersion = '';
-        const $link = document.querySelector<HTMLLinkElement>('link[data-chunk="client"][href*="/client."]');
+        const $link = document.querySelector<HTMLLinkElement>('link[data-chunk="client"][as="script"][href*="/client."]');
         if ($link) {
             const match = /\/client\.([^\.]+)\.js/.exec($link.href);
             match && (webVersion = match[1]);
-        } else {
+        }
+
+        if (!webVersion) {
             // Get version from <meta>
             // Sometimes this value is missing
             webVersion = (document.querySelector<HTMLMetaElement>('meta[name=gamepass-app-version]'))?.content ?? '';
