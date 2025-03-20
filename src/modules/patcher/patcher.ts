@@ -1329,8 +1329,6 @@ let STREAM_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
         (getGlobalPref(GlobalPref.TOUCH_CONTROLLER_MODE) !== TouchControllerMode.OFF && (getGlobalPref(GlobalPref.MKB_ENABLED) || getGlobalPref(GlobalPref.NATIVE_MKB_MODE) === NativeMkbMode.ON)) && 'patchBabylonRendererClass',
     ] : []) as PatchArray,
 
-    BX_FLAGS.EnableXcloudLogging && 'enableConsoleLogging',
-
     'patchPollGamepads',
 
     getGlobalPref(GlobalPref.STREAM_COMBINE_SOURCES) && 'streamCombineSources',

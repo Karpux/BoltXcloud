@@ -5737,7 +5737,6 @@ ${subsVar} = subs;
   getGlobalPref("touchController.opacity.default") !== 100 && "patchTouchControlDefaultOpacity",
   getGlobalPref("touchController.mode") !== "off" && (getGlobalPref("mkb.enabled") || getGlobalPref("nativeMkb.mode") === "on") && "patchBabylonRendererClass"
  ] : [],
- BX_FLAGS.EnableXcloudLogging && "enableConsoleLogging",
  "patchPollGamepads",
  getGlobalPref("stream.video.combineAudio") && "streamCombineSources",
  ...getGlobalPref("xhome.enabled") ? [
