@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.4.6-beta
+// @version      6.4.7-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -192,7 +192,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.4.6-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.4.7-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -5023,6 +5023,9 @@ class TouchController {
  static getCustomList() {
   return TouchController.#customList;
  }
+ static hasCustomControl(productId) {
+  return TouchController.#customList?.includes(productId);
+ }
  static setup() {
   window.testTouchLayout = (layout) => {
    let { touchLayoutManager } = window.BX_EXPOSED;
@@ -5654,6 +5657,17 @@ ${subsVar} = subs;
   let index = str.indexOf("GuideAchievementDetail.useParams()");
   if (index > -1 && (index = PatcherUtils.lastIndexOf(str, "const", index, 200)), index < 0) return !1;
   return PatcherUtils.injectUseEffect(str, index, "Script", "ui.guideAchievementDetail.rendered");
+ },
+ patchCustomInputIcon(str) {
+  let index = str.indexOf('.MouseAndKeyboard="MouseAndKeyboard"');
+  if (index < 0) return !1;
+  let productIdMatch = /const (\w+)=(\w+)=>{/.exec(str.substring(index, index + 200));
+  if (!productIdMatch) return !1;
+  str = str.replace(productIdMatch[0], productIdMatch[0] + `const productId = ${productIdMatch[2]};`);
+  let match = /(\w+)&&(\w+\.push\(\w+\.Touch\))/.exec(str);
+  if (!match) return !1;
+  if (str = str.replace(match[0], `(${match[1]} || window.BX_EXPOSED.hasCustomTouchControl(productId)) && ${match[2]}`), match = /(\w+)&&(\w+\.push\(\w+\.MouseAndKeyboard\))/.exec(str), match) str = str.replace(match[0], `(${match[1]} || window.BX_EXPOSED.hasCustomNativeMkb(productId)) && ${match[2]}`);
+  return str;
  }
 }, PATCH_ORDERS = PatcherUtils.filterPatches([
  ...AppInterface && getGlobalPref("nativeMkb.mode") === "on" ? [
@@ -5683,6 +5697,7 @@ ${subsVar} = subs;
  "guideAchievementsDefaultLocked",
  "injectHeaderUseEffect",
  "homePageBeforeLoad",
+ "patchCustomInputIcon",
  "gameCardCustomIcons",
  "productDetailPageBeforeLoad",
  "enableTvRoutes",
@@ -8281,6 +8296,10 @@ var BxExposed = {
  createReactLocalCoOpIcon: (attrs) => {
   let reactCE = window.BX_EXPOSED.reactCreateElement;
   return reactCE("svg", { xmlns: "http://www.w3.org/2000/svg", width: "1em", height: "1em", viewBox: "0 0 32 32", "fill-rule": "evenodd", "stroke-linecap": "round", "stroke-linejoin": "round", ...attrs }, reactCE("g", null, reactCE("path", { d: "M24.272 11.165h-3.294l-3.14 3.564c-.391.391-.922.611-1.476.611a2.1 2.1 0 0 1-2.087-2.088 2.09 2.09 0 0 1 .031-.362l1.22-6.274a3.89 3.89 0 0 1 3.81-3.206h6.57c1.834 0 3.439 1.573 3.833 3.295l1.205 6.185a2.09 2.09 0 0 1 .031.362 2.1 2.1 0 0 1-2.087 2.088c-.554 0-1.085-.22-1.476-.611l-3.14-3.564", fill: "none", stroke: "#fff", "stroke-width": "2" }), reactCE("circle", { cx: "22.625", cy: "5.874", r: ".879" }), reactCE("path", { d: "M11.022 24.415H7.728l-3.14 3.564c-.391.391-.922.611-1.476.611a2.1 2.1 0 0 1-2.087-2.088 2.09 2.09 0 0 1 .031-.362l1.22-6.274a3.89 3.89 0 0 1 3.81-3.206h6.57c1.834 0 3.439 1.573 3.833 3.295l1.205 6.185a2.09 2.09 0 0 1 .031.362 2.1 2.1 0 0 1-2.087 2.088c-.554 0-1.085-.22-1.476-.611l-3.14-3.564", fill: "none", stroke: "#fff", "stroke-width": "2" }), reactCE("circle", { cx: "9.375", cy: "19.124", r: ".879" })));
+ },
+ hasCustomTouchControl: TouchController.hasCustomControl,
+ hasCustomNativeMkb: (productId) => {
+  return BX_FLAGS.ForceNativeMkbTitles?.includes(productId);
  }
 };
 function localRedirect(path) {

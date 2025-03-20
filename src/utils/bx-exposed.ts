@@ -261,4 +261,9 @@ export const BxExposed = {
             ),
         );
     } : () => {},
+
+    hasCustomTouchControl: TouchController.hasCustomControl,
+    hasCustomNativeMkb: (productId: string) => {
+        return BX_FLAGS.ForceNativeMkbTitles?.includes(productId);
+    }
 };

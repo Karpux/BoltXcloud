@@ -267,6 +267,10 @@ export class TouchController {
         return TouchController.#customList;
     }
 
+    static hasCustomControl(productId: string): boolean {
+        return TouchController.#customList?.includes(productId);
+    }
+
     static setup() {
         // Function for testing touch control
         window.testTouchLayout = (layout: any) => {

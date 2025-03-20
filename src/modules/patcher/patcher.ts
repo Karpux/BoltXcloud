@@ -1169,6 +1169,36 @@ ${subsVar} = subs;
         return PatcherUtils.injectUseEffect(str, index, 'Script', 'ui.guideAchievementDetail.rendered');
     },
 
+    patchCustomInputIcon(str: string) {
+        let index = str.indexOf('.MouseAndKeyboard="MouseAndKeyboard"');
+        if (index < 0) {
+            return false;
+        }
+
+        // Get productId
+        const productIdMatch = /const (\w+)=(\w+)=>{/.exec(str.substring(index, index + 200));
+        if (!productIdMatch) {
+            return false;
+        }
+
+        // Define productId variable
+        str = str.replace(productIdMatch[0], productIdMatch[0] + `const productId = ${productIdMatch[2]};`);
+
+        let match = /(\w+)&&(\w+\.push\(\w+\.Touch\))/.exec(str);
+        if (!match) {
+            return false;
+        }
+
+        str = str.replace(match[0], `(${match[1]} || window.BX_EXPOSED.hasCustomTouchControl(productId)) && ${match[2]}`);
+
+        match = /(\w+)&&(\w+\.push\(\w+\.MouseAndKeyboard\))/.exec(str);
+        if (match) {
+            str = str.replace(match[0], `(${match[1]} || window.BX_EXPOSED.hasCustomNativeMkb(productId)) && ${match[2]}`);
+        }
+
+        return str;
+    },
+
     /*
     patchBasicGameInfo(str: string) {
         let index = str.indexOf('.ChildXboxTitleIds,offerings');
@@ -1239,6 +1269,8 @@ let PATCH_ORDERS = PatcherUtils.filterPatches([
     'injectHeaderUseEffect',
 
     'homePageBeforeLoad',
+
+    'patchCustomInputIcon',
 
     'gameCardCustomIcons',
     // 'gameCardPassTitle',
