@@ -61,27 +61,34 @@ button_color(name, normal, hover, active, disabled)
 
 /* Remove the "Cloud Gaming" text in header when the screen is too small */
 @media screen and (min-width: 641px) and (max-width: 767px) {
-    header button[class^="ExperienceDropdown-module__toggleButton"], header button[class^="XboxButton-module__headerXboxButton"] {
-        margin-right: 10px !important;
-    }
+    header {
+        button[class^="ExperienceDropdown-module__toggleButton"],
+        button[class^="XboxButton-module__headerXboxButton"] {
+            margin-right: 10px !important;
+        }
 
-    header button[class^="ExperienceDropdown-module__toggleButton"]{
-        > div{
+        a[href="/play"],
+        button[class^="ExperienceDropdown-module__toggleButton"] {
             > div {
-                font-size: 12px;
-            }
+                > div {
+                    font-size: 12px;
+                }
 
-            > svg {
-                width: 20px;
-                height: 20px;
+                > svg {
+                    width: 20px;
+                    height: 20px;
+                }
             }
         }
     }
 }
 
 @media screen and (max-width: 640px) {
-    header button[class^="ExperienceDropdown-module__toggleButton"] {
-        display: none;
+    header {
+        a[href="/play"],
+        button[class^="ExperienceDropdown-module__toggleButton"] {
+            display: none;
+        }
     }
 }
 
