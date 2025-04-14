@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.4.8
+// @version      6.4.9-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -192,7 +192,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.4.8", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.4.9-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -8158,7 +8158,8 @@ var FeatureGates = {
  ShowForcedUpdateScreen: !1,
  EnableTakControlResizing: !0,
  EnableLazyLoadedHome: !1,
- EnableRemotePlay: getGlobalPref("xhome.enabled")
+ EnableRemotePlay: getGlobalPref("xhome.enabled"),
+ EnableConsoles: getGlobalPref("xhome.enabled")
 }, nativeMkbMode = getGlobalPref("nativeMkb.mode");
 if (nativeMkbMode !== "default") FeatureGates.EnableMouseAndKeyboard = nativeMkbMode === "on";
 var blockFeatures = getGlobalPref("block.features");
