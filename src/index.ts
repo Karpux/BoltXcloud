@@ -147,6 +147,12 @@ if (isFullVersion() && BX_FLAGS.SafariWorkaround && document.readyState !== 'loa
     throw new Error('[Better xCloud] Executing workaround for Safari');
 }
 
+// Make sure it only run on /play
+if (!window.location.pathname.match(/^\/[a-zA-Z]{2}-[a-zA-Z]{2}\/play/)) {
+    throw new Error('[Better xCloud] Not xCloud page');
+}
+
+
 window.addEventListener('load', e => {
     // Automatically reload the page when running into the "We are sorry..." error message
     window.setTimeout(() => {

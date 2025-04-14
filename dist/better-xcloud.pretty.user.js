@@ -7,6 +7,7 @@
 // @license      MIT
 // @match        https://www.xbox.com/*/play*
 // @match        https://www.xbox.com/*/auth/msa?*loggedIn*
+// @exclude      https://www.xbox.com/*/xbox-game-pass/play-day-one
 // @run-at       document-start
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/redphx/better-xcloud/typescript/dist/better-xcloud.meta.js
@@ -10242,6 +10243,7 @@ if (BX_FLAGS.SafariWorkaround && document.readyState !== "loading") {
   class: "bx-reload-overlay"
  }, CE("div", !1, CE("p", !1, t("load-failed-message")), $secondaryAction))), document.documentElement.appendChild($fragment), isSafari && window.location.reload(!0), new Error("[Better xCloud] Executing workaround for Safari");
 }
+if (!window.location.pathname.match(/^\/[a-zA-Z]{2}-[a-zA-Z]{2}\/play/)) throw new Error("[Better xCloud] Not xCloud page");
 window.addEventListener("load", (e) => {
  window.setTimeout(() => {
   if (document.body.classList.contains("legacyBackground")) window.stop(), window.location.reload(!0);
