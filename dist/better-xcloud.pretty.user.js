@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.4.9
+// @version      6.4.10-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -193,7 +193,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.4.9", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.4.10-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -5549,7 +5549,7 @@ if (this.baseStorageKey in window.BX_EXPOSED.overrideSettings) {
   return str = PatcherUtils.replaceWith(str, index, '"All"', '"Locked"'), str;
  },
  disableTouchContextMenu(str) {
-  let index = str.indexOf('"ContextualCardActions-module__container');
+  let index = str.indexOf("arguments.length>2&&void 0!==arguments[2]?arguments[2]:500;");
   if (index >= 0 && (index = str.indexOf('addEventListener("touchstart"', index)), index >= 0 && (index = PatcherUtils.lastIndexOf(str, "return ", index, 50)), index < 0) return !1;
   return str = PatcherUtils.replaceWith(str, index, "return", "return () => {};"), str;
  },

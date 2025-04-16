@@ -903,7 +903,7 @@ if (this.baseStorageKey in window.BX_EXPOSED.overrideSettings) {
 
     // Disable long touch activating context menu
     disableTouchContextMenu(str: string) {
-        let index = str.indexOf('"ContextualCardActions-module__container');
+        let index = str.indexOf('arguments.length>2&&void 0!==arguments[2]?arguments[2]:500;');
         index >= 0 && (index = str.indexOf('addEventListener("touchstart"', index));
         index >= 0 && (index = PatcherUtils.lastIndexOf(str, 'return ', index, 50));
         if (index < 0) {
