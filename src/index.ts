@@ -329,7 +329,7 @@ BxEventBus.Stream.on('dataChannelCreated', payload => {
         let newId: number = parseInt(json.titleid, 16);
 
         // Get titleSlug for Remote Play
-        if (STATES.remotePlay.isPlaying) {
+        if (window.location.pathname.includes('/play/consoles/launch/')) {
             currentStream.titleSlug = 'remote-play';
             if (json.focused) {
                 const productTitle = await XboxApi.getProductTitle(newId);
@@ -447,11 +447,6 @@ function main() {
 
         Patcher.init();
         disablePwa();
-
-        // Preload Remote Play
-        if (getGlobalPref(GlobalPref.REMOTE_PLAY_ENABLED)) {
-            RemotePlayManager.detect();
-        }
 
         if (getGlobalPref(GlobalPref.TOUCH_CONTROLLER_MODE) === TouchControllerMode.ALL) {
             TouchController.setup();

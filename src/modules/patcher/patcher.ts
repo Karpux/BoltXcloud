@@ -21,7 +21,7 @@ import { PatcherUtils } from "./patcher-utils.js";
 
 export type PatchName = keyof typeof PATCHES;
 export type PatchArray = PatchName[];
-export type PatchPage = 'home' | 'stream' | 'product-detail';
+export type PatchPage = 'home' | 'stream' | 'remote-play-stream' | 'product-detail';
 type PatchFunction = (str: string) => string | false;
 
 const LOG_TAG = 'Patcher';
@@ -114,18 +114,6 @@ const PATCHES = {
         return str;
     },
 
-    // Enable Remote Play feature
-    remotePlayConnectMode(str: string) {
-        let text = 'connectMode:"cloud-connect",';
-        if (!str.includes(text)) {
-            return false;
-        }
-
-        const newCode = `connectMode: window.BX_REMOTE_PLAY_CONFIG ? "xhome-connect" : "cloud-connect",
-remotePlayServerId: (window.BX_REMOTE_PLAY_CONFIG && window.BX_REMOTE_PLAY_CONFIG.serverId) || '',`;
-        return str.replace(text, newCode);
-    },
-
     // Remote Play: Disable achievement toast
     remotePlayDisableAchievementToast(str: string) {
         let text = '.AchievementUnlock:{';
@@ -133,7 +121,7 @@ remotePlayServerId: (window.BX_REMOTE_PLAY_CONFIG && window.BX_REMOTE_PLAY_CONFI
             return false;
         }
 
-        const newCode = `if (window.location.pathname.includes('/consoles/launch/')) return;`;
+        const newCode = `if (window.location.pathname.includes('/play/consoles/launch/')) return;`;
         return str.replace(text, text + newCode);
     },
 
@@ -936,6 +924,10 @@ if (this.baseStorageKey in window.BX_EXPOSED.overrideSettings) {
         return PatcherUtils.patchBeforePageLoad(str, 'stream');
     },
 
+    remotePlayStreamPageBeforeLoad(str: string) {
+        return PatcherUtils.patchBeforePageLoad(str, 'remote-play-stream');
+    },
+
     disableAbsoluteMouse(str: string) {
         let text = 'sendAbsoluteMouseCapableMessage(e){';
         if (!str.includes(text)) {
@@ -1260,6 +1252,7 @@ let PATCH_ORDERS = PatcherUtils.filterPatches([
     'injectErrorPageUseEffect',
 
     'streamPageBeforeLoad',
+    'remotePlayStreamPageBeforeLoad',
 
     'injectGuideHomeUseEffect',
     'injectAchievementsProgressUseEffect',
@@ -1298,7 +1291,7 @@ let PATCH_ORDERS = PatcherUtils.filterPatches([
         'disableTelemetryProvider',
     ] : []) as PatchArray,
 
-    ...(getGlobalPref(GlobalPref.REMOTE_PLAY_ENABLED) ? [
+    ...(!getGlobalPref(GlobalPref.BLOCK_FEATURES).includes(BlockFeature.REMOTE_PLAY) ? [
         'remotePlayKeepAlive',
         'remotePlayDisableAchievementToast',
         STATES.userAgent.capabilities.touch && 'patchUpdateInputConfigurationAsync',
@@ -1365,10 +1358,9 @@ let STREAM_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
 
     getGlobalPref(GlobalPref.STREAM_COMBINE_SOURCES) && 'streamCombineSources',
 
-    ...(getGlobalPref(GlobalPref.REMOTE_PLAY_ENABLED) ? [
+    ...(!getGlobalPref(GlobalPref.BLOCK_FEATURES).includes(BlockFeature.REMOTE_PLAY) ? [
         'remotePlayPostStreamRedirectUrl',
         'patchRemotePlayMkb',
-        'remotePlayConnectMode',
     ] : []) as PatchArray,
 
     // Native MKB
@@ -1388,6 +1380,7 @@ export class Patcher {
     private static remainingPatches: { [key in PatchPage]: PatchArray } = {
         home: HOME_PAGE_PATCH_ORDERS,
         stream: STREAM_PAGE_PATCH_ORDERS,
+        'remote-play-stream': STREAM_PAGE_PATCH_ORDERS,
         'product-detail': PRODUCT_DETAIL_PAGE_PATCH_ORDERS,
     };
 
@@ -1551,7 +1544,9 @@ export class PatcherCache {
         BxLogger.info(LOG_TAG, 'Cache', this.CACHE);
 
         const pathName = window.location.pathname;
-        if (pathName.includes('/play/launch/')) {
+        if (pathName.includes('/play/consoles/launch/')) {
+            Patcher.patchPage('remote-play-stream');
+        } else if (pathName.includes('/play/launch/')) {
             Patcher.patchPage('stream');
         } else if (pathName.includes('/play/games/')) {
             Patcher.patchPage('product-detail');

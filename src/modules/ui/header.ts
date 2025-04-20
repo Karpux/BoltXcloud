@@ -11,6 +11,7 @@ import { GlobalPref } from "@/enums/pref-keys";
 import { getGlobalPref } from "@/utils/pref-utils";
 import { BxLogger } from "@/utils/bx-logger";
 import { BxEventBus } from "@/utils/bx-event-bus";
+import { BlockFeature } from "@/enums/pref-values";
 
 export class HeaderSection {
     private static instance: HeaderSection;
@@ -44,7 +45,7 @@ export class HeaderSection {
         });
 
         this.$buttonsWrapper = CE('div', false,
-            getGlobalPref(GlobalPref.REMOTE_PLAY_ENABLED) ? this.$btnRemotePlay : null,
+            !getGlobalPref(GlobalPref.BLOCK_FEATURES).includes(BlockFeature.REMOTE_PLAY) ? this.$btnRemotePlay : null,
             this.$btnSettings,
         );
 

@@ -133,6 +133,7 @@ export const enum BlockFeature {
     BYOG = 'byog',
     NOTIFICATIONS_INVITES = 'notifications-invites',
     NOTIFICATIONS_ACHIEVEMENTS = 'notifications-achievements',
+    REMOTE_PLAY = 'remote-play',
 }
 
 export const enum UiTheme {

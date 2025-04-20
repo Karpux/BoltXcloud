@@ -297,7 +297,7 @@ export function interceptHttpRequests() {
         }
 
         let requestType: RequestType;
-        if (url.includes('/sessions/home') || url.includes('xhome.') || (STATES.remotePlay.isPlaying && url.endsWith('/inputconfigs'))) {
+        if (url.includes('/sessions/home') || url.includes('xhome.') || (window.location.pathname.includes('/play/consoles/launch/') && url.endsWith('/inputconfigs'))) {
             requestType = 'xhome';
         } else {
             requestType = 'xcloud';

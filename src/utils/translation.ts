@@ -28,6 +28,8 @@ export const SUPPORTED_LANGUAGES = {
 };
 
 const Texts = {
+    "xbox-360-games": "Xbox 360 games",
+    "xbox-apps": "Xbox apps",
     "achievements": "Achievements",
     "activate": "Activate",
     "activated": "Activated",
@@ -61,9 +63,7 @@ const Texts = {
     "browser-unsupported-feature": "Your browser doesn't support this feature",
     "button-xbox": "Xbox button",
     "bypass-region-restriction": "Bypass region restriction",
-    "can-stream-xbox-360-games": "Can stream Xbox 360 games",
     "cancel": "Cancel",
-    "cant-stream-xbox-360-games": "Can't stream Xbox 360 games",
     "center": "Center",
     "chat": "Chat",
     "clarity-boost": "Clarity boost",

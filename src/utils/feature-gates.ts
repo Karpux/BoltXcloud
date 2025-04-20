@@ -10,8 +10,8 @@ export let FeatureGates: { [key: string]: boolean } = {
     ShowForcedUpdateScreen: false,
     EnableTakControlResizing: true,  // Experimenting
     EnableLazyLoadedHome: false,
-    EnableRemotePlay: getGlobalPref(GlobalPref.REMOTE_PLAY_ENABLED),
-    EnableConsoles: getGlobalPref(GlobalPref.REMOTE_PLAY_ENABLED),
+    EnableRemotePlay: !getGlobalPref(GlobalPref.BLOCK_FEATURES).includes(BlockFeature.REMOTE_PLAY),
+    EnableConsoles: !getGlobalPref(GlobalPref.BLOCK_FEATURES).includes(BlockFeature.REMOTE_PLAY),
 };
 
 // Enable Native Mouse & Keyboard

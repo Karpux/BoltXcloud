@@ -26,7 +26,6 @@ declare global {
             touchLayoutManager: any;
         }>;
 
-        BX_REMOTE_PLAY_CONFIG: BxStates.remotePlay.config;
         BX_STREAM_SETTINGS: StreamSettingsData;
 
         BX_FETCH: typeof window['fetch'];

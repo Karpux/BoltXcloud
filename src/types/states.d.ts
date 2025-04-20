@@ -41,11 +41,7 @@ type BxStates = {
     }>;
 
     remotePlay: Partial<{
-        isPlaying: boolean;
         server: string;
-        config: {
-            serverId: string;
-        };
         titleId?: string;
     }>;
 

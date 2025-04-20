@@ -8,6 +8,7 @@ import { HeaderSection } from "./ui/header";
 import { GlobalPref } from "@/enums/pref-keys";
 import { getGlobalPref, setGlobalPref } from "@/utils/pref-utils";
 import { RemotePlayDialog } from "./ui/dialog/remote-play-dialog";
+import { BlockFeature } from "@/enums/pref-values";
 
 export const enum RemotePlayConsoleState {
     ON = 'On',
@@ -37,7 +38,7 @@ export class RemotePlayManager {
     private static instance: RemotePlayManager | null | undefined;
     public static getInstance(): typeof RemotePlayManager['instance'] {
         if (typeof RemotePlayManager.instance === 'undefined') {
-            if (getGlobalPref(GlobalPref.REMOTE_PLAY_ENABLED)) {
+            if (!getGlobalPref(GlobalPref.BLOCK_FEATURES).includes(BlockFeature.REMOTE_PLAY)) {
                 RemotePlayManager.instance = new RemotePlayManager();
             } else {
                 RemotePlayManager.instance = null;
@@ -194,13 +195,7 @@ export class RemotePlayManager {
             setGlobalPref(GlobalPref.REMOTE_PLAY_STREAM_RESOLUTION, resolution, 'ui');
         }
 
-        STATES.remotePlay.config = {
-            serverId: serverId,
-        };
-        window.BX_REMOTE_PLAY_CONFIG = STATES.remotePlay.config;
-
-        localRedirect('/launch/fortnite/BT5P2X999VH2#remote-play');
-        setTimeout(() => localRedirect('/consoles/launch/' + serverId), 100);
+        localRedirect('/consoles/launch/' + serverId);
     }
 
     togglePopup(force = null) {
@@ -224,21 +219,6 @@ export class RemotePlayManager {
         */
 
         RemotePlayDialog.getInstance().show();
-    }
-
-    static detect() {
-        if (!getGlobalPref(GlobalPref.REMOTE_PLAY_ENABLED)) {
-            return;
-        }
-
-        STATES.remotePlay.isPlaying = window.location.pathname.includes('/launch/') && window.location.hash.startsWith('#remote-play');
-        if (STATES.remotePlay?.isPlaying) {
-            window.BX_REMOTE_PLAY_CONFIG = STATES.remotePlay.config;
-            // Remove /launch/... from URL
-            window.history.replaceState({origin: 'better-xcloud'}, '', 'https://www.xbox.com/' + location.pathname.substring(1, 6) + '/play');
-        } else {
-            window.BX_REMOTE_PLAY_CONFIG = null;
-        }
     }
 
     isReady() {

@@ -191,7 +191,6 @@ export class SettingsDialog extends NavigationDialog {
             },
             GlobalPref.SERVER_BYPASS_RESTRICTION,
             GlobalPref.UI_CONTROLLER_FRIENDLY,
-            GlobalPref.REMOTE_PLAY_ENABLED,
         ],
     }, {
         group: 'server',

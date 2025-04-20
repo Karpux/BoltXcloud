@@ -36,19 +36,25 @@ export class PatcherUtils {
         return txt.substring(0, index) + toString + txt.substring(index + fromString.length);
     }
 
+    static replaceAfterIndex(txt: string, search: string, replaceWith: string, index: number) {
+        const before = txt.slice(0, index);
+        const after = txt.slice(index).replace(search, replaceWith);
+        return before + after;
+    }
+
     static filterPatches(patches: Array<PatchName | false>): PatchArray {
         return patches.filter((item): item is PatchName => !!item);
     }
 
     static patchBeforePageLoad(str: string, page: PatchPage): string | false {
-        let text = `chunkName:()=>"${page}-page",`;
-        if (!str.includes(text)) {
+        const index = str.indexOf(`chunkName:()=>"${page}-page",`);
+        if (index < 0) {
             return false;
         }
 
-        str = str.replace('requireAsync(e){', `requireAsync(e){window.BX_EXPOSED.beforePageLoad("${page}");`);
-        str = str.replace('requireSync(e){', `requireSync(e){window.BX_EXPOSED.beforePageLoad("${page}");`);
-
+        str = PatcherUtils.replaceAfterIndex(str, 'requireAsync(e){', `requireAsync(e){window.BX_EXPOSED.beforePageLoad("${page}");`, index);
+        str = PatcherUtils.replaceAfterIndex(str, 'requireSync(e){', `requireSync(e){window.BX_EXPOSED.beforePageLoad("${page}");`, index);
+        console.log(str);
         return str;
     }
 

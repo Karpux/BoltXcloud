@@ -51,7 +51,7 @@ export class RemotePlayDialog extends NavigationDialog {
         $resolutions.addEventListener('input', (e: Event) => {
             const value = (e.target as HTMLSelectElement).value;
 
-            $settingNote.textContent = value === StreamResolution.DIM_1080P ? '✅ ' + t('can-stream-xbox-360-games') : '❌ ' + t('cant-stream-xbox-360-games');
+            $settingNote.textContent = `✅ ${t('xbox-360-games')} ${value === StreamResolution.DIM_1080P_HQ ? '❌' : '✅'} ${t('xbox-apps')}`;
             setGlobalPref(GlobalPref.REMOTE_PLAY_STREAM_RESOLUTION, value, 'ui');
         });
 

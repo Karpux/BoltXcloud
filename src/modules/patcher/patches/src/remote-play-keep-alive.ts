@@ -3,7 +3,7 @@ declare const e: string;
 
 try {
     const msg = JSON.parse(e);
-    if (msg.reason === 'WarningForBeingIdle' && window.location.pathname.includes('/consoles/launch/')) {
+    if (msg.reason === 'WarningForBeingIdle' && window.location.pathname.includes('/play/consoles/launch/')) {
         $this$.sendKeepAlive();
         // @ts-ignore
         return;

@@ -11,7 +11,6 @@ import { BaseSettingsStorage } from "./base-settings-storage";
 import { CodecProfile, StreamResolution, TouchControllerMode, TouchControllerStyleStandard, TouchControllerStyleCustom, GameBarPosition, NativeMkbMode, UiLayout, UiSection, BlockFeature, UiTheme } from "@/enums/pref-values";
 import { GhPagesUtils } from "../gh-pages";
 import { BxEventBus } from "../bx-event-bus";
-import { BxIcon } from "../bx-icon";
 
 
 function getSupportedCodecProfiles() {
@@ -497,6 +496,7 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
                 [BlockFeature.BYOG]: t('stream-your-own-game'),
                 [BlockFeature.NOTIFICATIONS_INVITES]: t('notifications') + ': ' + t('invites'),
                 [BlockFeature.NOTIFICATIONS_ACHIEVEMENTS]: t('notifications') + ': ' + t('achievements'),
+                [BlockFeature.REMOTE_PLAY]: t('remote-play'),
             },
         },
 
@@ -522,13 +522,6 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
         [GlobalPref.AUDIO_VOLUME_CONTROL_ENABLED]: {
             requiredVariants: 'full',
             label: t('enable-volume-control'),
-            default: false,
-        },
-
-        [GlobalPref.REMOTE_PLAY_ENABLED]: {
-            requiredVariants: 'full',
-            label: t('enable-remote-play-feature'),
-            labelIcon: BxIcon.REMOTE_PLAY,
             default: false,
         },
 
