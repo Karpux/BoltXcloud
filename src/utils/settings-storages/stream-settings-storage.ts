@@ -228,10 +228,13 @@ export class StreamSettingsStorage extends BaseSettingsStorage<StreamPref> {
             default: VideoRatio['16:9'],
             options: {
                 [VideoRatio['16:9']]: `16:9 (${t('default')})`,
-                [VideoRatio['18:9']]: '18:9',
-                [VideoRatio['21:9']]: '21:9',
                 [VideoRatio['16:10']]: '16:10',
+                [VideoRatio['18:9']]: '18:9',
+                [VideoRatio['20:9']]: '20:9',
+                [VideoRatio['21:9']]: '21:9',
+                [VideoRatio['3:2']]: '3:2',
                 [VideoRatio['4:3']]: '4:3',
+                [VideoRatio['5:4']]: '5:4',
 
                 [VideoRatio.FILL]: t('stretch'),
                 //'cover': 'Cover',

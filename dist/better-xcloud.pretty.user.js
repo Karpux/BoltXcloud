@@ -2442,10 +2442,13 @@ class StreamSettingsStorage extends BaseSettingsStorage {
    default: "16:9",
    options: {
     "16:9": `16:9 (${t("default")})`,
-    "18:9": "18:9",
-    "21:9": "21:9",
     "16:10": "16:10",
+    "18:9": "18:9",
+    "20:9": "20:9",
+    "21:9": "21:9",
+    "3:2": "3:2",
     "4:3": "4:3",
+    "5:4": "5:4",
     fill: t("stretch")
    }
   },
