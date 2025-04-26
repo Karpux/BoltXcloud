@@ -28,8 +28,6 @@ export const SUPPORTED_LANGUAGES = {
 };
 
 const Texts = {
-    "xbox-360-games": "Xbox 360 games",
-    "xbox-apps": "Xbox apps",
     "achievements": "Achievements",
     "activate": "Activate",
     "activated": "Activated",
@@ -435,6 +433,8 @@ const Texts = {
     "wallpaper": "Wallpaper",
     "webgl2": "WebGL2",
     "webgpu": "WebGPU",
+    "xbox-360-games": "Xbox 360 games",
+    "xbox-apps": "Xbox apps",
 };
 
 export class Translations {
