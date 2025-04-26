@@ -75,7 +75,12 @@ export class HeaderSection {
     }
 
     checkHeader = () => {
-        let $target = document.querySelector('#PageContent div[class*=EdgewaterHeader-module__rightSectionSpacing]');
+        const $header = document.querySelector('#gamepass-root header[class^=Header-module__header]');
+        if (!$header) {
+            return;
+        }
+
+        let $target = $header.querySelector('div[class*=EdgewaterHeader-module__rightSectionSpacing], div[class*=RemotePlayHeader-module__rightSectionSpacing]');
         if (!$target) {
             $target = document.querySelector('div[class^=UnsupportedMarketPage-module__buttons]');
         }

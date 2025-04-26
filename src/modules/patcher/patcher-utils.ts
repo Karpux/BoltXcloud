@@ -54,7 +54,7 @@ export class PatcherUtils {
 
         str = PatcherUtils.replaceAfterIndex(str, 'requireAsync(e){', `requireAsync(e){window.BX_EXPOSED.beforePageLoad("${page}");`, index);
         str = PatcherUtils.replaceAfterIndex(str, 'requireSync(e){', `requireSync(e){window.BX_EXPOSED.beforePageLoad("${page}");`, index);
-        console.log(str);
+
         return str;
     }
 

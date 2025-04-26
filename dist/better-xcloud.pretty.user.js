@@ -5113,7 +5113,7 @@ class PatcherUtils {
  static patchBeforePageLoad(str, page) {
   let index = str.indexOf(`chunkName:()=>"${page}-page",`);
   if (index < 0) return !1;
-  return str = PatcherUtils.replaceAfterIndex(str, "requireAsync(e){", `requireAsync(e){window.BX_EXPOSED.beforePageLoad("${page}");`, index), str = PatcherUtils.replaceAfterIndex(str, "requireSync(e){", `requireSync(e){window.BX_EXPOSED.beforePageLoad("${page}");`, index), console.log(str), str;
+  return str = PatcherUtils.replaceAfterIndex(str, "requireAsync(e){", `requireAsync(e){window.BX_EXPOSED.beforePageLoad("${page}");`, index), str = PatcherUtils.replaceAfterIndex(str, "requireSync(e){", `requireSync(e){window.BX_EXPOSED.beforePageLoad("${page}");`, index), str;
  }
  static isVarCharacter(char) {
   let code = char.charCodeAt(0), isUppercase = code >= 65 && code <= 90, isLowercase = code >= 97 && code <= 122, isDigit = code >= 48 && code <= 57;
@@ -5622,7 +5622,7 @@ ${subsVar} = subs;
   return str = PatcherUtils.insertAt(str, index, `&q=${getGlobalPref("ui.imageQuality")}`), str;
  },
  injectHeaderUseEffect(str) {
-  let index = str.indexOf('"EdgewaterHeader-module__spaceBetween');
+  let index = str.indexOf('className:"Header-module__header');
   if (index > -1 && (index = PatcherUtils.lastIndexOf(str, "return", index, 300)), index < 0) return !1;
   return PatcherUtils.injectUseEffect(str, index, "Script", "ui.header.rendered");
  },
@@ -8361,7 +8361,9 @@ class HeaderSection {
   });
  }
  checkHeader = () => {
-  let $target = document.querySelector("#PageContent div[class*=EdgewaterHeader-module__rightSectionSpacing]");
+  let $header = document.querySelector("#gamepass-root header[class^=Header-module__header]");
+  if (!$header) return;
+  let $target = $header.querySelector("div[class*=EdgewaterHeader-module__rightSectionSpacing], div[class*=RemotePlayHeader-module__rightSectionSpacing]");
   if (!$target) $target = document.querySelector("div[class^=UnsupportedMarketPage-module__buttons]");
   if ($target?.appendChild(this.$buttonsWrapper), !STATES.isSignedIn) BxEventBus.Script.emit("xcloud.server", { status: "signed-out" });
  };

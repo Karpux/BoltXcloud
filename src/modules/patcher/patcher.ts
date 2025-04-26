@@ -1091,7 +1091,7 @@ ${subsVar} = subs;
     },
 
     injectHeaderUseEffect(str: string) {
-        let index = str.indexOf('"EdgewaterHeader-module__spaceBetween');
+        let index = str.indexOf('className:"Header-module__header');
         index > -1 && (index = PatcherUtils.lastIndexOf(str, 'return', index, 300));
         if (index < 0) {
             return false;
