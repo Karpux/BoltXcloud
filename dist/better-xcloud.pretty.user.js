@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.4.11-beta
+// @version      6.5.0
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -192,7 +192,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.4.11-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.5.0", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -401,8 +401,6 @@ var SUPPORTED_LANGUAGES = {
  "zh-CN": "中文(简体)",
  "zh-TW": "中文(繁體)"
 }, Texts = {
- "xbox-360-games": "Xbox 360 games",
- "xbox-apps": "Xbox apps",
  achievements: "Achievements",
  activate: "Activate",
  activated: "Activated",
@@ -807,7 +805,9 @@ var SUPPORTED_LANGUAGES = {
  "waiting-for-input": "Waiting for input...",
  wallpaper: "Wallpaper",
  webgl2: "WebGL2",
- webgpu: "WebGPU"
+ webgpu: "WebGPU",
+ "xbox-360-games": "Xbox 360 games",
+ "xbox-apps": "Xbox apps"
 };
 class Translations {
  static EN_US = "en-US";
