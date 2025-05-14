@@ -183,8 +183,8 @@ export class StreamSettingsStorage extends BaseSettingsStorage<StreamPref> {
             label: ut('clarity-boost-mode'),
             default: StreamVideoProcessingMode.PERFORMANCE,
             options: {
-                [StreamVideoProcessingMode.QUALITY]: ut('quality'),
                 [StreamVideoProcessingMode.PERFORMANCE]: ut('performance'),
+                [StreamVideoProcessingMode.QUALITY]: ut('quality'),
             },
             suggest: {
                 lowest: StreamVideoProcessingMode.PERFORMANCE,

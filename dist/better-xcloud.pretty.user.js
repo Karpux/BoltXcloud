@@ -2402,8 +2402,8 @@ class StreamSettingsStorage extends BaseSettingsStorage {
    label: ut("clarity-boost-mode"),
    default: "performance",
    options: {
-    quality: ut("quality"),
-    performance: ut("performance")
+    performance: ut("performance"),
+    quality: ut("quality")
    },
    suggest: {
     lowest: "performance",
