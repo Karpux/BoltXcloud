@@ -1,9 +1,9 @@
 import { StreamPref, StorageKey, type PrefTypeMap } from "@/enums/pref-keys";
-import { DeviceVibrationMode, StreamPlayerType, StreamVideoProcessing, VideoPowerPreference, VideoRatio, VideoPosition, StreamStat, StreamStatPosition } from "@/enums/pref-values";
+import { DeviceVibrationMode, StreamPlayerType, StreamVideoProcessing, VideoPowerPreference, VideoRatio, VideoPosition, StreamStat, StreamStatPosition, StreamVideoProcessingMode } from "@/enums/pref-values";
 import { STATES } from "../global";
 import { KeyboardShortcutDefaultId } from "../local-db/keyboard-shortcuts-table";
 import { MkbMappingDefaultPresetId } from "../local-db/mkb-mapping-presets-table";
-import { t } from "../translation";
+import { t, ut } from "../translation";
 import { BaseSettingsStorage } from "./base-settings-storage";
 import { CE } from "../html";
 import type { SettingActionOrigin, SettingDefinitions } from "@/types/setting-definition";
@@ -177,6 +177,18 @@ export class StreamSettingsStorage extends BaseSettingsStorage<StreamPref> {
             suggest: {
                 lowest: StreamVideoProcessing.USM,
                 highest: StreamVideoProcessing.CAS,
+            },
+        },
+        [StreamPref.VIDEO_PROCESSING_MODE]: {
+            label: ut('clarity-boost-mode'),
+            default: StreamVideoProcessingMode.PERFORMANCE,
+            options: {
+                [StreamVideoProcessingMode.QUALITY]: ut('quality'),
+                [StreamVideoProcessingMode.PERFORMANCE]: ut('performance'),
+            },
+            suggest: {
+                lowest: StreamVideoProcessingMode.PERFORMANCE,
+                highest: StreamVideoProcessingMode.QUALITY,
             },
         },
         [StreamPref.VIDEO_POWER_PREFERENCE]: {

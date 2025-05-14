@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.5.0
+// @version      6.5.1-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -120,6 +120,7 @@ var ALL_PREFS = {
   "video.position",
   "video.player.powerPreference",
   "video.processing",
+  "video.processing.mode",
   "video.ratio",
   "video.saturation",
   "video.processing.sharpness"
@@ -192,7 +193,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.5.0", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.5.1-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -874,7 +875,9 @@ class Translations {
   localStorage.setItem(Translations.KEY_LOCALE, locale);
  }
 }
-var t = Translations.get;
+var t = Translations.get, ut = (text) => {
+ return BxLogger.warning("Untranslated text", text), text;
+};
 Translations.init();
 class NavigationUtils {
  static setNearby($elm, nearby) {
@@ -2393,6 +2396,18 @@ class StreamSettingsStorage extends BaseSettingsStorage {
    suggest: {
     lowest: "usm",
     highest: "cas"
+   }
+  },
+  "video.processing.mode": {
+   label: ut("clarity-boost-mode"),
+   default: "performance",
+   options: {
+    quality: ut("quality"),
+    performance: ut("performance")
+   },
+   suggest: {
+    lowest: "performance",
+    highest: "quality"
    }
   },
   "video.player.powerPreference": {
@@ -4415,6 +4430,10 @@ class SettingsManager {
    }
   },
   "video.processing": {
+   onChange: updateVideoPlayer,
+   onChangeUi: onChangeVideoPlayerType
+  },
+  "video.processing.mode": {
    onChange: updateVideoPlayer
   },
   "video.processing.sharpness": {
@@ -4565,13 +4584,13 @@ class SettingsManager {
  }
 }
 function onChangeVideoPlayerType() {
- let playerType = getStreamPref("video.player.type"), settingsManager = SettingsManager.getInstance();
+ let playerType = getStreamPref("video.player.type"), processing = getStreamPref("video.processing"), settingsManager = SettingsManager.getInstance();
  if (!settingsManager.hasElement("video.processing")) return;
- let isDisabled = !1, $videoProcessing = settingsManager.getElement("video.processing"), $videoSharpness = settingsManager.getElement("video.processing.sharpness"), $videoPowerPreference = settingsManager.getElement("video.player.powerPreference"), $videoMaxFps = settingsManager.getElement("video.maxFps"), $optCas = $videoProcessing.querySelector(`option[value=${"cas"}]`);
+ let isDisabled = !1, $videoProcessing = settingsManager.getElement("video.processing"), $videoProcessingMode = settingsManager.getElement("video.processing.mode"), $videoSharpness = settingsManager.getElement("video.processing.sharpness"), $videoPowerPreference = settingsManager.getElement("video.player.powerPreference"), $videoMaxFps = settingsManager.getElement("video.maxFps"), $optCas = $videoProcessing.querySelector(`option[value=${"cas"}]`);
  if (playerType === "default") {
   if ($videoProcessing.value = "usm", setStreamPref("video.processing", "usm", "direct"), $optCas && ($optCas.disabled = !0), UserAgent.isSafari()) isDisabled = !0;
  } else $optCas && ($optCas.disabled = !1);
- $videoProcessing.disabled = isDisabled, $videoSharpness.dataset.disabled = isDisabled.toString(), $videoPowerPreference.closest(".bx-settings-row").classList.toggle("bx-gone", playerType !== "webgl2"), $videoMaxFps.closest(".bx-settings-row").classList.toggle("bx-gone", playerType === "default");
+ $videoProcessing.disabled = isDisabled, $videoSharpness.dataset.disabled = isDisabled.toString(), $videoProcessingMode.closest(".bx-settings-row").classList.toggle("bx-gone", !(playerType === "webgl2" && processing === "cas")), $videoPowerPreference.closest(".bx-settings-row").classList.toggle("bx-gone", playerType !== "webgl2"), $videoMaxFps.closest(".bx-settings-row").classList.toggle("bx-gone", playerType === "default");
 }
 function limitVideoPlayerFps(targetFps) {
  STATES.currentStream.streamPlayerManager?.getCanvasPlayer()?.setTargetFps(targetFps);
@@ -4581,6 +4600,7 @@ function updateVideoPlayer() {
  if (!streamPlayerManager) return;
  let options = {
   processing: getStreamPref("video.processing"),
+  processingMode: getStreamPref("video.processing.mode"),
   sharpness: getStreamPref("video.processing.sharpness"),
   saturation: getStreamPref("video.saturation"),
   contrast: getStreamPref("video.contrast"),
@@ -7393,6 +7413,7 @@ class SettingsDialog extends NavigationDialog {
    "video.maxFps",
    "video.player.powerPreference",
    "video.processing",
+   "video.processing.mode",
    "video.ratio",
    "video.position",
    "video.processing.sharpness",
@@ -9382,7 +9403,7 @@ class WebGL2Player extends BaseCanvasPlayer {
  updateCanvas() {
   console.log("updateCanvas", this.options);
   let gl = this.gl, program = this.program, filterId = this.toFilterId(this.options.processing);
-  gl.uniform2f(gl.getUniformLocation(program, "iResolution"), this.$canvas.width, this.$canvas.height), gl.uniform1i(gl.getUniformLocation(program, "filterId"), filterId), gl.uniform1f(gl.getUniformLocation(program, "sharpenFactor"), this.options.sharpness), gl.uniform1f(gl.getUniformLocation(program, "brightness"), this.options.brightness / 100), gl.uniform1f(gl.getUniformLocation(program, "contrast"), this.options.contrast / 100), gl.uniform1f(gl.getUniformLocation(program, "saturation"), this.options.saturation / 100);
+  gl.uniform2f(gl.getUniformLocation(program, "iResolution"), this.$canvas.width, this.$canvas.height), gl.uniform1i(gl.getUniformLocation(program, "filterId"), filterId), gl.uniform1i(gl.getUniformLocation(program, "qualityMode"), this.options.processingMode === "quality" ? 1 : 0), gl.uniform1f(gl.getUniformLocation(program, "sharpenFactor"), this.options.sharpness / (this.options.processingMode === "quality" ? 1 : 1.2)), gl.uniform1f(gl.getUniformLocation(program, "brightness"), this.options.brightness / 100), gl.uniform1f(gl.getUniformLocation(program, "contrast"), this.options.contrast / 100), gl.uniform1f(gl.getUniformLocation(program, "saturation"), this.options.saturation / 100);
  }
  updateFrame() {
   let gl = this.gl;
@@ -9404,7 +9425,7 @@ class WebGL2Player extends BaseCanvasPlayer {
 in vec4 position;void main() {gl_Position = position;}`), gl.compileShader(vShader);
   let fShader = gl.createShader(gl.FRAGMENT_SHADER);
   gl.shaderSource(fShader, `#version 300 es
-precision mediump float;uniform sampler2D data;uniform vec2 iResolution;const int FILTER_UNSHARP_MASKING = 1;const float CAS_CONTRAST_PEAK = 0.8 * -3.0 + 8.0;const vec3 LUMINOSITY_FACTOR = vec3(0.299, 0.587, 0.114);uniform int filterId;uniform float sharpenFactor;uniform float brightness;uniform float contrast;uniform float saturation;out vec4 fragColor;vec3 clarityBoost(sampler2D tex, vec2 coord, vec3 e) {vec2 texelSize = 1.0 / iResolution.xy;vec3 a = texture(tex, coord + texelSize * vec2(-1, 1)).rgb;vec3 b = texture(tex, coord + texelSize * vec2(0, 1)).rgb;vec3 c = texture(tex, coord + texelSize * vec2(1, 1)).rgb;vec3 d = texture(tex, coord + texelSize * vec2(-1, 0)).rgb;vec3 f = texture(tex, coord + texelSize * vec2(1, 0)).rgb;vec3 g = texture(tex, coord + texelSize * vec2(-1, -1)).rgb;vec3 h = texture(tex, coord + texelSize * vec2(0, -1)).rgb;vec3 i = texture(tex, coord + texelSize * vec2(1, -1)).rgb;if (filterId == FILTER_UNSHARP_MASKING) {vec3 gaussianBlur = (a + c + g + i) * 1.0 + (b + d + f + h) * 2.0 + e * 4.0;gaussianBlur /= 16.0;return e + (e - gaussianBlur) * sharpenFactor / 3.0;}vec3 minRgb = min(min(min(d, e), min(f, b)), h);minRgb += min(min(a, c), min(g, i));vec3 maxRgb = max(max(max(d, e), max(f, b)), h);maxRgb += max(max(a, c), max(g, i));vec3 reciprocalMaxRgb = 1.0 / maxRgb;vec3 amplifyRgb = clamp(min(minRgb, 2.0 - maxRgb) * reciprocalMaxRgb, 0.0, 1.0);amplifyRgb = inversesqrt(amplifyRgb);vec3 weightRgb = -(1.0 / (amplifyRgb * CAS_CONTRAST_PEAK));vec3 reciprocalWeightRgb = 1.0 / (4.0 * weightRgb + 1.0);vec3 window = b + d + f + h;vec3 outColor = clamp((window * weightRgb + e) * reciprocalWeightRgb, 0.0, 1.0);return mix(e, outColor, sharpenFactor / 2.0);}void main() {vec2 uv = gl_FragCoord.xy / iResolution.xy;vec3 color = texture(data, uv).rgb;color = sharpenFactor > 0.0 ? clarityBoost(data, uv, color) : color;color = saturation != 1.0 ? mix(vec3(dot(color, LUMINOSITY_FACTOR)), color, saturation) : color;color = contrast * (color - 0.5) + 0.5;color = brightness * color;fragColor = vec4(color, 1.0);}`), gl.compileShader(fShader);
+precision mediump float;uniform sampler2D data;uniform vec2 iResolution;const int FILTER_UNSHARP_MASKING = 1;const int FILTER_CAS = 2;const float CAS_CONTRAST_PEAK = 0.8 * -3.0 + 8.0;const vec3 LUMINOSITY_FACTOR = vec3(0.299, 0.587, 0.114);uniform int filterId;uniform bool qualityMode;uniform float sharpenFactor;uniform float brightness;uniform float contrast;uniform float saturation;out vec4 fragColor;vec3 clarityBoost(sampler2D tex, vec2 coord, vec3 e) {vec2 texelSize = 1.0 / iResolution.xy;vec3 b = texture(tex, coord + texelSize * vec2(0, 1)).rgb;vec3 d = texture(tex, coord + texelSize * vec2(-1, 0)).rgb;vec3 f = texture(tex, coord + texelSize * vec2(1, 0)).rgb;vec3 h = texture(tex, coord + texelSize * vec2(0, -1)).rgb;vec3 a;vec3 c;vec3 g;vec3 i;if (filterId == FILTER_UNSHARP_MASKING || qualityMode) {a = texture(tex, coord + texelSize * vec2(-1, 1)).rgb;c = texture(tex, coord + texelSize * vec2(1, 1)).rgb;g = texture(tex, coord + texelSize * vec2(-1, -1)).rgb;i = texture(tex, coord + texelSize * vec2(1, -1)).rgb;}if (filterId == FILTER_UNSHARP_MASKING) {vec3 gaussianBlur = (a + c + g + i) * 1.0 + (b + d + f + h) * 2.0 + e * 4.0;gaussianBlur /= 16.0;return e + (e - gaussianBlur) * sharpenFactor / 3.0;}vec3 minRgb = min(min(min(d, e), min(f, b)), h);vec3 maxRgb = max(max(max(d, e), max(f, b)), h);if (qualityMode) {minRgb += min(min(a, c), min(g, i));maxRgb += max(max(a, c), max(g, i));}vec3 reciprocalMaxRgb = 1.0 / maxRgb;vec3 amplifyRgb = clamp(min(minRgb, 2.0 - maxRgb) * reciprocalMaxRgb, 0.0, 1.0);amplifyRgb = inversesqrt(amplifyRgb);vec3 weightRgb = -(1.0 / (amplifyRgb * CAS_CONTRAST_PEAK));vec3 reciprocalWeightRgb = 1.0 / (4.0 * weightRgb + 1.0);vec3 window = b + d + f + h;vec3 outColor = clamp((window * weightRgb + e) * reciprocalWeightRgb, 0.0, 1.0);return mix(e, outColor, sharpenFactor / 2.0);}void main() {vec2 uv = gl_FragCoord.xy / iResolution.xy;vec3 color = texture(data, uv).rgb;if (sharpenFactor > 0.0) {color = clarityBoost(data, uv, color);}color = mix(vec3(dot(color, LUMINOSITY_FACTOR)), color, saturation);color = contrast * (color - 0.5) + 0.5;color = brightness * color;fragColor = vec4(color, 1.0);}`), gl.compileShader(fShader);
   let program = gl.createProgram();
   if (this.program = program, gl.attachShader(program, vShader), gl.attachShader(program, fShader), gl.linkProgram(program), gl.useProgram(program), !gl.getProgramParameter(program, gl.LINK_STATUS)) console.error(`Link failed: ${gl.getProgramInfoLog(program)}`), console.error(`vs info-log: ${gl.getShaderInfoLog(vShader)}`), console.error(`fs info-log: ${gl.getShaderInfoLog(fShader)}`);
   this.updateCanvas();
@@ -9567,6 +9588,7 @@ function patchVideoApi() {
   if (this.style.visibility = "visible", !this.videoWidth) return;
   let playerOptions = {
    processing: getStreamPref("video.processing"),
+   processingMode: getStreamPref("video.processing.mode"),
    sharpness: getStreamPref("video.processing.sharpness"),
    saturation: getStreamPref("video.saturation"),
    contrast: getStreamPref("video.contrast"),

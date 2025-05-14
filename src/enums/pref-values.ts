@@ -130,6 +130,11 @@ export const enum StreamVideoProcessing {
     CAS = 'cas',
 }
 
+export const enum StreamVideoProcessingMode {
+    QUALITY = 'quality',
+    PERFORMANCE = 'performance',
+}
+
 export const enum BlockFeature {
     CHAT = 'chat',
     FRIENDS = 'friends',

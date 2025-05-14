@@ -1,5 +1,5 @@
 import type { BaseSettingsStorage } from "@/utils/settings-storages/base-settings-storage";
-import type { BlockFeature, CodecProfile, DeviceVibrationMode, GameBarPosition, LoadingScreenRocket, NativeMkbMode, StreamPlayerType, StreamResolution, StreamStat, StreamStatPosition, StreamVideoProcessing, TouchControllerMode, TouchControllerStyleCustom, TouchControllerStyleStandard, UiLayout, UiSection, UiTheme, VideoPosition, VideoPowerPreference, VideoRatio } from "./pref-values"
+import type { BlockFeature, CodecProfile, DeviceVibrationMode, GameBarPosition, LoadingScreenRocket, NativeMkbMode, StreamPlayerType, StreamResolution, StreamStat, StreamStatPosition, StreamVideoProcessing, StreamVideoProcessingMode, TouchControllerMode, TouchControllerStyleCustom, TouchControllerStyleStandard, UiLayout, UiSection, UiTheme, VideoPosition, VideoPowerPreference, VideoRatio } from "./pref-values"
 
 export const enum StorageKey {
     GLOBAL = 'BetterXcloud',
@@ -156,6 +156,7 @@ export const enum StreamPref {
     VIDEO_PLAYER_TYPE = 'video.player.type',
     VIDEO_POWER_PREFERENCE = 'video.player.powerPreference',
     VIDEO_PROCESSING = 'video.processing',
+    VIDEO_PROCESSING_MODE = 'video.processing.mode',
     VIDEO_SHARPNESS = 'video.processing.sharpness',
     VIDEO_MAX_FPS = 'video.maxFps',
     VIDEO_RATIO = 'video.ratio',
@@ -205,6 +206,7 @@ export type StreamPrefTypeMap = {
     [StreamPref.VIDEO_POSITION]: VideoPosition;
     [StreamPref.VIDEO_POWER_PREFERENCE]: VideoPowerPreference;
     [StreamPref.VIDEO_PROCESSING]: StreamVideoProcessing;
+    [StreamPref.VIDEO_PROCESSING_MODE]: StreamVideoProcessingMode;
     [StreamPref.VIDEO_RATIO]: VideoRatio;
     [StreamPref.VIDEO_SATURATION]: number;
     [StreamPref.VIDEO_SHARPNESS]: number;
@@ -294,6 +296,7 @@ export const ALL_PREFS: {
         StreamPref.VIDEO_POSITION,
         StreamPref.VIDEO_POWER_PREFERENCE,
         StreamPref.VIDEO_PROCESSING,
+        StreamPref.VIDEO_PROCESSING_MODE,
         StreamPref.VIDEO_RATIO,
         StreamPref.VIDEO_SATURATION,
         StreamPref.VIDEO_SHARPNESS,

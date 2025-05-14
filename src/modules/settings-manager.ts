@@ -82,6 +82,10 @@ export class SettingsManager {
         },
         [StreamPref.VIDEO_PROCESSING]: {
             onChange: updateVideoPlayer,
+            onChangeUi: onChangeVideoPlayerType,
+        },
+        [StreamPref.VIDEO_PROCESSING_MODE]: {
+            onChange: updateVideoPlayer,
         },
         [StreamPref.VIDEO_SHARPNESS]: {
             onChange: updateVideoPlayer,

@@ -3,7 +3,7 @@ import { compressCodeFile } from "@macros/build" with { type: "macro" };
 import { StreamPref } from "@/enums/pref-keys";
 import { getStreamPref } from "@/utils/pref-utils";
 import { BaseCanvasPlayer } from "../base-canvas-player";
-import { StreamPlayerType } from "@/enums/pref-values";
+import { StreamPlayerType, StreamVideoProcessingMode } from "@/enums/pref-values";
 
 
 export class WebGL2Player extends BaseCanvasPlayer {
@@ -25,7 +25,8 @@ export class WebGL2Player extends BaseCanvasPlayer {
         gl.uniform2f(gl.getUniformLocation(program, 'iResolution'), this.$canvas.width, this.$canvas.height);
 
         gl.uniform1i(gl.getUniformLocation(program, 'filterId'), filterId);
-        gl.uniform1f(gl.getUniformLocation(program, 'sharpenFactor'), this.options.sharpness);
+        gl.uniform1i(gl.getUniformLocation(program, 'qualityMode'), this.options.processingMode === StreamVideoProcessingMode.QUALITY ? 1 : 0);
+        gl.uniform1f(gl.getUniformLocation(program, 'sharpenFactor'), this.options.sharpness / (this.options.processingMode === StreamVideoProcessingMode.QUALITY ? 1 : 1.2));
         gl.uniform1f(gl.getUniformLocation(program, 'brightness'), this.options.brightness / 100);
         gl.uniform1f(gl.getUniformLocation(program, 'contrast'), this.options.contrast / 100);
         gl.uniform1f(gl.getUniformLocation(program, 'saturation'), this.options.saturation / 100);

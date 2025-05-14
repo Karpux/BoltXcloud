@@ -8,6 +8,7 @@ import type { StreamPlayerOptions } from "@/types/stream";
 
 export function onChangeVideoPlayerType() {
     const playerType = getStreamPref(StreamPref.VIDEO_PLAYER_TYPE);
+    const processing = getStreamPref(StreamPref.VIDEO_PROCESSING);
     const settingsManager = SettingsManager.getInstance();
     if (!settingsManager.hasElement(StreamPref.VIDEO_PROCESSING)) {
         return;
@@ -16,6 +17,7 @@ export function onChangeVideoPlayerType() {
     let isDisabled = false;
 
     const $videoProcessing = settingsManager.getElement(StreamPref.VIDEO_PROCESSING) as HTMLSelectElement;
+    const $videoProcessingMode = settingsManager.getElement(StreamPref.VIDEO_PROCESSING_MODE) as HTMLSelectElement;
     const $videoSharpness = settingsManager.getElement(StreamPref.VIDEO_SHARPNESS);
     const $videoPowerPreference = settingsManager.getElement(StreamPref.VIDEO_POWER_PREFERENCE);
     const $videoMaxFps = settingsManager.getElement(StreamPref.VIDEO_MAX_FPS);
@@ -40,6 +42,7 @@ export function onChangeVideoPlayerType() {
     $videoSharpness.dataset.disabled = isDisabled.toString();
 
     // Hide Power Preference setting if renderer isn't WebGL2
+    $videoProcessingMode.closest('.bx-settings-row')!.classList.toggle('bx-gone', !(playerType === StreamPlayerType.WEBGL2 && processing === StreamVideoProcessing.CAS));
     $videoPowerPreference.closest('.bx-settings-row')!.classList.toggle('bx-gone', playerType !== StreamPlayerType.WEBGL2);
     $videoMaxFps.closest('.bx-settings-row')!.classList.toggle('bx-gone', playerType === StreamPlayerType.VIDEO);
 }
@@ -59,6 +62,7 @@ export function updateVideoPlayer() {
 
     const options = {
         processing: getStreamPref(StreamPref.VIDEO_PROCESSING),
+        processingMode: getStreamPref(StreamPref.VIDEO_PROCESSING_MODE),
         sharpness: getStreamPref(StreamPref.VIDEO_SHARPNESS),
         saturation: getStreamPref(StreamPref.VIDEO_SATURATION),
         contrast: getStreamPref(StreamPref.VIDEO_CONTRAST),

@@ -1,7 +1,8 @@
-import type { StreamVideoProcessing } from "@/enums/pref-values";
+import type { StreamVideoProcessing, StreamVideoProcessingMode } from "@/enums/pref-values";
 
 type StreamPlayerOptions = {
     processing: StreamVideoProcessing,
+    processingMode: StreamVideoProcessingMode,
     sharpness: number,
     saturation: number,
     contrast: number,

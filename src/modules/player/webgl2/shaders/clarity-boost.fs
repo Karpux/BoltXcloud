@@ -5,7 +5,7 @@ uniform sampler2D data;
 uniform vec2 iResolution;
 
 const int FILTER_UNSHARP_MASKING = 1;
-// const int FILTER_CAS = 2;
+const int FILTER_CAS = 2;
 
 // constrast = 0.8
 const float CAS_CONTRAST_PEAK = 0.8 * -3.0 + 8.0;
@@ -14,6 +14,7 @@ const float CAS_CONTRAST_PEAK = 0.8 * -3.0 + 8.0;
 const vec3 LUMINOSITY_FACTOR = vec3(0.299, 0.587, 0.114);
 
 uniform int filterId;
+uniform bool qualityMode;
 uniform float sharpenFactor;
 uniform float brightness;
 uniform float contrast;
@@ -28,16 +29,22 @@ vec3 clarityBoost(sampler2D tex, vec2 coord, vec3 e) {
     // a b c
     // d e f
     // g h i
-    vec3 a = texture(tex, coord + texelSize * vec2(-1, 1)).rgb;
     vec3 b = texture(tex, coord + texelSize * vec2(0, 1)).rgb;
-    vec3 c = texture(tex, coord + texelSize * vec2(1, 1)).rgb;
-
     vec3 d = texture(tex, coord + texelSize * vec2(-1, 0)).rgb;
     vec3 f = texture(tex, coord + texelSize * vec2(1, 0)).rgb;
-
-    vec3 g = texture(tex, coord + texelSize * vec2(-1, -1)).rgb;
     vec3 h = texture(tex, coord + texelSize * vec2(0, -1)).rgb;
-    vec3 i = texture(tex, coord + texelSize * vec2(1, -1)).rgb;
+
+    vec3 a;
+    vec3 c;
+    vec3 g;
+    vec3 i;
+
+    if (filterId == FILTER_UNSHARP_MASKING || qualityMode) {
+        a = texture(tex, coord + texelSize * vec2(-1, 1)).rgb;
+        c = texture(tex, coord + texelSize * vec2(1, 1)).rgb;
+        g = texture(tex, coord + texelSize * vec2(-1, -1)).rgb;
+        i = texture(tex, coord + texelSize * vec2(1, -1)).rgb;
+    }
 
     // USM
     if (filterId == FILTER_UNSHARP_MASKING) {
@@ -55,10 +62,12 @@ vec3 clarityBoost(sampler2D tex, vec2 coord, vec3 e) {
     //  g h i             h
     // These are 2.0x bigger (factored out the extra multiply).
     vec3 minRgb = min(min(min(d, e), min(f, b)), h);
-    minRgb += min(min(a, c), min(g, i));
-
     vec3 maxRgb = max(max(max(d, e), max(f, b)), h);
-    maxRgb += max(max(a, c), max(g, i));
+
+    if (qualityMode) {
+        minRgb += min(min(a, c), min(g, i));
+        maxRgb += max(max(a, c), max(g, i));
+    }
 
     // Smooth minimum distance to signal limit divided by smooth max.
     vec3 reciprocalMaxRgb = 1.0 / maxRgb;
@@ -85,10 +94,12 @@ void main() {
     vec3 color = texture(data, uv).rgb;
 
     // Clarity boost
-    color = sharpenFactor > 0.0 ? clarityBoost(data, uv, color) : color;
+    if (sharpenFactor > 0.0) {
+        color = clarityBoost(data, uv, color);
+    }
 
     // Saturation
-    color = saturation != 1.0 ? mix(vec3(dot(color, LUMINOSITY_FACTOR)), color, saturation) : color;
+    color = mix(vec3(dot(color, LUMINOSITY_FACTOR)), color, saturation);
 
     // Contrast
     color = contrast * (color - 0.5) + 0.5;

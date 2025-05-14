@@ -22,6 +22,7 @@ export function patchVideoApi() {
 
         const playerOptions = {
             processing: getStreamPref(StreamPref.VIDEO_PROCESSING),
+            processingMode: getStreamPref(StreamPref.VIDEO_PROCESSING_MODE),
             sharpness: getStreamPref(StreamPref.VIDEO_SHARPNESS),
             saturation: getStreamPref(StreamPref.VIDEO_SATURATION),
             contrast: getStreamPref(StreamPref.VIDEO_CONTRAST),
