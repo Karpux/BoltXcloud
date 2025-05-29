@@ -28,9 +28,6 @@ export const SUPPORTED_LANGUAGES = {
 };
 
 const Texts = {
-    "clarity-boost-mode": "Clarity boost mode",
-    "performance": "Performance",
-    "quality": "Quality",
     "achievements": "Achievements",
     "activate": "Activate",
     "activated": "Activated",
@@ -68,6 +65,7 @@ const Texts = {
     "center": "Center",
     "chat": "Chat",
     "clarity-boost": "Clarity boost",
+    "clarity-boost-mode": "Clarity boost mode",
     "clarity-boost-warning": "These settings don't work when the Clarity Boost mode is ON",
     "clear": "Clear",
     "clear-data": "Clear data",
@@ -230,6 +228,7 @@ const Texts = {
     "only-supports-some-games": "Only supports some games",
     "opacity": "Opacity",
     "other": "Other",
+    "performance": "Performance",
     "playing": "Playing",
     "playtime": "Playtime",
     "poland": "Poland",
@@ -267,6 +266,7 @@ const Texts = {
     ],
     "press-to-bind": "Press a key or do a mouse click to bind...",
     "prompt-preset-name": "Preset's name:",
+    "quality": "Quality",
     "recommended": "Recommended",
     "recommended-settings-for-device": [
         (e: any) => `Recommended settings for ${e.device}`,
@@ -322,6 +322,7 @@ const Texts = {
     "separate-touch-controller": "Separate Touch controller & Controller #1",
     "separate-touch-controller-note": "Touch controller is Player 1, Controller #1 is Player 2",
     "server": "Server",
+    "server-list-error": "Can't get the server list",
     "server-locations": "Server locations",
     "settings": "Settings",
     "settings-for": "Settings for",
@@ -371,6 +372,7 @@ const Texts = {
     "tc-custom-layout-style": "Custom layout's button style",
     "tc-muted-colors": "Muted colors",
     "tc-standard-layout-style": "Standard layout's button style",
+    "test-controller": "Test controller",
     "text-size": "Text size",
     "theme": "Theme",
     "toggle": "Toggle",
