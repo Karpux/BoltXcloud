@@ -5429,7 +5429,7 @@ true` + text;
  },
  skipFeedbackDialog(str) {
   let index = str.indexOf("}shouldTransitionToFeedback(");
-  if (index > 0 && (index = PatcherUtils.indexOf(str, "}){", index, 200, !0)), index < 0) return !1;
+  if (index >= 0 && (index = PatcherUtils.indexOf(str, "}){", index, 200, !0)), index < 0) return !1;
   return str = PatcherUtils.insertAt(str, index, "return !1;"), str;
  },
  enableNativeMkb(str) {
@@ -5573,8 +5573,8 @@ if (this.baseStorageKey in window.BX_EXPOSED.overrideSettings) {
   return str = PatcherUtils.replaceWith(str, index, '"All"', '"Locked"'), str;
  },
  disableTouchContextMenu(str) {
-  let index = str.indexOf("arguments.length>2&&void 0!==arguments[2]?arguments[2]:500;");
-  if (index >= 0 && (index = str.indexOf('addEventListener("touchstart"', index)), index >= 0 && (index = PatcherUtils.lastIndexOf(str, "return ", index, 50)), index < 0) return !1;
+  let index = str.indexOf('.addEventListener("touchstart",');
+  if (index >= 0 && (index = PatcherUtils.indexOf(str, '.addEventListener("touchend"', index, 200)), index >= 0 && (index = PatcherUtils.lastIndexOf(str, "return ", index, 50)), index < 0) return !1;
   return str = PatcherUtils.replaceWith(str, index, "return", "return () => {};"), str;
  },
  modifyPreloadedState(str) {
