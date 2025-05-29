@@ -10,11 +10,11 @@
     "build": "build.ts"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.10",
-    "@types/node": "^22.14.1",
+    "@types/bun": "^1.2.15",
+    "@types/node": "^22.15.24",
     "@types/stylus": "^0.48.43",
-    "@webgpu/types": "^0.1.60",
-    "eslint": "^9.25.0",
+    "@webgpu/types": "^0.1.61",
+    "eslint": "^9.27.0",
     "eslint-plugin-compat": "^6.0.2",
     "stylus": "^0.64.0"
   },
