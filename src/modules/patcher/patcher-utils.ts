@@ -104,8 +104,8 @@ export class PatcherUtils {
         return str.substring(start, end);
     }
 
-    static injectUseEffect<T extends 'Stream' | 'Script'>(str: string, index: number, group: T, eventName: T extends 'Stream' ? keyof StreamEvents : keyof ScriptEvents) {
-        const newCode = `window.BX_EXPOSED.reactUseEffect(() => window.BxEventBus.${group}.emit('${eventName}', {}), []);`;
+    static injectUseEffect<T extends 'Stream' | 'Script'>(str: string, index: number, group: T, eventName: T extends 'Stream' ? keyof StreamEvents : keyof ScriptEvents, separator: string = ';') {
+        const newCode = `window.BX_EXPOSED.reactUseEffect(() => window.BxEventBus.${group}.emit('${eventName}', {}), [])${separator}`;
         str = PatcherUtils.insertAt(str, index, newCode);
 
         return str;

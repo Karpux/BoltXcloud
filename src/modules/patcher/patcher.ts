@@ -1118,12 +1118,12 @@ ${subsVar} = subs;
 
     injectErrorPageUseEffect(str: string) {
         let index = str.indexOf('"PureErrorPage-module__container');
-        index > -1 && (index = PatcherUtils.lastIndexOf(str, 'return', index, 200));
+        index > -1 && (index = PatcherUtils.lastIndexOf(str, '})=>(0,', index, 200));
         if (index < 0) {
             return false;
         }
 
-        return PatcherUtils.injectUseEffect(str, index, 'Script', 'ui.error.rendered');
+        return PatcherUtils.injectUseEffect(str, index + 4, 'Script', 'ui.error.rendered', ',');
     },
 
     injectStreamMenuUseEffect(str: string) {

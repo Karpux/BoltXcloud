@@ -5154,8 +5154,8 @@ class PatcherUtils {
    end += 1;
   return str.substring(start, end);
  }
- static injectUseEffect(str, index, group, eventName) {
-  let newCode = `window.BX_EXPOSED.reactUseEffect(() => window.BxEventBus.${group}.emit('${eventName}', {}), []);`;
+ static injectUseEffect(str, index, group, eventName, separator = ";") {
+  let newCode = `window.BX_EXPOSED.reactUseEffect(() => window.BxEventBus.${group}.emit('${eventName}', {}), [])${separator}`;
   return str = PatcherUtils.insertAt(str, index, newCode), str;
  }
 }
@@ -5658,8 +5658,8 @@ ${subsVar} = subs;
  },
  injectErrorPageUseEffect(str) {
   let index = str.indexOf('"PureErrorPage-module__container');
-  if (index > -1 && (index = PatcherUtils.lastIndexOf(str, "return", index, 200)), index < 0) return !1;
-  return PatcherUtils.injectUseEffect(str, index, "Script", "ui.error.rendered");
+  if (index > -1 && (index = PatcherUtils.lastIndexOf(str, "})=>(0,", index, 200)), index < 0) return !1;
+  return PatcherUtils.injectUseEffect(str, index + 4, "Script", "ui.error.rendered", ",");
  },
  injectStreamMenuUseEffect(str) {
   let index = str.indexOf('"StreamMenu-module__container');
