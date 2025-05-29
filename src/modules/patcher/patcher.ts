@@ -237,8 +237,12 @@ logFunc(logTag, '//', logMessage);
             return false;
         }
 
-        const constIndex = str.indexOf('const', index - 30);
-        str = str.substring(0, constIndex) + 'e.onClose();return null;' + str.substring(constIndex);
+        const constIndex = PatcherUtils.lastIndexOf(str, 'const[', index, 100);
+        if (constIndex < 0) {
+            return false;
+        }
+
+        str = PatcherUtils.insertAt(str, constIndex, 'e();return null;');
         return str;
     },
 

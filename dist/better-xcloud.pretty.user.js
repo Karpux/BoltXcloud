@@ -5256,8 +5256,9 @@ logFunc(logTag, '//', logMessage);
  disableGamepadDisconnectedScreen(str) {
   let index = str.indexOf('"GamepadDisconnected_Title",');
   if (index < 0) return !1;
-  let constIndex = str.indexOf("const", index - 30);
-  return str = str.substring(0, constIndex) + "e.onClose();return null;" + str.substring(constIndex), str;
+  let constIndex = PatcherUtils.lastIndexOf(str, "const[", index, 100);
+  if (constIndex < 0) return !1;
+  return str = PatcherUtils.insertAt(str, constIndex, "debugger;e();return null;"), console.log(str), str;
  },
  patchUpdateInputConfigurationAsync(str) {
   let text = "async updateInputConfigurationAsync(e){";
