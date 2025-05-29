@@ -583,12 +583,13 @@ true` + text;
     },
 
     skipFeedbackDialog(str: string) {
-        let text = 'shouldTransitionToFeedback(e){';
-        if (!str.includes(text)) {
+        let index = str.indexOf('}shouldTransitionToFeedback(');
+        index > 0 && (index = PatcherUtils.indexOf(str, '}){', index, 200, true));
+        if (index < 0) {
             return false;
         }
 
-        str = str.replace(text, text + 'return !1;');
+        str = PatcherUtils.insertAt(str, index, 'return !1;');
         return str;
     },
 

@@ -5343,9 +5343,7 @@ if (titleInfo && !titleInfo.details.hasTouchSupport && !titleInfo.details.hasFak
   let index = str.indexOf("({onCollapse:");
   if (index < 0) return !1;
   try {
-   let canShowTakHUDVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "canShowTakHUD", index, 500, !0) + 1), guideUIVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "guideUI", index, 500, !0) + 1), onShowStreamMenuVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "onShowStreamMenu", index, 500, !0) + 1), offsetVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "offset", index, 500, !0) + 1);
-   debugger;
-   let newCode = renderString(stream_hud_default, {
+   let canShowTakHUDVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "canShowTakHUD", index, 500, !0) + 1), guideUIVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "guideUI", index, 500, !0) + 1), onShowStreamMenuVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "onShowStreamMenu", index, 500, !0) + 1), offsetVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "offset", index, 500, !0) + 1), newCode = renderString(stream_hud_default, {
     guideUI: guideUIVar,
     onShowStreamMenu: onShowStreamMenuVar,
     offset: offsetVar
@@ -5430,9 +5428,9 @@ true` + text;
   return str = str.replace(text, newCode), str;
  },
  skipFeedbackDialog(str) {
-  let text = "shouldTransitionToFeedback(e){";
-  if (!str.includes(text)) return !1;
-  return str = str.replace(text, text + "return !1;"), str;
+  let index = str.indexOf("}shouldTransitionToFeedback(");
+  if (index > 0 && (index = PatcherUtils.indexOf(str, "}){", index, 200, !0)), index < 0) return !1;
+  return str = PatcherUtils.insertAt(str, index, "return !1;"), str;
  },
  enableNativeMkb(str) {
   let index = str.indexOf(".mouseSupported&&");
