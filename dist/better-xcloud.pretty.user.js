@@ -5258,7 +5258,7 @@ logFunc(logTag, '//', logMessage);
   if (index < 0) return !1;
   let constIndex = PatcherUtils.lastIndexOf(str, "const[", index, 100);
   if (constIndex < 0) return !1;
-  return str = PatcherUtils.insertAt(str, constIndex, "debugger;e();return null;"), console.log(str), str;
+  return str = PatcherUtils.insertAt(str, constIndex, "e();return null;"), str;
  },
  patchUpdateInputConfigurationAsync(str) {
   let text = "async updateInputConfigurationAsync(e){";
