@@ -1127,7 +1127,7 @@ ${subsVar} = subs;
             return false;
         }
 
-        str = PatcherUtils.insertAt(str, index + 4, '{');
+        str = PatcherUtils.insertAt(str, index + 4, '{return ');
         str = PatcherUtils.injectUseEffect(str, index + 5, 'Script', 'ui.error.rendered');
         str += '}';
         return str;
