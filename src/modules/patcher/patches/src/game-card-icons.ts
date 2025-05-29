@@ -1,8 +1,8 @@
 declare const $supportedInputIcons$: Array<any>;
-declare const $param$: { productId: string };
+declare const $productId$: string;
 
 const supportedInputIcons = $supportedInputIcons$;
-const { productId } = $param$;
+const productId = $productId$;
 
 // Remove controller icon
 supportedInputIcons.shift();

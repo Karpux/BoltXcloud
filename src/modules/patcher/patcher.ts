@@ -1006,22 +1006,22 @@ ${subsVar} = subs;
         }
 
         // Find function's parameter
-        const arrowIndex = PatcherUtils.lastIndexOf(str, '=>{', initialIndex, 300);
-        if (arrowIndex < 0) {
+        const productIdIndex = PatcherUtils.lastIndexOf(str, ',productId:', initialIndex, 300);
+        if (productIdIndex < 0) {
             return false;
         }
 
-        const paramVar = PatcherUtils.getVariableNameBefore(str, arrowIndex);
+        const productIdVar = PatcherUtils.getVariableNameAfter(str, productIdIndex + 11);
 
         // Find supportedInputIcons and title var names
         const supportedInputIconsVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'supportedInputIcons:', initialIndex, 100, true));
 
-        if (!paramVar || !supportedInputIconsVar) {
+        if (!productIdVar || !supportedInputIconsVar) {
             return false;
         }
 
         const newCode = renderString(codeGameCardIcons, {
-            param: paramVar,
+            productId: productIdVar,
             supportedInputIcons: supportedInputIconsVar,
         });
 
