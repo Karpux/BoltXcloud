@@ -389,20 +389,35 @@ if (titleInfo && !titleInfo.details.hasTouchSupport && !titleInfo.details.hasFak
     },
 
     patchStreamHud(str: string) {
-        let index = str.indexOf('let{onCollapse');
+        let index = str.indexOf('({onCollapse:');
         if (index < 0) {
             return false;
         }
 
-        let newCode = codeStreamHud;
+        try {
+            const canShowTakHUDVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'canShowTakHUD', index, 500, true) + 1);
+            const guideUIVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'guideUI', index, 500, true) + 1);
+            const onShowStreamMenuVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'onShowStreamMenu', index, 500, true) + 1);
+            const offsetVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'offset', index, 500, true) + 1);
 
-        // Remove the TAK Edit button when the touch controller is disabled
-        if (getGlobalPref(GlobalPref.TOUCH_CONTROLLER_MODE) === TouchControllerMode.OFF) {
-            newCode += 'options.canShowTakHUD = false;';
+            let newCode = renderString(codeStreamHud, {
+                guideUI: guideUIVar,
+                onShowStreamMenu: onShowStreamMenuVar,
+                offset: offsetVar,
+            });
+
+            // Remove the TAK Edit button when the touch controller is disabled
+            if (getGlobalPref(GlobalPref.TOUCH_CONTROLLER_MODE) === TouchControllerMode.OFF) {
+                newCode += `${canShowTakHUDVar} = false;`;
+            }
+
+            const bracketIndex = PatcherUtils.indexOf(str, '}){', index, 500, true);
+            str = PatcherUtils.insertAt(str, bracketIndex, newCode);
+            return str;
+
+        } catch (e) {
+            return false;
         }
-
-        str = PatcherUtils.insertAt(str, index, newCode);
-        return str;
     },
 
     broadcastPollingMode(str: string) {

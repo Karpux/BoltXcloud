@@ -1,13 +1,13 @@
 // @ts-ignore
-declare const arguments: any;
-
-const options = arguments[0];
+declare let $guideUI$: any;
+declare const $onShowStreamMenu$: any;
+declare const $offset$: any;
 
 // Expose onShowStreamMenu
-window.BX_EXPOSED.showStreamMenu = options.onShowStreamMenu;
+window.BX_EXPOSED.showStreamMenu = $onShowStreamMenu$;
 // Restore the "..." button
-options.guideUI = null;
+$guideUI$ = null;
 
 window.BX_EXPOSED.reactUseEffect(() => {
-    window.BxEventBus.Stream.emit('ui.streamHud.rendered', { expanded: options.offset.x === 0 });
+    window.BxEventBus.Stream.emit('ui.streamHud.rendered', { expanded: $offset$.x === 0 });
 });
