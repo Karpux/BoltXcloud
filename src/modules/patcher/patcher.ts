@@ -1123,7 +1123,10 @@ ${subsVar} = subs;
             return false;
         }
 
-        return PatcherUtils.injectUseEffect(str, index + 4, 'Script', 'ui.error.rendered', ',');
+        str = PatcherUtils.insertAt(str, index + 4, '{');
+        str = PatcherUtils.injectUseEffect(str, index + 5, 'Script', 'ui.error.rendered');
+        str += '}';
+        return str;
     },
 
     injectStreamMenuUseEffect(str: string) {
