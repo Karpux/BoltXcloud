@@ -402,6 +402,9 @@ var SUPPORTED_LANGUAGES = {
  "zh-CN": "中文(简体)",
  "zh-TW": "中文(繁體)"
 }, Texts = {
+ "clarity-boost-mode": "Clarity boost mode",
+ performance: "Performance",
+ quality: "Quality",
  achievements: "Achievements",
  activate: "Activate",
  activated: "Activated",
@@ -875,9 +878,7 @@ class Translations {
   localStorage.setItem(Translations.KEY_LOCALE, locale);
  }
 }
-var t = Translations.get, ut = (text) => {
- return BxLogger.warning("Untranslated text", text), text;
-};
+var t = Translations.get;
 Translations.init();
 class NavigationUtils {
  static setNearby($elm, nearby) {
@@ -2399,11 +2400,11 @@ class StreamSettingsStorage extends BaseSettingsStorage {
    }
   },
   "video.processing.mode": {
-   label: ut("clarity-boost-mode"),
+   label: t("clarity-boost-mode"),
    default: "performance",
    options: {
-    performance: ut("performance"),
-    quality: ut("quality")
+    performance: t("performance"),
+    quality: t("quality")
    },
    suggest: {
     lowest: "performance",
@@ -5861,20 +5862,20 @@ class PatcherCache {
   PATCH_ORDERS = this.cleanupPatches(PATCH_ORDERS), STREAM_PAGE_PATCH_ORDERS = this.cleanupPatches(STREAM_PAGE_PATCH_ORDERS), PRODUCT_DETAIL_PAGE_PATCH_ORDERS = this.cleanupPatches(PRODUCT_DETAIL_PAGE_PATCH_ORDERS), BxLogger.info(LOG_TAG2, "PATCH_ORDERS", PATCH_ORDERS.slice(0));
  }
  getSignature() {
-  let scriptVersion = SCRIPT_VERSION, patches = JSON.stringify(ALL_PATCHES), webVersion = "", $link = document.querySelector('link[data-chunk="client"][as="script"][href*="/client."]');
+  let scriptVersion = SCRIPT_VERSION, patches = JSON.stringify(ALL_PATCHES), clientHash = "", $link = document.querySelector('link[data-chunk="client"][as="script"][href*="/client."]');
   if ($link) {
    let match = /\/client\.([^\.]+)\.js/.exec($link.href);
-   match && (webVersion = match[1]);
+   match && (clientHash = match[1]);
   }
-  if (!webVersion) webVersion = document.querySelector("meta[name=gamepass-app-version]")?.content ?? "";
-  return hashCode(scriptVersion + webVersion + patches);
+  let webVersion = document.querySelector("meta[name=gamepass-app-version]")?.content ?? "", webVersionDate = document.querySelector("meta[name=gamepass-app-date]")?.content ?? "";
+  return `${scriptVersion}:${clientHash}:${webVersion}:${webVersionDate}:${hashCode(patches)}`;
  }
  clear() {
   window.localStorage.removeItem(this.KEY_CACHE), this.CACHE = {};
  }
  checkSignature() {
   let storedSig = window.localStorage.getItem(this.KEY_SIGNATURE) || 0, currentSig = this.getSignature();
-  if (currentSig !== parseInt(storedSig)) BxLogger.warning(LOG_TAG2, "Signature changed"), window.localStorage.setItem(this.KEY_SIGNATURE, currentSig.toString()), this.clear();
+  if (currentSig !== storedSig) BxLogger.warning(LOG_TAG2, "Signature changed"), window.localStorage.setItem(this.KEY_SIGNATURE, currentSig.toString()), this.clear();
   else BxLogger.info(LOG_TAG2, "Signature unchanged");
  }
  cleanupPatches(patches) {

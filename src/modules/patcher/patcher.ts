@@ -1565,26 +1565,25 @@ export class PatcherCache {
     /**
      * Get patch's signature
      */
-    private getSignature(): number {
+    private getSignature(): string {
         const scriptVersion = SCRIPT_VERSION;
         const patches = JSON.stringify(ALL_PATCHES);
 
         // Get client.js's hash
-        let webVersion = '';
+        let clientHash = '';
         const $link = document.querySelector<HTMLLinkElement>('link[data-chunk="client"][as="script"][href*="/client."]');
         if ($link) {
             const match = /\/client\.([^\.]+)\.js/.exec($link.href);
-            match && (webVersion = match[1]);
+            match && (clientHash = match[1]);
         }
 
-        if (!webVersion) {
-            // Get version from <meta>
-            // Sometimes this value is missing
-            webVersion = (document.querySelector<HTMLMetaElement>('meta[name=gamepass-app-version]'))?.content ?? '';
-        }
+        // Get version from <meta>
+        // Sometimes this value is missing
+        const webVersion = (document.querySelector<HTMLMetaElement>('meta[name=gamepass-app-version]'))?.content ?? '';
+        const webVersionDate = (document.querySelector<HTMLMetaElement>('meta[name=gamepass-app-date]'))?.content ?? '';
 
         // Calculate signature
-        const sig = hashCode(scriptVersion + webVersion + patches)
+        const sig = `${scriptVersion}:${clientHash}:${webVersion}:${webVersionDate}:${hashCode(patches)}`;
         return sig;
     }
 
@@ -1598,7 +1597,7 @@ export class PatcherCache {
         const storedSig = window.localStorage.getItem(this.KEY_SIGNATURE) || 0;
         const currentSig = this.getSignature();
 
-        if (currentSig !== parseInt(storedSig as string)) {
+        if (currentSig !== storedSig) {
             // Save new signature
             BxLogger.warning(LOG_TAG, 'Signature changed');
             window.localStorage.setItem(this.KEY_SIGNATURE, currentSig.toString());
