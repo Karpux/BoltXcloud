@@ -5471,7 +5471,7 @@ true` + text;
   let match = /render:.*?jsx\)\(([^,]+),/.exec(str.substring(index, index + 100));
   if (!match) return !1;
   let funcName = match[1];
-  if (index = str.indexOf(`const ${funcName}=e=>{`), index > -1 && (index = str.indexOf("return ", index)), index > -1 && (index = str.indexOf("?", index)), index < 0) return !1;
+  if (index = str.indexOf(`const ${funcName}=({children`), index > -1 && (index = PatcherUtils.indexOf(str, "return ", 300)), index > -1 && (index = PatcherUtils.indexOf(str, "?", 100)), index < 0) return !1;
   return str = str.substring(0, index) + "|| true" + str.substring(index), str;
  },
  ignoreNewsSection(str) {
@@ -5659,7 +5659,7 @@ ${subsVar} = subs;
  injectErrorPageUseEffect(str) {
   let index = str.indexOf('"PureErrorPage-module__container');
   if (index > -1 && (index = PatcherUtils.lastIndexOf(str, "})=>(0,", index, 200)), index < 0) return !1;
-  return PatcherUtils.injectUseEffect(str, index + 4, "Script", "ui.error.rendered", ",");
+  return str = PatcherUtils.insertAt(str, index + 4, "{"), str = PatcherUtils.injectUseEffect(str, index + 5, "Script", "ui.error.rendered"), str += "}", str;
  },
  injectStreamMenuUseEffect(str) {
   let index = str.indexOf('"StreamMenu-module__container');

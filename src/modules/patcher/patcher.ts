@@ -680,9 +680,9 @@ true` + text;
 
         // Replace *qe*'s return value
         // `return a && r ?` => `return a && r || true ?`
-        index = str.indexOf(`const ${funcName}=e=>{`);
-        index > -1 && (index = str.indexOf('return ', index));
-        index > -1 && (index = str.indexOf('?', index));
+        index = str.indexOf(`const ${funcName}=({children`);
+        index > -1 && (index = PatcherUtils.indexOf(str, 'return ', 300));
+        index > -1 && (index = PatcherUtils.indexOf(str, '?', 100));
 
         if (index < 0) {
             return false;
