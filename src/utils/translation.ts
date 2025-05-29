@@ -28,6 +28,9 @@ export const SUPPORTED_LANGUAGES = {
 };
 
 const Texts = {
+    "clarity-boost-mode": "Clarity boost mode",
+    "performance": "Performance",
+    "quality": "Quality",
     "achievements": "Achievements",
     "activate": "Activate",
     "activated": "Activated",

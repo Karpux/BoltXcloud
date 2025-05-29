@@ -3,7 +3,7 @@ import { DeviceVibrationMode, StreamPlayerType, StreamVideoProcessing, VideoPowe
 import { STATES } from "../global";
 import { KeyboardShortcutDefaultId } from "../local-db/keyboard-shortcuts-table";
 import { MkbMappingDefaultPresetId } from "../local-db/mkb-mapping-presets-table";
-import { t, ut } from "../translation";
+import { t } from "../translation";
 import { BaseSettingsStorage } from "./base-settings-storage";
 import { CE } from "../html";
 import type { SettingActionOrigin, SettingDefinitions } from "@/types/setting-definition";
@@ -180,11 +180,11 @@ export class StreamSettingsStorage extends BaseSettingsStorage<StreamPref> {
             },
         },
         [StreamPref.VIDEO_PROCESSING_MODE]: {
-            label: ut('clarity-boost-mode'),
+            label: t('clarity-boost-mode'),
             default: StreamVideoProcessingMode.PERFORMANCE,
             options: {
-                [StreamVideoProcessingMode.PERFORMANCE]: ut('performance'),
-                [StreamVideoProcessingMode.QUALITY]: ut('quality'),
+                [StreamVideoProcessingMode.PERFORMANCE]: t('performance'),
+                [StreamVideoProcessingMode.QUALITY]: t('quality'),
             },
             suggest: {
                 lowest: StreamVideoProcessingMode.PERFORMANCE,
