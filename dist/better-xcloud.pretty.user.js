@@ -5473,8 +5473,8 @@ true` + text;
  ignorePlayWithFriendsSection(str) {
   let index = str.indexOf('location:"PlayWithFriendsRow",');
   if (index < 0) return !1;
-  if (index = PatcherUtils.lastIndexOf(str, "return", index, 50), index < 0) return !1;
-  return str = PatcherUtils.replaceWith(str, index, "return", "return null;"), str;
+  if (index = PatcherUtils.lastIndexOf(str, "=>", index, 50), index < 0) return !1;
+  return str = PatcherUtils.replaceWith(str, index, "=>", "=> true ? null :"), str;
  },
  ignoreAllGamesSection(str) {
   let index = str.indexOf('className:"AllGamesRow-module__allGamesRowContainer');
@@ -5616,7 +5616,6 @@ ${subsVar} = subs;
  gameCardCustomIcons(str) {
   let initialIndex = str.indexOf("const{supportedInputIcons:");
   if (initialIndex < 0) return !1;
-  debugger;
   let returnIndex = PatcherUtils.lastIndexOf(str, "return ", str.indexOf("SupportedInputsBadge"));
   if (returnIndex < 0) return !1;
   let productIdIndex = PatcherUtils.lastIndexOf(str, ",productId:", initialIndex, 300);

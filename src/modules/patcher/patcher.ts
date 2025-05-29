@@ -695,12 +695,12 @@ true` + text;
             return false;
         }
 
-        index = PatcherUtils.lastIndexOf(str, 'return', index, 50);
+        index = PatcherUtils.lastIndexOf(str, '=>', index, 50);
         if (index < 0) {
             return false;
         }
 
-        str = PatcherUtils.replaceWith(str, index, 'return', 'return null;');
+        str = PatcherUtils.replaceWith(str, index, '=>', '=> true ? null :');
         return str;
     },
 
