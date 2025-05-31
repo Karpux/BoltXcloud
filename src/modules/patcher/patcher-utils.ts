@@ -111,7 +111,7 @@ export class PatcherUtils {
         return str;
     }
 
-    static parseParams(str: string, index: number, maxRange: number) {
+    static findAndParseParams(str: string, index: number, maxRange: number) {
         const substr = str.substring(index, index + maxRange);
         let startIndex = substr.indexOf('({');
         if (startIndex < 0) {
@@ -127,6 +127,14 @@ export class PatcherUtils {
 
         try {
             const input = substr.substring(startIndex, endIndex);
+            return PatcherUtils.parseObjectVariables(input);
+        } catch {
+            return null;
+        }
+    }
+
+    static parseObjectVariables(input: string) {
+        try {
             const pairs = [...input.matchAll(/(\w+)\s*:\s*([a-zA-Z_$][\w$]*)/g)];
 
             const result: Record<string, string> = {};

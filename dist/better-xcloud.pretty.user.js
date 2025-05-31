@@ -5160,7 +5160,7 @@ class PatcherUtils {
   let newCode = `window.BX_EXPOSED.reactUseEffect(() => window.BxEventBus.${group}.emit('${eventName}', {}), [])${separator}`;
   return str = PatcherUtils.insertAt(str, index, newCode), str;
  }
- static parseParams(str, index, maxRange) {
+ static findAndParseParams(str, index, maxRange) {
   let substr = str.substring(index, index + maxRange), startIndex = substr.indexOf("({");
   if (startIndex < 0) return !1;
   startIndex += 1;
@@ -5168,7 +5168,15 @@ class PatcherUtils {
   if (endIndex < 0) return !1;
   endIndex += 1;
   try {
-   let pairs = [...substr.substring(startIndex, endIndex).matchAll(/(\w+)\s*:\s*([a-zA-Z_$][\w$]*)/g)], result = {};
+   let input = substr.substring(startIndex, endIndex);
+   return PatcherUtils.parseObjectVariables(input);
+  } catch {
+   return null;
+  }
+ }
+ static parseObjectVariables(input) {
+  try {
+   let pairs = [...input.matchAll(/(\w+)\s*:\s*([a-zA-Z_$][\w$]*)/g)], result = {};
    for (let [_, key, value] of pairs)
     result[key] = value;
    return result;
@@ -5362,7 +5370,7 @@ if (titleInfo && !titleInfo.details.hasTouchSupport && !titleInfo.details.hasFak
   let index = str.indexOf("({onCollapse:");
   if (index < 0) return !1;
   try {
-   if (!PatcherUtils.parseParams(str, index, 1000)) return !1;
+   if (!PatcherUtils.findAndParseParams(str, index, 1000)) return !1;
    let canShowTakHUDVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "canShowTakHUD", index, 500, !0) + 1), guideUIVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "guideUI", index, 500, !0) + 1), onShowStreamMenuVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "onShowStreamMenu", index, 500, !0) + 1), offsetVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "offset", index, 500, !0) + 1), newCode = renderString(stream_hud_default, {
     guideUI: guideUIVar,
     onShowStreamMenu: onShowStreamMenuVar,
@@ -5524,7 +5532,7 @@ true` + text;
  ignoreSiglSections(str) {
   let index = str.indexOf("SiglRow-module__heroCard___");
   if (index >= 0 && (index = PatcherUtils.lastIndexOf(str, "const[", index, 300)), index < 0) return !1;
-  let params = PatcherUtils.parseParams(str, index - 500, 500);
+  let params = PatcherUtils.findAndParseParams(str, index - 500, 500);
   if (!params || !params.id) return !1;
   let PREF_HIDE_SECTIONS = getGlobalPref("ui.hideSections"), siglIds = [], sections = {
    "native-mkb": "8fa264dd-124f-4af3-97e8-596fcdf4b486",
@@ -5643,8 +5651,10 @@ ${subsVar} = subs;
   if (returnIndex < 0) return !1;
   let productIdIndex = PatcherUtils.lastIndexOf(str, ",productId:", initialIndex, 300);
   if (productIdIndex < 0) return !1;
-  let productIdVar = PatcherUtils.getVariableNameAfter(str, productIdIndex + 11), supportedInputIconsVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "supportedInputIcons:", initialIndex, 100, !0));
-  if (!productIdVar || !supportedInputIconsVar) return !1;
+  let params = PatcherUtils.findAndParseParams(str, productIdIndex - 200, 400);
+  if (!params || !params.productId) return !1;
+  let productIdVar = params.productId, supportedInputIconsVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "supportedInputIcons:", initialIndex, 100, !0));
+  if (!supportedInputIconsVar) return !1;
   let newCode = renderString(game_card_icons_default, {
    productId: productIdVar,
    supportedInputIcons: supportedInputIconsVar

@@ -399,7 +399,7 @@ if (titleInfo && !titleInfo.details.hasTouchSupport && !titleInfo.details.hasFak
         }
 
         try {
-            const params = PatcherUtils.parseParams(str, index, 1000);
+            const params = PatcherUtils.findAndParseParams(str, index, 1000);
             if (!params) {
                 return false;
             }
@@ -778,7 +778,7 @@ true` + text;
             return false;
         }
 
-        const params = PatcherUtils.parseParams(str, index - 500, 500);
+        const params = PatcherUtils.findAndParseParams(str, index - 500, 500);
         if (!params || !params.id) {
             return false;
         }
@@ -1030,12 +1030,16 @@ ${subsVar} = subs;
             return false;
         }
 
-        const productIdVar = PatcherUtils.getVariableNameAfter(str, productIdIndex + 11);
+        const params = PatcherUtils.findAndParseParams(str, productIdIndex - 200, 400);
+        if (!params || !params.productId) {
+            return false;
+        }
+
+        const productIdVar = params.productId;
 
         // Find supportedInputIcons and title var names
         const supportedInputIconsVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'supportedInputIcons:', initialIndex, 100, true));
-
-        if (!productIdVar || !supportedInputIconsVar) {
+        if (!supportedInputIconsVar) {
             return false;
         }
 
