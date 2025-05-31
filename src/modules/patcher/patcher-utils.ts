@@ -110,4 +110,33 @@ export class PatcherUtils {
 
         return str;
     }
+
+    static parseParams(str: string, index: number, maxRange: number) {
+        const substr = str.substring(index, index + maxRange);
+        let startIndex = substr.indexOf('({');
+        if (startIndex < 0) {
+            return false;
+        }
+        startIndex += 1;
+
+        let endIndex = substr.indexOf('})', startIndex);
+        if (endIndex < 0) {
+            return false;
+        }
+        endIndex += 1;
+
+        try {
+            const input = substr.substring(startIndex, endIndex);
+            const pairs = [...input.matchAll(/(\w+)\s*:\s*([a-zA-Z_$][\w$]*)/g)];
+
+            const result: Record<string, string> = {};
+            for (const [_, key, value] of pairs) {
+                result[key] = value;
+            }
+
+            return result;
+        } catch {
+            return null;
+        }
+    }
 }

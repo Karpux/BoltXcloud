@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.6.1
+// @version      6.6.2-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -193,7 +193,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.6.1", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.6.2-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -5160,6 +5160,22 @@ class PatcherUtils {
   let newCode = `window.BX_EXPOSED.reactUseEffect(() => window.BxEventBus.${group}.emit('${eventName}', {}), [])${separator}`;
   return str = PatcherUtils.insertAt(str, index, newCode), str;
  }
+ static parseParams(str, index, maxRange) {
+  let substr = str.substring(index, index + maxRange), startIndex = substr.indexOf("({");
+  if (startIndex < 0) return !1;
+  startIndex += 1;
+  let endIndex = substr.indexOf("})", startIndex);
+  if (endIndex < 0) return !1;
+  endIndex += 1;
+  try {
+   let pairs = [...substr.substring(startIndex, endIndex).matchAll(/(\w+)\s*:\s*([a-zA-Z_$][\w$]*)/g)], result = {};
+   for (let [_, key, value] of pairs)
+    result[key] = value;
+   return result;
+  } catch {
+   return null;
+  }
+ }
 }
 var LOG_TAG2 = "Patcher", PATCHES = {
  disableAiTrack(str) {
@@ -5346,6 +5362,7 @@ if (titleInfo && !titleInfo.details.hasTouchSupport && !titleInfo.details.hasFak
   let index = str.indexOf("({onCollapse:");
   if (index < 0) return !1;
   try {
+   if (!PatcherUtils.parseParams(str, index, 1000)) return !1;
    let canShowTakHUDVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "canShowTakHUD", index, 500, !0) + 1), guideUIVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "guideUI", index, 500, !0) + 1), onShowStreamMenuVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "onShowStreamMenu", index, 500, !0) + 1), offsetVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, "offset", index, 500, !0) + 1), newCode = renderString(stream_hud_default, {
     guideUI: guideUIVar,
     onShowStreamMenu: onShowStreamMenuVar,
@@ -5506,8 +5523,9 @@ true` + text;
  },
  ignoreSiglSections(str) {
   let index = str.indexOf("SiglRow-module__heroCard___");
-  if (index < 0) return !1;
-  if (index = PatcherUtils.lastIndexOf(str, "const[", index, 300), index < 0) return !1;
+  if (index >= 0 && (index = PatcherUtils.lastIndexOf(str, "const[", index, 300)), index < 0) return !1;
+  let params = PatcherUtils.parseParams(str, index - 500, 500);
+  if (!params || !params.id) return !1;
   let PREF_HIDE_SECTIONS = getGlobalPref("ui.hideSections"), siglIds = [], sections = {
    "native-mkb": "8fa264dd-124f-4af3-97e8-596fcdf4b486",
    "most-popular": "e7590b22-e299-44db-ae22-25c61405454c",
@@ -5518,14 +5536,7 @@ true` + text;
    let galleryId = sections[section];
    galleryId && siglIds.push(galleryId);
   }
-  let newCode = `
-if (e && e.id) {
-  const siglId = e.id;
-  if (${siglIds.map((item2) => `siglId === "${item2}"`).join(" || ")}) {
-    return null;
-  }
-}
-`;
+  let checkSyntax = siglIds.map((item2) => `${params.id} === "${item2}"`).join(" || "), newCode = `if (${params.id} && (${checkSyntax})) return null;`;
   return str = PatcherUtils.insertAt(str, index, newCode), str;
  },
  ignoreGenresSection(str) {

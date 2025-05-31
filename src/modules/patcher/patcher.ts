@@ -399,6 +399,11 @@ if (titleInfo && !titleInfo.details.hasTouchSupport && !titleInfo.details.hasFak
         }
 
         try {
+            const params = PatcherUtils.parseParams(str, index, 1000);
+            if (!params) {
+                return false;
+            }
+
             const canShowTakHUDVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'canShowTakHUD', index, 500, true) + 1);
             const guideUIVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'guideUI', index, 500, true) + 1);
             const onShowStreamMenuVar = PatcherUtils.getVariableNameAfter(str, PatcherUtils.indexOf(str, 'onShowStreamMenu', index, 500, true) + 1);
@@ -768,12 +773,13 @@ true` + text;
     // home-page.js
     ignoreSiglSections(str: string) {
         let index = str.indexOf('SiglRow-module__heroCard___');
+        index >= 0 && (index = PatcherUtils.lastIndexOf(str, 'const[', index, 300));
         if (index < 0) {
             return false;
         }
 
-        index = PatcherUtils.lastIndexOf(str, 'const[', index, 300);
-        if (index < 0) {
+        const params = PatcherUtils.parseParams(str, index - 500, 500);
+        if (!params || !params.id) {
             return false;
         }
 
@@ -792,16 +798,9 @@ true` + text;
             galleryId && siglIds.push(galleryId);
         };
 
-        const checkSyntax = siglIds.map(item => `siglId === "${item}"`).join(' || ');
+        const checkSyntax = siglIds.map(item => `${params.id} === "${item}"`).join(' || ');
+        const newCode = `if (${params.id} && (${checkSyntax})) return null;`;
 
-        const newCode = `
-if (e && e.id) {
-    const siglId = e.id;
-    if (${checkSyntax}) {
-        return null;
-    }
-}
-`;
         str = PatcherUtils.insertAt(str, index, newCode);
         return str;
     },
