@@ -5502,7 +5502,7 @@ true` + text;
   return str = str.substring(0, index) + "|| true" + str.substring(index), str;
  },
  ignoreNewsSection(str) {
-  let index = str.indexOf('Logger("CarouselRow")');
+  let index = str.indexOf('("CarouselRow"))');
   if (index > -1 && (index = PatcherUtils.lastIndexOf(str, "const ", index, 200)), index < 0) return !1;
   return str = PatcherUtils.insertAt(str, index, "return null;"), str;
  },

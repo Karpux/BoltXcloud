@@ -702,7 +702,7 @@ true` + text;
 
     // Don't render News section
     ignoreNewsSection(str: string) {
-        let index = str.indexOf('Logger("CarouselRow")');
+        let index = str.indexOf('("CarouselRow"))');
         index > -1 && (index = PatcherUtils.lastIndexOf(str, 'const ', index, 200));
         if (index < 0) {
             return false;
