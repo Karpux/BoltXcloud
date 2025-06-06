@@ -632,13 +632,12 @@ true` + text;
     },
 
     exposeInputChannel(str: string) {
-        let index = str.indexOf('this.flushData=');
-        if (index < 0) {
+        let text = '()(this,"flushData",(';
+        if (!str.includes(text)) {
             return false;
         }
 
-        const newCode = 'window.BX_EXPOSED.inputChannel = this,';
-        str = PatcherUtils.insertAt(str, index, newCode);
+        str = str.replace(text, '()(window.BX_EXPOSED.inputChannel = this, "flushData", (');
         return str;
     },
 

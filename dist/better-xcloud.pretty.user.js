@@ -5473,10 +5473,9 @@ true` + text;
   return str = str.replace(text, text + "return true;"), str;
  },
  exposeInputChannel(str) {
-  let index = str.indexOf("this.flushData=");
-  if (index < 0) return !1;
-  let newCode = "window.BX_EXPOSED.inputChannel = this,";
-  return str = PatcherUtils.insertAt(str, index, newCode), str;
+  let text = '()(this,"flushData",(';
+  if (!str.includes(text)) return !1;
+  return str = str.replace(text, '()(window.BX_EXPOSED.inputChannel = this, "flushData", ('), str;
  },
  disableNativeRequestPointerLock(str) {
   let text = "async requestPointerLock(){";
