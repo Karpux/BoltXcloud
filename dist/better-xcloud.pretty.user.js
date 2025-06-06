@@ -5240,7 +5240,7 @@ var LOG_TAG2 = "Patcher", PATCHES = {
   return str.replace(text, "this.shouldCollectStats=!1");
  },
  patchPollGamepads(str) {
-  let index = str.indexOf("},this.pollGamepads=()=>{");
+  let index = str.indexOf('()(this,"pollGamepads",');
   if (index < 0) return !1;
   let setTimeoutIndex = str.indexOf("setTimeout(this.pollGamepads", index);
   if (setTimeoutIndex < 0) return !1;

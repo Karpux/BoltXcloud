@@ -136,7 +136,7 @@ const PATCHES = {
     },
 
     patchPollGamepads(str: string) {
-        const index = str.indexOf('},this.pollGamepads=()=>{');
+        const index = str.indexOf('()(this,"pollGamepads",');
         if (index < 0) {
             return false;
         }
