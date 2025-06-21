@@ -8461,7 +8461,7 @@ class RemotePlayDialog extends NavigationDialog {
   for (let con of consoles) {
    let $connect, $child = CE("div", {
     class: "bx-remote-play-device-wrapper"
-   }, CE("div", { class: "bx-remote-play-device-info" }, CE("div", !1, CE("span", { class: "bx-remote-play-device-name" }, con.deviceName), CE("span", { class: "bx-remote-play-console-type" }, con.consoleType.replace("Xbox", ""))), CE("div", { class: "bx-remote-play-power-state" }, this.STATE_LABELS[con.powerState])), createButton({
+   }, CE("div", { class: "bx-remote-play-device-info" }, CE("div", !1, CE("span", { class: "bx-remote-play-device-name" }, con.deviceName), CE("span", { class: "bx-remote-play-console-type" }, con.consoleType.replace("Xbox", ""))), CE("div", { class: "bx-remote-play-power-state" }, this.STATE_LABELS[con.powerState])), AppInterface ? createButton({
     attributes: {
      "data-server-id": con.serverId,
      "data-device-name": con.deviceName
@@ -8470,7 +8470,7 @@ class RemotePlayDialog extends NavigationDialog {
     style: 8 | 64,
     title: t("create-shortcut"),
     onClick: createConsoleShortcut
-   }), $connect = createButton({
+   }) : null, $connect = createButton({
     classes: ["bx-remote-play-connect-button"],
     label: t("console-connect"),
     style: 1 | 64,
@@ -10282,6 +10282,35 @@ class StreamUiHandler {
   StreamUiHandler.$btnStreamSettings = void 0, StreamUiHandler.$btnStreamStats = void 0, StreamUiHandler.$btnRefresh = void 0, StreamUiHandler.$btnHome = void 0;
  }
 }
+function handleDeepLink() {
+ let deepLinkData = JSON.parse(AppInterface.getDeepLinkData());
+ if (console.log("deepLinkData", deepLinkData), !deepLinkData.host) return;
+ let onReady = () => {
+  if (deepLinkData.host === "PLAY") localRedirect("/launch/" + deepLinkData.data.join("/"));
+  else if (deepLinkData.host === "DEVICE_CODE") localRedirect("/login/deviceCode");
+  else if (deepLinkData.host === "REMOTE_PLAY") {
+   let serverId = deepLinkData.data[0], resolution = deepLinkData.data[1] || "1080p", manager = RemotePlayManager.getInstance();
+   if (!manager) return;
+   if (manager.isReady()) {
+    manager.play(serverId, resolution);
+    return;
+   }
+   window.addEventListener(BxEvent.REMOTE_PLAY_READY, () => {
+    manager.play(serverId, resolution);
+   });
+  }
+ }, handled = !1, observer = new MutationObserver((mutationList) => {
+  mutationList.forEach((mutation) => {
+   if (handled || mutation.type !== "childList") return;
+   let $target = mutation.target;
+   if (!handled && $target.className && $target.className.startsWith && $target.className.includes("HomePage-module__homePage")) {
+    handled = !0, observer.disconnect(), setTimeout(onReady, 1000);
+    return;
+   }
+  });
+ });
+ observer.observe(document.documentElement, { subtree: !0, childList: !0 });
+}
 SettingsManager.getInstance();
 if (window.location.pathname.includes("/auth/msa")) {
  let nativePushState = window.history.pushState;
@@ -10325,6 +10354,10 @@ document.addEventListener("readystatechange", (e) => {
  }
  preloadFonts();
 });
+if (AppInterface) window.addEventListener(BxEvent.XCLOUD_ROUTER_HISTORY_READY, (e) => {
+  if (window.location.pathname.includes("/fireos-browser-update")) localRedirect("/play");
+  else handleDeepLink();
+ }, { once: !0 });
 window.BX_EXPOSED = BxExposed;
 window.addEventListener(BxEvent.POPSTATE, onHistoryChanged);
 window.addEventListener("popstate", onHistoryChanged);

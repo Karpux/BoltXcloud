@@ -47,6 +47,8 @@ import { Toast } from "./utils/toast";
 import { WebGPUPlayer } from "./modules/player/webgpu/webgpu-player";
 import { StreamUiHandler } from "./modules/stream/stream-ui";
 import { TrueAchievements } from "./utils/true-achievements";
+import { localRedirect } from "./modules/ui/ui";
+import { handleDeepLink } from "./utils/deep-link";
 
 SettingsManager.getInstance();
 
@@ -190,7 +192,18 @@ document.addEventListener('readystatechange', e => {
 
     // Preload fonts
     preloadFonts();
-})
+});
+
+// Deep link
+if (AppInterface) {
+    window.addEventListener(BxEvent.XCLOUD_ROUTER_HISTORY_READY, e => {
+        if (window.location.pathname.includes('/fireos-browser-update')) {
+            localRedirect('/play');
+        } else {
+            handleDeepLink();
+        }
+    }, { once: true });
+}
 
 window.BX_EXPOSED = BxExposed;
 

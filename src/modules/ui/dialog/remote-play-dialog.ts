@@ -98,7 +98,7 @@ export class RemotePlayDialog extends NavigationDialog {
                 ),
 
                 // Shortcut button
-                createButton({
+                AppInterface ? createButton({
                     attributes: {
                         'data-server-id': con.serverId,
                         'data-device-name': con.deviceName,
@@ -107,7 +107,7 @@ export class RemotePlayDialog extends NavigationDialog {
                     style: ButtonStyle.GHOST | ButtonStyle.FOCUSABLE,
                     title: t('create-shortcut'),
                     onClick: createConsoleShortcut,
-                }),
+                }) : null,
 
                 // Connect button
                 $connect = createButton({

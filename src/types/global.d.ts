@@ -24,6 +24,7 @@ declare global {
             openAppSettings?(),
             updateLatestScript(),
             closeApp(),
+            getDeepLinkData(): string,
 
             createShortcut(path: string),
             createConsoleShortcut(serverId: string, deviceName: string, optionsJson: string),
