@@ -373,7 +373,7 @@ export class SettingsDialog extends NavigationDialog {
             $parent => {
                 $parent.appendChild(createButton({
                     label: t('clear-data'),
-                    style: ButtonStyle.GHOST | ButtonStyle.FULL_WIDTH | ButtonStyle.FOCUSABLE,
+                    style: ButtonStyle.DANGER | ButtonStyle.FROSTED | ButtonStyle.FULL_WIDTH | ButtonStyle.FOCUSABLE,
                     onClick: e => {
                         if (confirm(t('clear-data-confirm'))) {
                             clearAllData();

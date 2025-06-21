@@ -2760,7 +2760,7 @@ function parseDetailsPath(path) {
  return { titleSlug, productId };
 }
 function clearAllData() {
- for (let i = 0;i < localStorage.length; i++) {
+ for (let i = localStorage.length - 1;i >= 0; i--) {
   let key = localStorage.key(i);
   if (!key) continue;
   if (key.startsWith("BetterXcloud") || key.startsWith("better_xcloud")) localStorage.removeItem(key);
@@ -7387,7 +7387,7 @@ class SettingsDialog extends NavigationDialog {
    ($parent) => {
     $parent.appendChild(createButton({
      label: t("clear-data"),
-     style: 8 | 128 | 64,
+     style: 4 | 16 | 128 | 64,
      onClick: (e) => {
       if (confirm(t("clear-data-confirm"))) clearAllData();
      }
