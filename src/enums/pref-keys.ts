@@ -80,6 +80,7 @@ export const enum GlobalPref {
     AUDIO_VOLUME_CONTROL_ENABLED = 'audio.volume.booster.enabled',
 
     REMOTE_PLAY_STREAM_RESOLUTION = 'xhome.video.resolution',
+    REMOTE_PLAY_PREFER_IPV6 = 'xhome.ipv6.prefer',
 
     GAME_FORTNITE_FORCE_CONSOLE = 'game.fortnite.forceConsole',
 }
@@ -99,6 +100,7 @@ export type GlobalPrefTypeMap = {
     [GlobalPref.NATIVE_MKB_FORCED_GAMES]: string[];
     [GlobalPref.NATIVE_MKB_MODE]: NativeMkbMode;
     [GlobalPref.REMOTE_PLAY_STREAM_RESOLUTION]: StreamResolution;
+    [GlobalPref.REMOTE_PLAY_PREFER_IPV6]: boolean;
     [GlobalPref.SCREENSHOT_APPLY_FILTERS]: boolean;
     [GlobalPref.SERVER_BYPASS_RESTRICTION]: string;
     [GlobalPref.SERVER_PREFER_IPV6]: boolean;
@@ -233,6 +235,7 @@ export const ALL_PREFS: {
         GlobalPref.NATIVE_MKB_FORCED_GAMES,
         GlobalPref.NATIVE_MKB_MODE,
         GlobalPref.REMOTE_PLAY_STREAM_RESOLUTION,
+        GlobalPref.REMOTE_PLAY_PREFER_IPV6,
         GlobalPref.SCREENSHOT_APPLY_FILTERS,
         GlobalPref.SERVER_BYPASS_RESTRICTION,
         GlobalPref.SERVER_PREFER_IPV6,

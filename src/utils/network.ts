@@ -109,7 +109,7 @@ export async function patchIceCandidates(request: Request, consoleAddrs?: Remote
     }
 
     const options = {
-        preferIpv6Server: getGlobalPref(GlobalPref.SERVER_PREFER_IPV6),
+        preferIpv6Server: getGlobalPref(consoleAddrs ? GlobalPref.REMOTE_PLAY_PREFER_IPV6 : GlobalPref.SERVER_PREFER_IPV6),
         consoleAddrs: consoleAddrs,
     };
 

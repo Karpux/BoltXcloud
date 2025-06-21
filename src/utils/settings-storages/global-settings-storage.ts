@@ -535,6 +535,11 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
             },
         },
 
+        [GlobalPref.REMOTE_PLAY_PREFER_IPV6]: {
+            requiredVariants: 'full',
+            default: false,
+        },
+
         [GlobalPref.GAME_FORTNITE_FORCE_CONSOLE]: {
             requiredVariants: 'full',
             label: '🎮 ' + t('fortnite-force-console-version'),

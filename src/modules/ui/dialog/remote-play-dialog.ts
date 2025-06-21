@@ -1,4 +1,4 @@
-import { ButtonStyle, CE, createButton } from "@/utils/html";
+import { ButtonStyle, CE, createButton, escapeCssSelector } from "@/utils/html";
 import { NavigationDialog, type NavigationElement } from "./navigation-dialog";
 import { GlobalPref } from "@/enums/pref-keys";
 import { BxIcon } from "@/utils/bx-icon";
@@ -11,6 +11,7 @@ import { BxLogger } from "@/utils/bx-logger";
 import { StreamResolution } from "@/enums/pref-values";
 import { setNearby } from "@/utils/navigation-utils";
 import { AppInterface } from "@/utils/global";
+import { SettingElement } from "@/utils/setting-element";
 
 
 export class RemotePlayDialog extends NavigationDialog {
@@ -67,6 +68,9 @@ export class RemotePlayDialog extends NavigationDialog {
         }, CE('div', false,
             CE('label', false, t('target-resolution'), $settingNote),
             $resolutions,
+        ), CE('div', false,
+            CE('label', { 'for': `bx_setting_${escapeCssSelector(GlobalPref.REMOTE_PLAY_PREFER_IPV6)}` }, t('prefer-ipv6-server')),
+            SettingElement.fromPref(GlobalPref.REMOTE_PLAY_PREFER_IPV6),
         ));
 
         $fragment.appendChild($qualitySettings);
