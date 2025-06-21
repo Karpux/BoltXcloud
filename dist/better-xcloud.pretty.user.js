@@ -8361,6 +8361,170 @@ var BxExposed = {
   return BX_FLAGS.ForceNativeMkbTitles?.includes(productId);
  }
 };
+class XhomeInterceptor {
+ static consoleAddrs = {};
+ static async handleLogin(request) {
+  try {
+   let obj = await request.clone().json();
+   obj.offeringId = "xhome", request = new Request("https://xhome.gssv-play-prod.xboxlive.com/v2/login/user", {
+    method: "POST",
+    body: JSON.stringify(obj),
+    headers: {
+     "Content-Type": "application/json"
+    }
+   });
+  } catch (e) {
+   alert(e), console.log(e);
+  }
+  return NATIVE_FETCH(request);
+ }
+ static async handleConfiguration(request) {
+  BxEventBus.Stream.emit("state.starting", {});
+  let response = await NATIVE_FETCH(request), obj = await response.clone().json(), serverDetails = obj.serverDetails, pairs = [
+   ["ipAddress", "port"],
+   ["ipV4Address", "ipV4Port"],
+   ["ipV6Address", "ipV6Port"]
+  ];
+  XhomeInterceptor.consoleAddrs = {};
+  for (let pair of pairs) {
+   let [keyAddr, keyPort] = pair;
+   if (keyAddr && keyPort && serverDetails[keyAddr]) {
+    let port = serverDetails[keyPort], ports = new Set;
+    port && ports.add(port), ports.add(9002), XhomeInterceptor.consoleAddrs[serverDetails[keyAddr]] = Array.from(ports);
+   }
+  }
+  return response.json = () => Promise.resolve(obj), response.text = () => Promise.resolve(JSON.stringify(obj)), response;
+ }
+ static async handleInputConfigs(request, opts) {
+  let response = await NATIVE_FETCH(request);
+  if (getGlobalPref("touchController.mode") !== "all") return response;
+  let obj = await response.clone().json(), xboxTitleId = JSON.parse(opts.body).titleIds[0];
+  TouchController.setXboxTitleId(xboxTitleId);
+  let inputConfigs = obj[0], hasTouchSupport = inputConfigs.supportedTabs.length > 0;
+  if (!hasTouchSupport) {
+   let supportedInputTypes = inputConfigs.supportedInputTypes;
+   hasTouchSupport = supportedInputTypes.includes("NativeTouch") || supportedInputTypes.includes("CustomTouchOverlay");
+  }
+  if (hasTouchSupport) TouchController.disable(), BxEvent.dispatch(window, BxEvent.CUSTOM_TOUCH_LAYOUTS_LOADED, {
+    data: null
+   });
+  else TouchController.enable(), TouchController.requestCustomLayouts();
+  return response.json = () => Promise.resolve(obj), response.text = () => Promise.resolve(JSON.stringify(obj)), response;
+ }
+ static async handleTitles(request) {
+  let clone = request.clone(), headers = {};
+  for (let pair of clone.headers.entries())
+   headers[pair[0]] = pair[1];
+  let index = request.url.indexOf(".xboxlive.com");
+  return request = new Request("https://wus.core.gssv-play-prod" + request.url.substring(index), {
+   method: clone.method,
+   body: await clone.text(),
+   headers
+  }), NATIVE_FETCH(request);
+ }
+ static async handlePlay(request) {
+  BxEventBus.Stream.emit("state.loading", {});
+  let body = await request.clone().json(), newRequest = new Request(request, {
+   body: JSON.stringify(body)
+  });
+  return NATIVE_FETCH(newRequest);
+ }
+ static async handle(request) {
+  TouchController.disable();
+  let clone = request.clone(), headers = {};
+  for (let pair of clone.headers.entries())
+   headers[pair[0]] = pair[1];
+  let osName = getOsNameFromResolution(getGlobalPref("xhome.video.resolution"));
+  headers["x-ms-device-info"] = JSON.stringify(generateMsDeviceInfo(osName));
+  let opts = {
+   method: clone.method,
+   headers
+  };
+  if (clone.method === "POST") opts.body = await clone.text();
+  let url = request.url;
+  if (request = new Request(url, opts), url.includes("/configuration")) return XhomeInterceptor.handleConfiguration(request);
+  else if (url.endsWith("/sessions/home/play")) return XhomeInterceptor.handlePlay(request);
+  else if (url.includes("inputconfigs")) return XhomeInterceptor.handleInputConfigs(request, opts);
+  else if (url.includes("/login/user")) return XhomeInterceptor.handleLogin(request);
+  else if (url.endsWith("/titles")) return XhomeInterceptor.handleTitles(request);
+  else if (url && url.endsWith("/ice") && url.includes("/sessions/") && request.method === "GET") return patchIceCandidates(request, XhomeInterceptor.consoleAddrs);
+  return await NATIVE_FETCH(request);
+ }
+}
+function getPreferredServerRegion(shortName = !1) {
+ let preferredRegion = getGlobalPref("server.region"), serverRegions = STATES.serverRegions;
+ if (preferredRegion in serverRegions) if (shortName && serverRegions[preferredRegion].shortName) return serverRegions[preferredRegion].shortName;
+  else return preferredRegion;
+ for (let regionName in serverRegions) {
+  let region = serverRegions[regionName];
+  if (!region.isDefault) continue;
+  if (shortName && region.shortName) return region.shortName;
+  else return regionName;
+ }
+ return null;
+}
+class LoadingScreen {
+ static $bgStyle;
+ static $waitTimeBox;
+ static waitTimeInterval = null;
+ static orgWebTitle;
+ static secondsToString(seconds) {
+  let m = Math.floor(seconds / 60), s = Math.floor(seconds % 60), mDisplay = m > 0 ? `${m}m` : "", sDisplay = `${s}s`.padStart(s >= 0 ? 3 : 4, "0");
+  return mDisplay + sDisplay;
+ }
+ static setup() {
+  let titleInfo = STATES.currentStream.titleInfo;
+  if (!titleInfo) return;
+  if (!LoadingScreen.$bgStyle) {
+   let $bgStyle = CE("style");
+   document.documentElement.appendChild($bgStyle), LoadingScreen.$bgStyle = $bgStyle;
+  }
+  if (titleInfo.productInfo) LoadingScreen.setBackground(titleInfo.productInfo.heroImageUrl || titleInfo.productInfo.titledHeroImageUrl || titleInfo.productInfo.tileImageUrl);
+  if (getGlobalPref("loadingScreen.rocket") === "hide") LoadingScreen.hideRocket();
+ }
+ static hideRocket() {
+  let $bgStyle = LoadingScreen.$bgStyle;
+  $bgStyle.textContent += "#game-stream div[class*=RocketAnimation-module__container] > svg{display:none}#game-stream video[class*=RocketAnimationVideo-module__video]{display:none}";
+ }
+ static setBackground(imageUrl) {
+  let $bgStyle = LoadingScreen.$bgStyle;
+  imageUrl = imageUrl + "?w=1920";
+  let imageQuality = getGlobalPref("ui.imageQuality");
+  if (imageQuality !== 90) imageUrl += "&q=" + imageQuality;
+  $bgStyle.textContent += '#game-stream{background-color:transparent !important;background-position:center center !important;background-repeat:no-repeat !important;background-size:cover !important}#game-stream rect[width="800"]{transition:opacity .3s ease-in-out !important}' + `#game-stream {background-image: linear-gradient(#00000033, #000000e6), url(${imageUrl}) !important;}`;
+  let bg = new Image;
+  bg.onload = (e) => {
+   $bgStyle.textContent += '#game-stream rect[width="800"]{opacity:0 !important}';
+  }, bg.src = imageUrl;
+ }
+ static setupWaitTime(waitTime) {
+  if (getGlobalPref("loadingScreen.rocket") === "hide-queue") LoadingScreen.hideRocket();
+  let secondsLeft = waitTime, $countDown, $estimated;
+  LoadingScreen.orgWebTitle = document.title;
+  let endDate = new Date, timeZoneOffsetSeconds = endDate.getTimezoneOffset() * 60;
+  endDate.setSeconds(endDate.getSeconds() + waitTime - timeZoneOffsetSeconds);
+  let endDateStr = endDate.toISOString().slice(0, 19);
+  endDateStr = endDateStr.substring(0, 10) + " " + endDateStr.substring(11, 19), endDateStr += ` (${LoadingScreen.secondsToString(waitTime)})`;
+  let $waitTimeBox = LoadingScreen.$waitTimeBox;
+  if (!$waitTimeBox) $waitTimeBox = CE("div", { class: "bx-wait-time-box" }, CE("label", !1, t("server")), CE("span", !1, getPreferredServerRegion()), CE("label", !1, t("wait-time-estimated")), $estimated = CE("span", {}), CE("label", !1, t("wait-time-countdown")), $countDown = CE("span", {})), document.documentElement.appendChild($waitTimeBox), LoadingScreen.$waitTimeBox = $waitTimeBox;
+  else $waitTimeBox.classList.remove("bx-gone"), $estimated = $waitTimeBox.querySelector(".bx-wait-time-estimated"), $countDown = $waitTimeBox.querySelector(".bx-wait-time-countdown");
+  $estimated.textContent = endDateStr, $countDown.textContent = LoadingScreen.secondsToString(secondsLeft), document.title = `[${$countDown.textContent}] ${LoadingScreen.orgWebTitle}`, LoadingScreen.waitTimeInterval = window.setInterval(() => {
+   if (secondsLeft--, $countDown.textContent = LoadingScreen.secondsToString(secondsLeft), document.title = `[${$countDown.textContent}] ${LoadingScreen.orgWebTitle}`, secondsLeft <= 0) LoadingScreen.waitTimeInterval && clearInterval(LoadingScreen.waitTimeInterval), LoadingScreen.waitTimeInterval = null;
+  }, 1000);
+ }
+ static hide() {
+  if (LoadingScreen.orgWebTitle && (document.title = LoadingScreen.orgWebTitle), LoadingScreen.$waitTimeBox && LoadingScreen.$waitTimeBox.classList.add("bx-gone"), getGlobalPref("loadingScreen.gameArt.show") && LoadingScreen.$bgStyle) {
+   let $rocketBg = document.querySelector('#game-stream rect[width="800"]');
+   $rocketBg && $rocketBg.addEventListener("transitionend", (e) => {
+    LoadingScreen.$bgStyle.textContent += "#game-stream{background:#000 !important}";
+   }), LoadingScreen.$bgStyle.textContent += '#game-stream rect[width="800"]{opacity:1 !important}';
+  }
+  setTimeout(LoadingScreen.reset, 2000);
+ }
+ static reset() {
+  LoadingScreen.$bgStyle && (LoadingScreen.$bgStyle.textContent = ""), LoadingScreen.$waitTimeBox && LoadingScreen.$waitTimeBox.classList.add("bx-gone"), LoadingScreen.waitTimeInterval && clearInterval(LoadingScreen.waitTimeInterval), LoadingScreen.waitTimeInterval = null;
+ }
+}
 function localRedirect(path) {
  let url = window.location.href.substring(0, 31) + path, $pageContent = document.getElementById("PageContent");
  if (!$pageContent) return;
@@ -8375,18 +8539,6 @@ function localRedirect(path) {
  }), $pageContent.appendChild($anchor), $anchor.click();
 }
 window.localRedirect = localRedirect;
-function getPreferredServerRegion(shortName = !1) {
- let preferredRegion = getGlobalPref("server.region"), serverRegions = STATES.serverRegions;
- if (preferredRegion in serverRegions) if (shortName && serverRegions[preferredRegion].shortName) return serverRegions[preferredRegion].shortName;
-  else return preferredRegion;
- for (let regionName in serverRegions) {
-  let region = serverRegions[regionName];
-  if (!region.isDefault) continue;
-  if (shortName && region.shortName) return region.shortName;
-  else return regionName;
- }
- return null;
-}
 class HeaderSection {
  static instance;
  static getInstance = () => HeaderSection.instance ?? (HeaderSection.instance = new HeaderSection);
@@ -8625,164 +8777,6 @@ class RemotePlayManager {
  }
  isReady() {
   return this.consoles !== null;
- }
-}
-class XhomeInterceptor {
- static consoleAddrs = {};
- static async handleLogin(request) {
-  try {
-   let obj = await request.clone().json();
-   obj.offeringId = "xhome", request = new Request("https://xhome.gssv-play-prod.xboxlive.com/v2/login/user", {
-    method: "POST",
-    body: JSON.stringify(obj),
-    headers: {
-     "Content-Type": "application/json"
-    }
-   });
-  } catch (e) {
-   alert(e), console.log(e);
-  }
-  return NATIVE_FETCH(request);
- }
- static async handleConfiguration(request) {
-  BxEventBus.Stream.emit("state.starting", {});
-  let response = await NATIVE_FETCH(request), obj = await response.clone().json(), serverDetails = obj.serverDetails, pairs = [
-   ["ipAddress", "port"],
-   ["ipV4Address", "ipV4Port"],
-   ["ipV6Address", "ipV6Port"]
-  ];
-  XhomeInterceptor.consoleAddrs = {};
-  for (let pair of pairs) {
-   let [keyAddr, keyPort] = pair;
-   if (keyAddr && keyPort && serverDetails[keyAddr]) {
-    let port = serverDetails[keyPort], ports = new Set;
-    port && ports.add(port), ports.add(9002), XhomeInterceptor.consoleAddrs[serverDetails[keyAddr]] = Array.from(ports);
-   }
-  }
-  return response.json = () => Promise.resolve(obj), response.text = () => Promise.resolve(JSON.stringify(obj)), response;
- }
- static async handleInputConfigs(request, opts) {
-  let response = await NATIVE_FETCH(request);
-  if (getGlobalPref("touchController.mode") !== "all") return response;
-  let obj = await response.clone().json(), xboxTitleId = JSON.parse(opts.body).titleIds[0];
-  TouchController.setXboxTitleId(xboxTitleId);
-  let inputConfigs = obj[0], hasTouchSupport = inputConfigs.supportedTabs.length > 0;
-  if (!hasTouchSupport) {
-   let supportedInputTypes = inputConfigs.supportedInputTypes;
-   hasTouchSupport = supportedInputTypes.includes("NativeTouch") || supportedInputTypes.includes("CustomTouchOverlay");
-  }
-  if (hasTouchSupport) TouchController.disable(), BxEvent.dispatch(window, BxEvent.CUSTOM_TOUCH_LAYOUTS_LOADED, {
-    data: null
-   });
-  else TouchController.enable(), TouchController.requestCustomLayouts();
-  return response.json = () => Promise.resolve(obj), response.text = () => Promise.resolve(JSON.stringify(obj)), response;
- }
- static async handleTitles(request) {
-  let clone = request.clone(), headers = {};
-  for (let pair of clone.headers.entries())
-   headers[pair[0]] = pair[1];
-  headers.authorization = `Bearer ${RemotePlayManager.getInstance().getXcloudToken()}`;
-  let index = request.url.indexOf(".xboxlive.com");
-  return request = new Request("https://wus.core.gssv-play-prod" + request.url.substring(index), {
-   method: clone.method,
-   body: await clone.text(),
-   headers
-  }), NATIVE_FETCH(request);
- }
- static async handlePlay(request) {
-  BxEventBus.Stream.emit("state.loading", {});
-  let body = await request.clone().json(), newRequest = new Request(request, {
-   body: JSON.stringify(body)
-  });
-  return NATIVE_FETCH(newRequest);
- }
- static async handle(request) {
-  TouchController.disable();
-  let clone = request.clone(), headers = {};
-  for (let pair of clone.headers.entries())
-   headers[pair[0]] = pair[1];
-  headers.authorization = `Bearer ${RemotePlayManager.getInstance().getXhomeToken()}`;
-  let osName = getOsNameFromResolution(getGlobalPref("xhome.video.resolution"));
-  headers["x-ms-device-info"] = JSON.stringify(generateMsDeviceInfo(osName));
-  let opts = {
-   method: clone.method,
-   headers
-  };
-  if (clone.method === "POST") opts.body = await clone.text();
-  let url = request.url;
-  if (!url.includes("/servers/home")) {
-   let parsed = new URL(url);
-   url = STATES.remotePlay.server + parsed.pathname;
-  }
-  if (request = new Request(url, opts), url.includes("/configuration")) return XhomeInterceptor.handleConfiguration(request);
-  else if (url.endsWith("/sessions/home/play")) return XhomeInterceptor.handlePlay(request);
-  else if (url.includes("inputconfigs")) return XhomeInterceptor.handleInputConfigs(request, opts);
-  else if (url.includes("/login/user")) return XhomeInterceptor.handleLogin(request);
-  else if (url.endsWith("/titles")) return XhomeInterceptor.handleTitles(request);
-  else if (url && url.endsWith("/ice") && url.includes("/sessions/") && request.method === "GET") return patchIceCandidates(request, XhomeInterceptor.consoleAddrs);
-  return await NATIVE_FETCH(request);
- }
-}
-class LoadingScreen {
- static $bgStyle;
- static $waitTimeBox;
- static waitTimeInterval = null;
- static orgWebTitle;
- static secondsToString(seconds) {
-  let m = Math.floor(seconds / 60), s = Math.floor(seconds % 60), mDisplay = m > 0 ? `${m}m` : "", sDisplay = `${s}s`.padStart(s >= 0 ? 3 : 4, "0");
-  return mDisplay + sDisplay;
- }
- static setup() {
-  let titleInfo = STATES.currentStream.titleInfo;
-  if (!titleInfo) return;
-  if (!LoadingScreen.$bgStyle) {
-   let $bgStyle = CE("style");
-   document.documentElement.appendChild($bgStyle), LoadingScreen.$bgStyle = $bgStyle;
-  }
-  if (titleInfo.productInfo) LoadingScreen.setBackground(titleInfo.productInfo.heroImageUrl || titleInfo.productInfo.titledHeroImageUrl || titleInfo.productInfo.tileImageUrl);
-  if (getGlobalPref("loadingScreen.rocket") === "hide") LoadingScreen.hideRocket();
- }
- static hideRocket() {
-  let $bgStyle = LoadingScreen.$bgStyle;
-  $bgStyle.textContent += "#game-stream div[class*=RocketAnimation-module__container] > svg{display:none}#game-stream video[class*=RocketAnimationVideo-module__video]{display:none}";
- }
- static setBackground(imageUrl) {
-  let $bgStyle = LoadingScreen.$bgStyle;
-  imageUrl = imageUrl + "?w=1920";
-  let imageQuality = getGlobalPref("ui.imageQuality");
-  if (imageQuality !== 90) imageUrl += "&q=" + imageQuality;
-  $bgStyle.textContent += '#game-stream{background-color:transparent !important;background-position:center center !important;background-repeat:no-repeat !important;background-size:cover !important}#game-stream rect[width="800"]{transition:opacity .3s ease-in-out !important}' + `#game-stream {background-image: linear-gradient(#00000033, #000000e6), url(${imageUrl}) !important;}`;
-  let bg = new Image;
-  bg.onload = (e) => {
-   $bgStyle.textContent += '#game-stream rect[width="800"]{opacity:0 !important}';
-  }, bg.src = imageUrl;
- }
- static setupWaitTime(waitTime) {
-  if (getGlobalPref("loadingScreen.rocket") === "hide-queue") LoadingScreen.hideRocket();
-  let secondsLeft = waitTime, $countDown, $estimated;
-  LoadingScreen.orgWebTitle = document.title;
-  let endDate = new Date, timeZoneOffsetSeconds = endDate.getTimezoneOffset() * 60;
-  endDate.setSeconds(endDate.getSeconds() + waitTime - timeZoneOffsetSeconds);
-  let endDateStr = endDate.toISOString().slice(0, 19);
-  endDateStr = endDateStr.substring(0, 10) + " " + endDateStr.substring(11, 19), endDateStr += ` (${LoadingScreen.secondsToString(waitTime)})`;
-  let $waitTimeBox = LoadingScreen.$waitTimeBox;
-  if (!$waitTimeBox) $waitTimeBox = CE("div", { class: "bx-wait-time-box" }, CE("label", !1, t("server")), CE("span", !1, getPreferredServerRegion()), CE("label", !1, t("wait-time-estimated")), $estimated = CE("span", {}), CE("label", !1, t("wait-time-countdown")), $countDown = CE("span", {})), document.documentElement.appendChild($waitTimeBox), LoadingScreen.$waitTimeBox = $waitTimeBox;
-  else $waitTimeBox.classList.remove("bx-gone"), $estimated = $waitTimeBox.querySelector(".bx-wait-time-estimated"), $countDown = $waitTimeBox.querySelector(".bx-wait-time-countdown");
-  $estimated.textContent = endDateStr, $countDown.textContent = LoadingScreen.secondsToString(secondsLeft), document.title = `[${$countDown.textContent}] ${LoadingScreen.orgWebTitle}`, LoadingScreen.waitTimeInterval = window.setInterval(() => {
-   if (secondsLeft--, $countDown.textContent = LoadingScreen.secondsToString(secondsLeft), document.title = `[${$countDown.textContent}] ${LoadingScreen.orgWebTitle}`, secondsLeft <= 0) LoadingScreen.waitTimeInterval && clearInterval(LoadingScreen.waitTimeInterval), LoadingScreen.waitTimeInterval = null;
-  }, 1000);
- }
- static hide() {
-  if (LoadingScreen.orgWebTitle && (document.title = LoadingScreen.orgWebTitle), LoadingScreen.$waitTimeBox && LoadingScreen.$waitTimeBox.classList.add("bx-gone"), getGlobalPref("loadingScreen.gameArt.show") && LoadingScreen.$bgStyle) {
-   let $rocketBg = document.querySelector('#game-stream rect[width="800"]');
-   $rocketBg && $rocketBg.addEventListener("transitionend", (e) => {
-    LoadingScreen.$bgStyle.textContent += "#game-stream{background:#000 !important}";
-   }), LoadingScreen.$bgStyle.textContent += '#game-stream rect[width="800"]{opacity:1 !important}';
-  }
-  setTimeout(LoadingScreen.reset, 2000);
- }
- static reset() {
-  LoadingScreen.$bgStyle && (LoadingScreen.$bgStyle.textContent = ""), LoadingScreen.$waitTimeBox && LoadingScreen.$waitTimeBox.classList.add("bx-gone"), LoadingScreen.waitTimeInterval && clearInterval(LoadingScreen.waitTimeInterval), LoadingScreen.waitTimeInterval = null;
  }
 }
 class GuideMenu {

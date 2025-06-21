@@ -2,10 +2,8 @@ import { TouchController } from "@/modules/touch-controller";
 import { BxEvent } from "./bx-event";
 import { SupportedInputType } from "./bx-exposed";
 import { NATIVE_FETCH } from "./bx-flags";
-import { STATES } from "./global";
 import { generateMsDeviceInfo, getOsNameFromResolution, patchIceCandidates } from "./network";
 import { GlobalPref } from "@/enums/pref-keys";
-import { RemotePlayManager } from "@/modules/remote-play-manager";
 import { TouchControllerMode } from "@/enums/pref-values";
 import { BxEventBus } from "./bx-event-bus";
 import { getGlobalPref } from "./pref-utils";
@@ -111,7 +109,6 @@ export class XhomeInterceptor {
         for (const pair of (clone.headers as any).entries()) {
             headers[pair[0]] = pair[1];
         }
-        headers.authorization = `Bearer ${RemotePlayManager.getInstance()!.getXcloudToken()}`;
 
         const index = request.url.indexOf('.xboxlive.com');
         request = new Request('https://wus.core.gssv-play-prod' + request.url.substring(index), {
@@ -147,8 +144,6 @@ export class XhomeInterceptor {
         for (const pair of (clone.headers as any).entries()) {
             headers[pair[0]] = pair[1];
         }
-        // Add xHome token to headers
-        headers.authorization = `Bearer ${RemotePlayManager.getInstance()!.getXhomeToken()}`;
 
         // Patch resolution
         const osName = getOsNameFromResolution(getGlobalPref(GlobalPref.REMOTE_PLAY_STREAM_RESOLUTION));
@@ -164,12 +159,7 @@ export class XhomeInterceptor {
             opts.body = await clone.text();
         }
 
-        // Replace xCloud domain with xHome domain
-        let url = request.url;
-        if (!url.includes('/servers/home')) {
-            const parsed = new URL(url);
-            url = STATES.remotePlay.server + parsed.pathname;
-        }
+        const url = request.url;
 
         // Create new Request instance
         request = new Request(url, opts);
