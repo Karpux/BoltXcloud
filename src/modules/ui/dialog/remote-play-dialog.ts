@@ -9,6 +9,8 @@ import { BxSelectElement } from "@/web-components/bx-select";
 import { BxEvent } from "@/utils/bx-event";
 import { BxLogger } from "@/utils/bx-logger";
 import { StreamResolution } from "@/enums/pref-values";
+import { setNearby } from "@/utils/navigation-utils";
+import { AppInterface } from "@/utils/global";
 
 
 export class RemotePlayDialog extends NavigationDialog {
@@ -73,8 +75,20 @@ export class RemotePlayDialog extends NavigationDialog {
         const manager = RemotePlayManager.getInstance()!;
         const consoles = manager.getConsoles();
 
+        const createConsoleShortcut = (e: Event) => {
+            const { serverId, deviceName } = (e.target as HTMLElement).dataset;
+            const optionsJson = JSON.stringify({
+                'resolution': getGlobalPref(GlobalPref.REMOTE_PLAY_STREAM_RESOLUTION),
+            });
+
+            AppInterface?.createConsoleShortcut(serverId!, deviceName!, optionsJson);
+        };
+
         for (let con of consoles) {
-            const $child = CE('div', { class: 'bx-remote-play-device-wrapper' },
+            let $connect;
+            const $child = CE('div', {
+                    class: 'bx-remote-play-device-wrapper',
+                },
                 CE('div', { class: 'bx-remote-play-device-info' },
                     CE('div', false,
                         CE('span', { class: 'bx-remote-play-device-name' }, con.deviceName),
@@ -83,8 +97,20 @@ export class RemotePlayDialog extends NavigationDialog {
                     CE('div', { class: 'bx-remote-play-power-state' }, this.STATE_LABELS[con.powerState]),
                 ),
 
-                // Connect button
+                // Shortcut button
                 createButton({
+                    attributes: {
+                        'data-server-id': con.serverId,
+                        'data-device-name': con.deviceName,
+                    },
+                    icon: BxIcon.CREATE_SHORTCUT,
+                    style: ButtonStyle.GHOST | ButtonStyle.FOCUSABLE,
+                    title: t('create-shortcut'),
+                    onClick: createConsoleShortcut,
+                }),
+
+                // Connect button
+                $connect = createButton({
                     classes: ['bx-remote-play-connect-button'],
                     label: t('console-connect'),
                     style: ButtonStyle.PRIMARY | ButtonStyle.FOCUSABLE,
@@ -92,6 +118,10 @@ export class RemotePlayDialog extends NavigationDialog {
                 }),
             );
 
+            setNearby($child, {
+                orientation: 'horizontal',
+                focus: $connect,
+            })
             $fragment.appendChild($child);
         }
 
@@ -130,7 +160,7 @@ export class RemotePlayDialog extends NavigationDialog {
     }
 
     focusIfNeeded(): void {
-        const $btnConnect = this.$container.querySelector<HTMLElement>('.bx-remote-play-device-wrapper button');
+        const $btnConnect = this.$container.querySelector<HTMLElement>('.bx-remote-play-device-wrapper button:last-of-type');
         $btnConnect && $btnConnect.focus();
     }
 }

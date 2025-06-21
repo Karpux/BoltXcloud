@@ -152,7 +152,10 @@ export class BxEventBus<TEvents extends Record<string, any>> {
             try {
                 if (event in this.appJsInterfaces) {
                     const method = this.appJsInterfaces[event];
-                        AppInterface[method] && AppInterface[method]();
+                    if (method && method in AppInterface) {
+                        // @ts-ignore
+                        AppInterface[method]();
+                    }
                 } else {
                     AppInterface.onEventBus(this.group + '.' + (event as string));
                 }

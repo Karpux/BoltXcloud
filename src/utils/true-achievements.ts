@@ -153,7 +153,7 @@ export class TrueAchievements {
             xboxTitleId = this.getStreamXboxTitleId();
         }
 
-        if (AppInterface && AppInterface.openTrueAchievementsLink) {
+        if (AppInterface?.openTrueAchievementsLink) {
             AppInterface.openTrueAchievementsLink(override, xboxTitleId?.toString(), id?.toString());
             return;
         }

@@ -11,7 +11,27 @@ export {};
 
 declare global {
     interface Window {
-        AppInterface: any;
+        AppInterface: {
+            startPointerServer(),
+            requestPointerCapture(),
+            releasePointerCapture(),
+
+            runShortcut?(action: string),
+            saveScreenshot(name: string | undefined, data: string),
+            vibrate(dataJson: string, intensity: number),
+            openTrueAchievementsLink(override: boolean, xboxTitleId?: string | undefined, id?: string | undefined),
+
+            openAppSettings?(),
+            updateLatestScript(),
+            closeApp(),
+
+            createShortcut(path: string),
+            createConsoleShortcut(serverId: string, deviceName: string, optionsJson: string),
+            downloadWallpapers(titleSlug: string | undefined, productId: string | undefined),
+
+            onEvent(event: String),
+            onEventBus(event: String),
+        };
         BX_FLAGS?: BxFlags;
         BX_CE: (elmName: string, props: { [index: string]: any }={}) => HTMLElement;
         BX_EXPOSED: typeof BxExposed & Partial<{

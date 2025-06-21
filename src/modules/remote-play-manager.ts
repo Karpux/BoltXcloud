@@ -209,15 +209,6 @@ export class RemotePlayManager {
             return;
         }
 
-        /*
-        // Show native dialog in Android app
-        if (AppInterface && AppInterface.showRemotePlayDialog) {
-            AppInterface.showRemotePlayDialog(JSON.stringify(this.consoles));
-            (document.activeElement as HTMLElement).blur();
-            return;
-        }
-        */
-
         RemotePlayDialog.getInstance().show();
     }
 
