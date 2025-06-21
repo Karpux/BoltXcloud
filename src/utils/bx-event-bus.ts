@@ -9,7 +9,7 @@ type EventCallback<T = any> = (payload: T) => void;
 
 export type ScriptEvents = {
     'xcloud.server': {
-        status: 'ready' | 'unavailable' | 'signed-out',
+        status: 'ready' | 'unavailable' | 'signed-out' | 'error',
     };
 
     'dialog.shown': {};

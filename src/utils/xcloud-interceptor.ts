@@ -49,7 +49,13 @@ export class XcloudInterceptor {
             ip && (request as Request).headers.set('X-Forwarded-For', ip);
         }
 
-        const response = await NATIVE_FETCH(request, init);
+        let response;
+        try {
+            response = await NATIVE_FETCH(request, init);
+        } catch (e) {
+            BxEventBus.Script.emit('xcloud.server', { status: 'error' });
+            return;
+        }
         if (response.status !== 200) {
             // Unsupported region
             BxEventBus.Script.emit('xcloud.server', { status: 'unavailable' });

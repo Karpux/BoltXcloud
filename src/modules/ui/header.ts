@@ -12,6 +12,7 @@ import { getGlobalPref } from "@/utils/pref-utils";
 import { BxLogger } from "@/utils/bx-logger";
 import { BxEventBus } from "@/utils/bx-event-bus";
 import { BlockFeature } from "@/enums/pref-values";
+import { Toast } from "@/utils/toast";
 
 export class HeaderSection {
     private static instance: HeaderSection;
@@ -60,6 +61,8 @@ export class HeaderSection {
                 if (!SCRIPT_VERSION.includes('beta') && PREF_LATEST_VERSION && PREF_LATEST_VERSION !== SCRIPT_VERSION) {
                     $btnSettings.setAttribute('data-update-available', 'true');
                 }
+            } else if (status === 'error') {
+                Toast.show(t('server-list-error'), '❌', { instant: true });
             } else if (status === 'unavailable') {
                 STATES.supportedRegion = false;
 

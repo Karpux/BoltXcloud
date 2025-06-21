@@ -8565,7 +8565,8 @@ class HeaderSection {
     STATES.isSignedIn = !0, $btnSettings.querySelector("span").textContent = getPreferredServerRegion(!0) || t("better-xcloud");
     let PREF_LATEST_VERSION = getGlobalPref("version.latest");
     if (!SCRIPT_VERSION.includes("beta") && PREF_LATEST_VERSION && PREF_LATEST_VERSION !== SCRIPT_VERSION) $btnSettings.setAttribute("data-update-available", "true");
-   } else if (status === "unavailable") {
+   } else if (status === "error") Toast.show(t("server-list-error"), "❌", { instant: !0 });
+   else if (status === "unavailable") {
     if (STATES.supportedRegion = !1, document.querySelector("div[class^=UnsupportedMarketPage-module__container]")) SettingsDialog.getInstance().show();
    }
    $btnSettings.classList.remove("bx-gone");
@@ -9063,7 +9064,13 @@ class XcloudInterceptor {
    let ip = BypassServerIps[bypassServer];
    ip && request.headers.set("X-Forwarded-For", ip);
   }
-  let response = await NATIVE_FETCH(request, init);
+  let response;
+  try {
+   response = await NATIVE_FETCH(request, init);
+  } catch (e) {
+   BxEventBus.Script.emit("xcloud.server", { status: "error" });
+   return;
+  }
   if (response.status !== 200) return BxEventBus.Script.emit("xcloud.server", { status: "unavailable" }), response;
   let obj = await response.clone().json();
   RemotePlayManager.getInstance()?.setXcloudToken(obj.gsToken);
