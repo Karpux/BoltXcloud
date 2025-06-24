@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.7.0
+// @version      6.7.1-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -194,7 +194,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.7.0", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.7.1-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -5192,8 +5192,8 @@ class PatcherUtils {
 }
 var LOG_TAG2 = "Patcher", PATCHES = {
  disableAiTrack(str) {
-  let text = ".track=function(", index = str.indexOf(text);
-  if (index < 0 || PatcherUtils.indexOf(str, '"AppInsightsCore', index, 200) < 0) return !1;
+  let text = ".track=function(", index = str.indexOf('"AppInsightsCore.initialize"');
+  if (index > -1 && (index = PatcherUtils.indexOf(str, '"AppInsightsCore.track"', index)), index > -1 && (index = PatcherUtils.lastIndexOf(str, text, index, 300)), index < 0) return !1;
   return PatcherUtils.replaceWith(str, index, text, ".track=function(e){},!!function(");
  },
  disableTelemetryProvider(str) {

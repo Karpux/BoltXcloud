@@ -30,8 +30,10 @@ const PATCHES = {
     // Disable ApplicationInsights.track() function
     disableAiTrack(str: string) {
         let text = '.track=function(';
-        const index = str.indexOf(text);
-        if (index < 0 || PatcherUtils.indexOf(str, '"AppInsightsCore', index, 200) < 0) {
+        let index = str.indexOf('"AppInsightsCore.initialize"');
+        (index > -1) && (index = PatcherUtils.indexOf(str, '"AppInsightsCore.track"', index));
+        (index > -1) && (index = PatcherUtils.lastIndexOf(str, text, index, 300));
+        if (index < 0) {
             return false;
         }
 
