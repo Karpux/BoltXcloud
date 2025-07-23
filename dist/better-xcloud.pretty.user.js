@@ -2103,7 +2103,7 @@ class BaseCanvasPlayer extends BaseStreamPlayer {
   if ("requestVideoFrameCallback" in HTMLVideoElement.prototype) {
    let $video2 = this.$video;
    frameCallback = $video2.requestVideoFrameCallback.bind($video2);
-  } else frameCallback = requestAnimationFrame;
+  } else frameCallback = window.requestAnimationFrame.bind(window);
   this.frameCallback = frameCallback, this.boundDrawFrame = this.drawFrame.bind(this);
  }
  async init() {
@@ -9050,6 +9050,7 @@ class XcloudInterceptor {
   WestUS2: ["🇺🇸", "america-north"],
   MexicoCentral: ["🇲🇽", "america-north"],
   BrazilSouth: ["🇧🇷", "america-south"],
+  ChileCentral: ["🇨🇱", "america-south"],
   JapanEast: ["🇯🇵", "asia"],
   KoreaCentral: ["🇰🇷", "asia"],
   AustraliaEast: ["🇦🇺", "australia"],

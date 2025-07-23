@@ -27,6 +27,7 @@ export class XcloudInterceptor {
 
         // South America
         BrazilSouth: ['🇧🇷', 'america-south'],
+        ChileCentral: ['🇨🇱', 'america-south'],
 
         // Asia
         JapanEast: ['🇯🇵', 'asia'],
