@@ -40,7 +40,7 @@ export class XcloudInterceptor {
         // Europe
         SwedenCentral: ['🇸🇪', 'europe'],
         UKSouth: ['🇬🇧', 'europe'],
-        WestEurope: ['🇪🇺', 'europe'],
+        WestEurope: ['🇳🇱', 'europe'],
     };
 
     private static async handleLogin(request: RequestInfo | URL, init?: RequestInit) {
