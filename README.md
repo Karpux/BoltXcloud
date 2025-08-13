@@ -11,6 +11,11 @@
 
 ### Improve Xbox Cloud Gaming (xCloud) experience on [xbox.com/play](https://www.xbox.com/play). It also allows you to use Remote Play on the xCloud website.  
 
+> [!WARNING]
+> I only provide Better xCloud on the official repos. Don't download it from anywhere else  
+> Fake websites:
+>   - betterxcloud.net
+
 > [!IMPORTANT]  
 > I only accept pull requests for:
 > - Custom touch controls
