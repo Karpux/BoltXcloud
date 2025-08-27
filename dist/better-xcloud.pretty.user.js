@@ -5493,9 +5493,10 @@ true` + text;
   return str = str.replace(text, 'if (!e) e = "https://www.xbox.com";'), str;
  },
  exposeDialogRoutes(str) {
-  let text = "return{goBack:function(){";
-  if (!str.includes(text)) return !1;
-  return str = str.replace(text, "return window.BX_EXPOSED.dialogRoutes = {goBack:function(){"), str;
+  let index = str.indexOf("return{goBack:function(){"), firstIndex = index;
+  if (index >= 0 && (index = PatcherUtils.indexOf(str, "getIsAnyDialogOpen", index, 2000)), index >= 0 && (index = PatcherUtils.indexOf(str, "return ", index, 300)), index < 0) return !1;
+  let endBracketIndex = PatcherUtils.indexOf(str, "}", index, 50), oldCode = str.substring(index, endBracketIndex), newCode = str.substring(index, endBracketIndex).replace("return", "const result=") + ";";
+  return newCode += 'window.BxEventBus.Script.emit(result ? "dialog.shown" : "dialog.dismissed", {});', newCode += "return result;", str = PatcherUtils.replaceWith(str, index, oldCode, newCode), str = PatcherUtils.insertAt(str, firstIndex + 6, " window.BX_EXPOSED.dialogRoutes = "), str;
  },
  enableTvRoutes(str) {
   let index = str.indexOf(".LoginDeviceCode.path,");

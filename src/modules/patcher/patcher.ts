@@ -664,13 +664,37 @@ true` + text;
         return str;
     },
 
+    /**
+     * Expose dialogRoutes, patch getIsAnyDialogOpen()
+     * to make it dispatch "dialog.shown" and "dialog.dismissed" events
+     */
     exposeDialogRoutes(str: string) {
-        let text = 'return{goBack:function(){';
-        if (!str.includes(text)) {
+        /*
+        getIsAnyDialogOpen: function() {
+            const t = l();
+            return e.length > 1 || t.index > 0
+        },
+        */
+        let index = str.indexOf('return{goBack:function(){');
+        const firstIndex = index;
+
+        (index >= 0) && (index = PatcherUtils.indexOf(str, 'getIsAnyDialogOpen', index, 2000));
+        // Find "return" statement
+        (index >= 0) && (index = PatcherUtils.indexOf(str, 'return ', index, 300));
+        if (index < 0) {
             return false;
         }
 
-        str = str.replace(text, 'return window.BX_EXPOSED.dialogRoutes = {goBack:function(){');
+        // Check return value and dispatch events
+        const endBracketIndex = PatcherUtils.indexOf(str, '}', index, 50);
+        const oldCode = str.substring(index, endBracketIndex);
+        let newCode = str.substring(index, endBracketIndex).replace('return', 'const result=') + ';';
+        newCode += 'window.BxEventBus.Script.emit(result ? "dialog.shown" : "dialog.dismissed", {});'
+        newCode += 'return result;'
+        str = PatcherUtils.replaceWith(str, index, oldCode, newCode);
+
+        // Expose dialogRoutes
+        str = PatcherUtils.insertAt(str, firstIndex + 6, ' window.BX_EXPOSED.dialogRoutes = ');
         return str;
     },
 
