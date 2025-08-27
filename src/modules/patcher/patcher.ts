@@ -773,13 +773,13 @@ true` + text;
 
     // home-page.js
     ignoreSiglSections(str: string) {
-        let index = str.indexOf('SiglRow-module__heroCard___');
-        index >= 0 && (index = PatcherUtils.lastIndexOf(str, 'const[', index, 300));
+        let index = str.indexOf('SiglRow requires either id');
+        index >= 0 && (index = PatcherUtils.lastIndexOf(str, '})=>{', index, 300, true));
         if (index < 0) {
             return false;
         }
 
-        const params = PatcherUtils.findAndParseParams(str, index - 500, 500);
+        const params = PatcherUtils.findAndParseParams(str, PatcherUtils.lastIndexOf(str, 'const', index, 1000), 1000);
         if (!params || !params.id) {
             return false;
         }

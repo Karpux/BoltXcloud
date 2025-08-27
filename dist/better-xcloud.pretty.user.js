@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.7.2-beta
+// @version      6.7.3-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -194,7 +194,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.7.2-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.7.3-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -5534,9 +5534,9 @@ true` + text;
   return str = PatcherUtils.insertAt(str, index, "return null;"), str;
  },
  ignoreSiglSections(str) {
-  let index = str.indexOf("SiglRow-module__heroCard___");
-  if (index >= 0 && (index = PatcherUtils.lastIndexOf(str, "const[", index, 300)), index < 0) return !1;
-  let params = PatcherUtils.findAndParseParams(str, index - 500, 500);
+  let index = str.indexOf("SiglRow requires either id");
+  if (index >= 0 && (index = PatcherUtils.lastIndexOf(str, "})=>{", index, 300, !0)), index < 0) return !1;
+  let params = PatcherUtils.findAndParseParams(str, PatcherUtils.lastIndexOf(str, "const", index, 1000), 1000);
   if (!params || !params.id) return !1;
   let PREF_HIDE_SECTIONS = getGlobalPref("ui.hideSections"), siglIds = [], sections = {
    "native-mkb": "8fa264dd-124f-4af3-97e8-596fcdf4b486",
