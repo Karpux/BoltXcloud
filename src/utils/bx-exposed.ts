@@ -43,6 +43,7 @@ export const BxExposed = {
             for (const exp in FeatureGates) {
                 state.experiments.overrideFeatureGates[exp.toLocaleLowerCase()] = FeatureGates[exp];
             }
+            BxLogger.info('state.experiments', state.experiments);
         } catch (e) {
             BxLogger.error(LOG_TAG, e);
         }
@@ -55,7 +56,7 @@ export const BxExposed = {
                 let customList = TouchController.getCustomList();
 
                 // Remove non-cloud games from the official list
-                const siglId = GamePassCloudGallery.ALL_WITH_BYGO;
+                const siglId = GamePassCloudGallery.ALL_WITH_BYOG;
                 if (siglId in sigls) {
                     const allGames = sigls[siglId].data.products;
                     customList = customList.filter(id => allGames.includes(id));
