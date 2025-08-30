@@ -25,8 +25,8 @@ export function addCss() {
     }
 
     // Hide BYOG section
-    if (getGlobalPref(GlobalPref.BLOCK_FEATURES).includes(BlockFeature.BYOG) || getGlobalPref(GlobalPref.UI_HIDE_SECTIONS).includes(UiSection.BOYG)) {
-        selectorToHide.push('#BodyContent > div[class*=ByogRow-module__container___]');
+    if (getGlobalPref(GlobalPref.UI_HIDE_SECTIONS).includes(UiSection.BOYG)) {
+        selectorToHide.push('#BodyContent > div[class*=ShowcaseRow-module__container___]');
     }
 
     // Hide "All games" section

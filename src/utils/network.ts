@@ -208,6 +208,7 @@ export function interceptHttpRequests() {
         '2c06dea3f26c40c69b8456d319791fd0@o427368.ingest.sentry.io',
     ];
 
+    // @ts-expect-error
     window.BX_FETCH = window.fetch = async (request: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
         let url = (typeof request === 'string') ? request : (request as Request).url;
 
@@ -259,7 +260,7 @@ export function interceptHttpRequests() {
             const response = await NATIVE_FETCH(request, init);
             const obj = await response.clone().json();
 
-            if (url.includes(GamePassCloudGallery.ALL) || url.includes(GamePassCloudGallery.ALL_WITH_BYGO)) {
+            if (url.includes(GamePassCloudGallery.ALL) || url.includes(GamePassCloudGallery.ALL_WITH_BYOG)) {
                 for (let i = 1; i < obj.length; i++) {
                     gamepassAllGames.push(obj[i].id);
                 }

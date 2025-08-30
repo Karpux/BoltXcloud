@@ -138,7 +138,6 @@ export const enum StreamVideoProcessingMode {
 export const enum BlockFeature {
     CHAT = 'chat',
     FRIENDS = 'friends',
-    BYOG = 'byog',
     NOTIFICATIONS_INVITES = 'notifications-invites',
     NOTIFICATIONS_ACHIEVEMENTS = 'notifications-achievements',
     REMOTE_PLAY = 'remote-play',

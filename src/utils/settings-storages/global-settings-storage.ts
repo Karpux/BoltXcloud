@@ -493,7 +493,6 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
             multipleOptions: {
                 [BlockFeature.CHAT]: t('chat'),
                 [BlockFeature.FRIENDS]: t('friends-followers'),
-                [BlockFeature.BYOG]: t('stream-your-own-game'),
                 [BlockFeature.NOTIFICATIONS_INVITES]: t('notifications') + ': ' + t('invites'),
                 [BlockFeature.NOTIFICATIONS_ACHIEVEMENTS]: t('notifications') + ': ' + t('achievements'),
                 [BlockFeature.REMOTE_PLAY]: t('remote-play'),

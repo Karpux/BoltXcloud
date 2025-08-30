@@ -30,12 +30,6 @@ if (blockFeatures.includes(BlockFeature.FRIENDS)) {
     FeatureGates.EnableFriendsAndFollowers = false;
 }
 
-// Disable BYOG feature
-if (blockFeatures.includes(BlockFeature.BYOG)) {
-    FeatureGates.EnableBYOG = false;
-    FeatureGates.EnableBYOGPurchase = false;
-}
-
 if (BX_FLAGS.FeatureGates) {
     FeatureGates = Object.assign(BX_FLAGS.FeatureGates, FeatureGates);
 }

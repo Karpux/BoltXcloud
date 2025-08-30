@@ -768,14 +768,13 @@ true` + text;
     },
 
     ignoreByogSection(str: string) {
-        let index = str.indexOf('"ByogRow-module__container');
-        index > -1 && (index = PatcherUtils.lastIndexOf(str, 'return', index, 100));
-
+        let index = str.indexOf('"ShowcaseRow-module__container');
+        index > -1 && (index = PatcherUtils.lastIndexOf(str, ')=>(', index, 200));
         if (index < 0) {
             return false;
         }
 
-        str = PatcherUtils.insertAt(str, index, 'return null;');
+        str = PatcherUtils.insertAt(str, index + 3, 'null && ');
         return str;
     },
 
@@ -1357,7 +1356,7 @@ let PATCH_ORDERS = PatcherUtils.filterPatches([
 const hideSections = getGlobalPref(GlobalPref.UI_HIDE_SECTIONS);
 let HOME_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
     hideSections.includes(UiSection.GENRES) && 'ignoreGenresSection',
-    !getGlobalPref(GlobalPref.BLOCK_FEATURES).includes(BlockFeature.BYOG) && hideSections.includes(UiSection.BOYG) && 'ignoreByogSection',
+    hideSections.includes(UiSection.BOYG) && 'ignoreByogSection',
 
     STATES.browser.capabilities.touch && hideSections.includes(UiSection.TOUCH) && 'ignorePlayWithTouchSection',
 
