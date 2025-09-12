@@ -9014,8 +9014,8 @@ class StreamBadges {
     let match = /profile-level-id=([0-9a-f]{6})/.exec(videoStat.sdpFmtpLine);
     match && (video.profile = match[1]);
    }
-   let text = videoHeight + "p";
-   if (text && (text += "/"), text += video.codec, video.profile) {
+   let text = `${videoWidth}x${videoHeight}/${video.codec}`;
+   if (video.profile) {
     let profile = video.profile, quality = profile;
     if (profile.startsWith("4d")) quality = t("visual-quality-high");
     else if (profile.startsWith("42e")) quality = t("visual-quality-normal");

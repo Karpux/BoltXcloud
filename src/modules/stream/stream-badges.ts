@@ -299,9 +299,7 @@ export class StreamBadges {
                 match && (video.profile = match[1]);
             }
 
-            let text = videoHeight + 'p';
-            text && (text += '/');
-            text += video.codec;
+            let text = `${videoWidth}x${videoHeight}/${video.codec}`;
             if (video.profile) {
                 const profile = video.profile;
 
