@@ -317,6 +317,7 @@ export class StreamSettingsStorage extends BaseSettingsStorage<StreamPref> {
                 [StreamStat.BATTERY]: t('battery'),
                 [StreamStat.PING]: t('stat-ping'),
                 [StreamStat.JITTER]: t('jitter'),
+                [StreamStat.RESOLUTION]: t('resolution'),
                 [StreamStat.FPS]: t('stat-fps'),
                 [StreamStat.BITRATE]: t('stat-bitrate'),
                 [StreamStat.DECODE_TIME]: t('stat-decode-time'),

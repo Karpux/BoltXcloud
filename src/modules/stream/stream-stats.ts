@@ -39,6 +39,10 @@ export class StreamStats {
             name: t('jitter'),
             $element: CE('span'),
         },
+        [StreamStat.RESOLUTION]: {
+            name: t('resolution'),
+            $element: CE('span'),
+        },
         [StreamStat.FPS]: {
             name: t('stat-fps'),
             $element: CE('span'),

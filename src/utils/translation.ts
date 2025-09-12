@@ -298,6 +298,7 @@ const Texts = {
     "renderer": "Renderer",
     "renderer-configuration": "Renderer configuration",
     "reset-highlighted-setting": "Reset highlighted setting",
+    "resolution": "Resolution",
     "right-click-to-unbind": "Right-click on a key to unbind it",
     "right-stick": "Right stick",
     "right-stick-deadzone": "Right stick deadzone",

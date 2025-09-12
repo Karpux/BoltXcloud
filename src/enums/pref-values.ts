@@ -75,6 +75,7 @@ export const enum NativeMkbMode {
 export const enum StreamStat {
     PING = 'ping',
     JITTER = 'jit',
+    RESOLUTION = 'res',
     FPS = 'fps',
     BITRATE = 'btr',
     DECODE_TIME = 'dt',

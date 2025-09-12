@@ -20,6 +20,11 @@ type CurrentStats = {
         toString: () => string;
     };
 
+    [StreamStat.RESOLUTION]: {
+        current: string;
+        toString: () => string;
+    };
+
     [StreamStat.FPS]: {
         current: number;
         toString: () => string;
@@ -104,6 +109,13 @@ export class StreamStatsCollector {
             grades: [30, 40, 60],
             toString() {
                 return `${this.current.toFixed(1)}ms`.padStart(6);
+            },
+        },
+
+        [StreamStat.RESOLUTION]: {
+            current: '',
+            toString() {
+                return this.current;
             },
         },
 
@@ -230,6 +242,10 @@ export class StreamStatsCollector {
 
         stats.forEach(stat => {
             if (stat.type === 'inbound-rtp' && stat.kind === 'video') {
+                // Resolution
+                const resolution = this.currentStats[StreamStat.RESOLUTION];
+                resolution.current = stat.frameWidth + 'x' + stat.frameHeight;
+
                 // FPS
                 const fps = this.currentStats[StreamStat.FPS];
                 fps.current = stat.framesPerSecond || 0;
