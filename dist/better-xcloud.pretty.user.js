@@ -8897,6 +8897,7 @@ class StreamBadges {
  static getInstance = () => StreamBadges.instance ?? (StreamBadges.instance = new StreamBadges);
  LOG_TAG = "StreamBadges";
  serverInfo = {};
+ videoCodec = "";
  badges = {
   playtime: {
    name: t("playtime"),
@@ -8958,7 +8959,8 @@ class StreamBadges {
   }
   let statsCollector = StreamStatsCollector.getInstance();
   await statsCollector.collect();
-  let play = statsCollector.getStat("play"), batt = statsCollector.getStat("batt"), dl = statsCollector.getStat("dl"), ul = statsCollector.getStat("ul"), badges = {
+  let play = statsCollector.getStat("play"), batt = statsCollector.getStat("batt"), dl = statsCollector.getStat("dl"), ul = statsCollector.getStat("ul"), res = statsCollector.getStat("res"), badges = {
+   video: res.toString() + (this.videoCodec ? "/" + this.videoCodec : ""),
    download: dl.toString(),
    upload: ul.toString(),
    playtime: play.toString(),
@@ -9006,37 +9008,34 @@ class StreamBadges {
   return this.$container = $container, await this.start(), $container;
  }
  async getServerStats() {
-  let stats = await STATES.currentStream.peerConnection.getStats(), allVideoCodecs = {}, videoCodecId, videoWidth = 0, videoHeight = 0, allAudioCodecs = {}, audioCodecId, allCandidatePairs = {}, allRemoteCandidates = {}, candidatePairId;
+  let stats = await STATES.currentStream.peerConnection.getStats(), allVideoCodecs = {}, videoCodecId, allAudioCodecs = {}, audioCodecId, allCandidatePairs = {}, allRemoteCandidates = {}, candidatePairId;
   if (stats.forEach((stat) => {
    if (stat.type === "codec") {
     let mimeType = stat.mimeType.split("/")[0];
     if (mimeType === "video") allVideoCodecs[stat.id] = stat;
     else if (mimeType === "audio") allAudioCodecs[stat.id] = stat;
    } else if (stat.type === "inbound-rtp" && stat.packetsReceived > 0) {
-    if (stat.kind === "video") videoCodecId = stat.codecId, videoWidth = stat.frameWidth, videoHeight = stat.frameHeight;
+    if (stat.kind === "video") videoCodecId = stat.codecId;
     else if (stat.kind === "audio") audioCodecId = stat.codecId;
    } else if (stat.type === "transport" && stat.selectedCandidatePairId) candidatePairId = stat.selectedCandidatePairId;
    else if (stat.type === "candidate-pair") allCandidatePairs[stat.id] = stat.remoteCandidateId;
    else if (stat.type === "remote-candidate") allRemoteCandidates[stat.id] = stat.address;
   }), videoCodecId) {
    let videoStat = allVideoCodecs[videoCodecId], video = {
-    width: videoWidth,
-    height: videoHeight,
     codec: videoStat.mimeType.substring(6)
    };
    if (video.codec === "H264") {
     let match = /profile-level-id=([0-9a-f]{6})/.exec(videoStat.sdpFmtpLine);
     match && (video.profile = match[1]);
    }
-   let text = `${videoWidth}x${videoHeight}/${video.codec}`;
-   if (video.profile) {
+   if (this.videoCodec = video.codec, video.profile) {
     let profile = video.profile, quality = profile;
     if (profile.startsWith("4d")) quality = t("visual-quality-high");
     else if (profile.startsWith("42e")) quality = t("visual-quality-normal");
     else if (profile.startsWith("420")) quality = t("visual-quality-low");
-    text += ` (${quality})`;
+    this.videoCodec += ` (${quality})`;
    }
-   this.badges.video.$element = this.renderBadge("video", text), this.serverInfo.video = video;
+   this.badges.video.$element = this.renderBadge("video", this.videoCodec), this.serverInfo.video = video;
   }
   if (audioCodecId) {
    let audioStat = allAudioCodecs[audioCodecId], audio = {

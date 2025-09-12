@@ -24,8 +24,6 @@ type StreamServerInfo = {
     },
 
     video?: {
-        width: number,
-        height: number,
         codec: string,
         profile?: string,
     },
@@ -54,6 +52,7 @@ export class StreamBadges {
     private readonly LOG_TAG = 'StreamBadges';
 
     private serverInfo: StreamServerInfo = {};
+    private videoCodec = '';
 
     private badges: Record<StreamBadge, StreamBadgeInfo> = {
         [StreamBadge.PLAYTIME]: {
@@ -144,8 +143,10 @@ export class StreamBadges {
         const batt = statsCollector.getStat(StreamStat.BATTERY);
         const dl = statsCollector.getStat(StreamStat.DOWNLOAD);
         const ul = statsCollector.getStat(StreamStat.UPLOAD);
+        const res = statsCollector.getStat(StreamStat.RESOLUTION);
 
         const badges = {
+            [StreamBadge.VIDEO]: res.toString() + (this.videoCodec ? '/' + this.videoCodec : ''),
             [StreamBadge.DOWNLOAD]: dl.toString(),
             [StreamBadge.UPLOAD]: ul.toString(),
             [StreamBadge.PLAYTIME]: play.toString(),
@@ -247,8 +248,6 @@ export class StreamBadges {
 
         const allVideoCodecs: Record<string, RTCBasicStat> = {};
         let videoCodecId;
-        let videoWidth = 0;
-        let videoHeight = 0;
 
         const allAudioCodecs: Record<string, RTCBasicStat> = {};
         let audioCodecId;
@@ -271,8 +270,6 @@ export class StreamBadges {
                 // Get the codecId of the video/audio track currently being used
                 if (stat.kind === 'video') {
                     videoCodecId = stat.codecId;
-                    videoWidth = stat.frameWidth;
-                    videoHeight = stat.frameHeight;
                 } else if (stat.kind === 'audio') {
                     audioCodecId = stat.codecId;
                 }
@@ -289,8 +286,6 @@ export class StreamBadges {
         if (videoCodecId) {
             const videoStat = allVideoCodecs[videoCodecId];
             const video: StreamServerInfo['video'] = {
-                width: videoWidth,
-                height: videoHeight,
                 codec: videoStat.mimeType.substring(6),
             };
 
@@ -299,7 +294,7 @@ export class StreamBadges {
                 match && (video.profile = match[1]);
             }
 
-            let text = `${videoWidth}x${videoHeight}/${video.codec}`;
+            this.videoCodec = video.codec;
             if (video.profile) {
                 const profile = video.profile;
 
@@ -312,11 +307,11 @@ export class StreamBadges {
                     quality = t('visual-quality-low');
                 }
 
-                text += ` (${quality})`;
+                this.videoCodec += ` (${quality})`;
             }
 
             // Render badge
-            this.badges.video.$element = this.renderBadge(StreamBadge.VIDEO, text);
+            this.badges.video.$element = this.renderBadge(StreamBadge.VIDEO, this.videoCodec);
 
             this.serverInfo.video = video;
         }
