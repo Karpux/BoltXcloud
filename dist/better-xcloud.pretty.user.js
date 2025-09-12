@@ -127,7 +127,7 @@ var ALL_PREFS = {
   "video.processing.sharpness"
  ]
 };
-var SMART_TV_UNIQUE_ID = "FC4A1DA2-711C-4E9C-BC7F-047AF8A672EA", CHROMIUM_VERSION = "125.0.0.0";
+var SMART_TV_UNIQUE_ID = "FC4A1DA2-711C-4E9C-BC7F-047AF8A672EA", CHROMIUM_VERSION = "140.0.3485.54";
 if (!!window.chrome || window.navigator.userAgent.includes("Chrome")) {
  let match = window.navigator.userAgent.match(/\s(?:Chrome|Edg)\/([\d\.]+)/);
  if (match) CHROMIUM_VERSION = match[1];
@@ -9309,9 +9309,9 @@ function generateMsDeviceInfo(osName) {
   dev: {
    os: { name: osName, ver: "22631.2715", platform: "desktop" },
    hw: { make: "Microsoft", model: "unknown", sdktype: "web" },
-   browser: { browserName: "chrome", browserVersion: "130.0" },
+   browser: { browserName: "chrome", browserVersion: "140.0.3485.54" },
    displayInfo: {
-    dimensions: { widthInPixels: 1920, heightInPixels: 1080 },
+    dimensions: { widthInPixels: 4096, heightInPixels: 2160 },
     pixelDensity: { dpiX: 1, dpiY: 1 }
    }
   }

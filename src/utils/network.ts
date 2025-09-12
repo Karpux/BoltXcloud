@@ -328,9 +328,9 @@ export function generateMsDeviceInfo(osName: OsName) {
         dev: {
             os: { name: osName, ver: '22631.2715', platform: 'desktop' },
             hw: { make: 'Microsoft', model: 'unknown', sdktype: 'web' },
-            browser: { browserName: 'chrome', browserVersion: '130.0' },
+            browser: { browserName: 'chrome', browserVersion: '140.0.3485.54' },
             displayInfo: {
-                dimensions: { widthInPixels: 1920, heightInPixels: 1080 },
+                dimensions: { widthInPixels: 4096, heightInPixels: 2160 },
                 pixelDensity: { dpiX: 1, dpiY: 1 },
             },
         },

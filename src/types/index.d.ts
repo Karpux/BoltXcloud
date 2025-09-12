@@ -135,7 +135,7 @@ type XboxAchievement = {
     }
 };
 
-type OsName = 'windows' | 'tizen' | 'webOS' | 'xboxOS' | 'android';
+type OsName = 'windows' | 'tizen' | 'webOS' | 'xboxOS' | 'android' | 'kepler';
 
 type XcloudGamepad = {
     GamepadIndex: number;
