@@ -5625,9 +5625,6 @@ if (this.baseStorageKey in window.BX_EXPOSED.overrideSettings) {
  homePageBeforeLoad(str) {
   return PatcherUtils.patchBeforePageLoad(str, "home");
  },
- productDetailPageBeforeLoad(str) {
-  return PatcherUtils.patchBeforePageLoad(str, "product-detail");
- },
  streamPageBeforeLoad(str) {
   return PatcherUtils.patchBeforePageLoad(str, "stream");
  },
@@ -5786,9 +5783,9 @@ try {
  "homePageBeforeLoad",
  "patchCustomInputIcon",
  "gameCardCustomIcons",
- "productDetailPageBeforeLoad",
  "enableTvRoutes",
  "overrideStorageGetSettings",
+ "detectProductDetailPage",
  getGlobalPref("ui.layout") !== "default" && "websiteLayout",
  getGlobalPref("game.fortnite.forceConsole") && "forceFortniteConsole",
  ...STATES.userAgent.capabilities.touch ? [
@@ -5850,15 +5847,12 @@ try {
   "patchMouseAndKeyboardEnabled",
   "disableNativeRequestPointerLock"
  ] : []
-]), PRODUCT_DETAIL_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
- "detectProductDetailPage"
-]), ALL_PATCHES = [...PATCH_ORDERS, ...HOME_PAGE_PATCH_ORDERS, ...STREAM_PAGE_PATCH_ORDERS, ...PRODUCT_DETAIL_PAGE_PATCH_ORDERS];
+]), ALL_PATCHES = [...PATCH_ORDERS, ...HOME_PAGE_PATCH_ORDERS, ...STREAM_PAGE_PATCH_ORDERS];
 class Patcher {
  static remainingPatches = {
   home: HOME_PAGE_PATCH_ORDERS,
   stream: STREAM_PAGE_PATCH_ORDERS,
-  "remote-play-stream": STREAM_PAGE_PATCH_ORDERS,
-  "product-detail": PRODUCT_DETAIL_PAGE_PATCH_ORDERS
+  "remote-play-stream": STREAM_PAGE_PATCH_ORDERS
  };
  static patchPage(page) {
   let remaining = Patcher.remainingPatches[page];
@@ -5925,9 +5919,8 @@ class PatcherCache {
   let pathName = window.location.pathname;
   if (pathName.includes("/play/consoles/launch/")) Patcher.patchPage("remote-play-stream");
   else if (pathName.includes("/play/launch/")) Patcher.patchPage("stream");
-  else if (pathName.includes("/play/games/")) Patcher.patchPage("product-detail");
   else if (pathName.endsWith("/play") || pathName.endsWith("/play/")) Patcher.patchPage("home");
-  PATCH_ORDERS = this.cleanupPatches(PATCH_ORDERS), STREAM_PAGE_PATCH_ORDERS = this.cleanupPatches(STREAM_PAGE_PATCH_ORDERS), PRODUCT_DETAIL_PAGE_PATCH_ORDERS = this.cleanupPatches(PRODUCT_DETAIL_PAGE_PATCH_ORDERS), BxLogger.info(LOG_TAG2, "PATCH_ORDERS", PATCH_ORDERS.slice(0));
+  PATCH_ORDERS = this.cleanupPatches(PATCH_ORDERS), STREAM_PAGE_PATCH_ORDERS = this.cleanupPatches(STREAM_PAGE_PATCH_ORDERS), BxLogger.info(LOG_TAG2, "PATCH_ORDERS", PATCH_ORDERS.slice(0));
  }
  getSignature() {
   let scriptVersion = SCRIPT_VERSION, patches = JSON.stringify(ALL_PATCHES), clientHash = "", $link = document.querySelector('link[data-chunk="client"][as="script"][href*="/client."]');

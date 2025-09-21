@@ -21,7 +21,7 @@ import { PatcherUtils } from "./patcher-utils.js";
 
 export type PatchName = keyof typeof PATCHES;
 export type PatchArray = PatchName[];
-export type PatchPage = 'home' | 'stream' | 'remote-play-stream' | 'product-detail';
+export type PatchPage = 'home' | 'stream' | 'remote-play-stream';
 type PatchFunction = (str: string) => string | false;
 
 const LOG_TAG = 'Patcher';
@@ -959,10 +959,6 @@ if (this.baseStorageKey in window.BX_EXPOSED.overrideSettings) {
         return PatcherUtils.patchBeforePageLoad(str, 'home');
     },
 
-    productDetailPageBeforeLoad(str: string) {
-        return PatcherUtils.patchBeforePageLoad(str, 'product-detail');
-    },
-
     streamPageBeforeLoad(str: string) {
         return PatcherUtils.patchBeforePageLoad(str, 'stream');
     },
@@ -1345,11 +1341,11 @@ let PATCH_ORDERS = PatcherUtils.filterPatches([
     'gameCardCustomIcons',
     // 'gameCardPassTitle',
 
-    'productDetailPageBeforeLoad',
-
     'enableTvRoutes',
 
     'overrideStorageGetSettings',
+
+    'detectProductDetailPage',
 
     getGlobalPref(GlobalPref.UI_LAYOUT) !== UiLayout.DEFAULT && 'websiteLayout',
     getGlobalPref(GlobalPref.GAME_FORTNITE_FORCE_CONSOLE) && 'forceFortniteConsole',
@@ -1449,18 +1445,13 @@ let STREAM_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
     ] : []) as PatchArray,
 ]);
 
-let PRODUCT_DETAIL_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
-    'detectProductDetailPage',
-]);
-
-const ALL_PATCHES = [...PATCH_ORDERS, ...HOME_PAGE_PATCH_ORDERS, ...STREAM_PAGE_PATCH_ORDERS, ...PRODUCT_DETAIL_PAGE_PATCH_ORDERS];
+const ALL_PATCHES = [...PATCH_ORDERS, ...HOME_PAGE_PATCH_ORDERS, ...STREAM_PAGE_PATCH_ORDERS];
 
 export class Patcher {
     private static remainingPatches: { [key in PatchPage]: PatchArray } = {
         home: HOME_PAGE_PATCH_ORDERS,
         stream: STREAM_PAGE_PATCH_ORDERS,
         'remote-play-stream': STREAM_PAGE_PATCH_ORDERS,
-        'product-detail': PRODUCT_DETAIL_PAGE_PATCH_ORDERS,
     };
 
     static patchPage(page: PatchPage) {
@@ -1627,8 +1618,6 @@ export class PatcherCache {
             Patcher.patchPage('remote-play-stream');
         } else if (pathName.includes('/play/launch/')) {
             Patcher.patchPage('stream');
-        } else if (pathName.includes('/play/games/')) {
-            Patcher.patchPage('product-detail');
         } else if (pathName.endsWith('/play') || pathName.endsWith('/play/')) {
             Patcher.patchPage('home');
         }
@@ -1636,7 +1625,6 @@ export class PatcherCache {
         // Remove cached patches from PATCH_ORDERS & PLAYING_PATCH_ORDERS
         PATCH_ORDERS = this.cleanupPatches(PATCH_ORDERS);
         STREAM_PAGE_PATCH_ORDERS = this.cleanupPatches(STREAM_PAGE_PATCH_ORDERS);
-        PRODUCT_DETAIL_PAGE_PATCH_ORDERS = this.cleanupPatches(PRODUCT_DETAIL_PAGE_PATCH_ORDERS);
 
         BxLogger.info(LOG_TAG, 'PATCH_ORDERS', PATCH_ORDERS.slice(0));
     }
