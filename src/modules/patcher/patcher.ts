@@ -1241,6 +1241,33 @@ ${subsVar} = subs;
         return str;
     },
 
+    /**
+     * Modify "metadataToSend" value, prevent dropping resolution when Decode Time is high
+     * https://github.com/redphx/better-xcloud/issues/791
+     */
+    patchStreamMetadata(str: string) {
+        let index = str.indexOf('}onVideoFrame(');
+        (index >= 0) && (index = PatcherUtils.indexOf(str, '){', index, 30, true));
+        if (index < 0) {
+            return false;
+        }
+
+        const fakeDtMs = 1;
+        const code = `
+try {
+    const obj = arguments[0];
+    const baseMs = obj.frameSubmittedTimeMs;
+    const renderMs = obj.frameRenderedTimeMs - obj.frameDecodedTimeMs;
+    obj.frameDecodedTimeMs = baseMs + ${fakeDtMs};
+    obj.frameRenderedTimeMs = obj.frameDecodedTimeMs + renderMs;
+    obj.expectedDisplayTime = obj.frameRenderedTimeMs;
+    arguments[0] = obj;
+} catch (e) { alert(e) }
+`;
+        str = PatcherUtils.insertAt(str, index, code);
+        return str;
+    },
+
     /*
     patchBasicGameInfo(str: string) {
         let index = str.indexOf('.ChildXboxTitleIds,offerings');
@@ -1385,6 +1412,8 @@ let STREAM_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
     'alwaysShowStreamHud',
 
     'injectStreamMenuUseEffect',
+
+    'patchStreamMetadata',
 
     // 'exposeEventTarget',
 

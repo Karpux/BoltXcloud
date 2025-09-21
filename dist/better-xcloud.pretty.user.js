@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.7.3
+// @version      6.7.4-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -194,7 +194,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.7.3", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.7.4-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -5738,6 +5738,22 @@ ${subsVar} = subs;
   if (!match) return !1;
   if (str = str.replace(match[0], `(${match[1]} || window.BX_EXPOSED.hasCustomTouchControl(productId)) && ${match[2]}`), match = /(\w+)&&(\w+\.push\(\w+\.MouseAndKeyboard\))/.exec(str), match) str = str.replace(match[0], `(${match[1]} || window.BX_EXPOSED.hasCustomNativeMkb(productId)) && ${match[2]}`);
   return str;
+ },
+ patchStreamMetadata(str) {
+  let index = str.indexOf("}onVideoFrame(");
+  if (index >= 0 && (index = PatcherUtils.indexOf(str, "){", index, 30, !0)), index < 0) return !1;
+  let code = `
+try {
+  const obj = arguments[0];
+  const baseMs = obj.frameSubmittedTimeMs;
+  const renderMs = obj.frameRenderedTimeMs - obj.frameDecodedTimeMs;
+  obj.frameDecodedTimeMs = baseMs + ${1};
+  obj.frameRenderedTimeMs = obj.frameDecodedTimeMs + renderMs;
+  obj.expectedDisplayTime = obj.frameRenderedTimeMs;
+  arguments[0] = obj;
+} catch (e) { alert(e) }
+`;
+  return str = PatcherUtils.insertAt(str, index, code), str;
  }
 }, PATCH_ORDERS = PatcherUtils.filterPatches([
  ...AppInterface && getGlobalPref("nativeMkb.mode") === "on" ? [
@@ -5813,6 +5829,7 @@ ${subsVar} = subs;
  "playVibration",
  "alwaysShowStreamHud",
  "injectStreamMenuUseEffect",
+ "patchStreamMetadata",
  getGlobalPref("audio.volume.booster.enabled") && !getGlobalPref("stream.video.combineAudio") && "patchAudioMediaStream",
  getGlobalPref("audio.volume.booster.enabled") && getGlobalPref("stream.video.combineAudio") && "patchCombinedAudioVideoMediaStream",
  getGlobalPref("ui.feedbackDialog.disabled") && "skipFeedbackDialog",
