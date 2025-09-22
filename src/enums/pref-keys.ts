@@ -34,6 +34,7 @@ export const enum GlobalPref {
     STREAM_CODEC_PROFILE = 'stream.video.codecProfile',
     STREAM_MAX_VIDEO_BITRATE = 'stream.video.maxBitrate',
     STREAM_COMBINE_SOURCES = 'stream.video.combineAudio',
+    STREAM_PREVENT_RESOLUTION_DROPS = 'stream.video.preventResolutionDrops',
 
     USER_AGENT_PROFILE = 'userAgent.profile',
 
@@ -110,6 +111,7 @@ export type GlobalPrefTypeMap = {
     [GlobalPref.STREAM_MAX_VIDEO_BITRATE]: number;
     [GlobalPref.STREAM_PREFERRED_LOCALE]: StreamPreferredLocale;
     [GlobalPref.STREAM_RESOLUTION]: StreamResolution;
+    [GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS]: boolean;
     [GlobalPref.TOUCH_CONTROLLER_AUTO_OFF]: boolean;
     [GlobalPref.TOUCH_CONTROLLER_DEFAULT_OPACITY]: number;
     [GlobalPref.TOUCH_CONTROLLER_MODE]: TouchControllerMode;
@@ -245,6 +247,7 @@ export const ALL_PREFS: {
         GlobalPref.STREAM_MAX_VIDEO_BITRATE,
         GlobalPref.STREAM_PREFERRED_LOCALE,
         GlobalPref.STREAM_RESOLUTION,
+        GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS,
         GlobalPref.TOUCH_CONTROLLER_AUTO_OFF,
         GlobalPref.TOUCH_CONTROLLER_DEFAULT_OPACITY,
         GlobalPref.TOUCH_CONTROLLER_MODE,

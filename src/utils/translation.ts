@@ -265,6 +265,7 @@ const Texts = {
         (e: any) => `按下 ${e.key} 來啟用此功能`,
     ],
     "press-to-bind": "Press a key or do a mouse click to bind...",
+    "prevent-resolution-drops": "Prevent resolution drops",
     "prompt-preset-name": "Preset's name:",
     "quality": "Quality",
     "recommended": "Recommended",

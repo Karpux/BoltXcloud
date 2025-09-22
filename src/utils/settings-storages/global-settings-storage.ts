@@ -151,6 +151,11 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
                 highest: StreamResolution.DIM_1080P_HQ,
             },
         },
+        [GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS]: {
+            label: t('prevent-resolution-drops'),
+            default: false,
+            note: CE('a', { href: 'https://github.com/redphx/better-xcloud/issues/791', target: '_blank' }, '⚠️ ' + t('unexpected-behavior')),
+        },
 
         [GlobalPref.STREAM_CODEC_PROFILE]: {
             label: t('visual-quality'),

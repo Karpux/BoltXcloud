@@ -68,6 +68,7 @@ var ALL_PREFS = {
   "stream.video.maxBitrate",
   "stream.locale",
   "stream.video.resolution",
+  "stream.video.preventResolutionDrops",
   "touchController.autoOff",
   "touchController.opacity.default",
   "touchController.mode",
@@ -640,6 +641,7 @@ var SUPPORTED_LANGUAGES = {
   e => `按下 ${e.key} 來啟用此功能`
  ],
  "press-to-bind": "Press a key or do a mouse click to bind...",
+ "prevent-resolution-drops": "Prevent resolution drops",
  "prompt-preset-name": "Preset's name:",
  quality: "Quality",
  recommended: "Recommended",
@@ -1374,6 +1376,11 @@ class GlobalSettingsStorage extends BaseSettingsStorage {
     lowest: "720p",
     highest: "1080p-hq"
    }
+  },
+  "stream.video.preventResolutionDrops": {
+   label: t("prevent-resolution-drops"),
+   default: !1,
+   note: CE("a", { href: "https://github.com/redphx/better-xcloud/issues/791", target: "_blank" }, "⚠️ " + t("unexpected-behavior"))
   },
   "stream.video.codecProfile": {
    label: t("visual-quality"),
@@ -5739,15 +5746,17 @@ ${subsVar} = subs;
  patchStreamMetadata(str) {
   let index = str.indexOf("}onVideoFrame(");
   if (index >= 0 && (index = PatcherUtils.indexOf(str, "){", index, 30, !0)), index < 0) return !1;
-  let code = `
+  let maxDt = 10, code = `
 try {
   const obj = arguments[0];
-  const baseMs = obj.frameSubmittedTimeMs;
-  const renderMs = obj.frameRenderedTimeMs - obj.frameDecodedTimeMs;
-  obj.frameDecodedTimeMs = baseMs + ${1};
-  obj.frameRenderedTimeMs = obj.frameDecodedTimeMs + renderMs;
-  obj.expectedDisplayTime = obj.frameRenderedTimeMs;
-  arguments[0] = obj;
+  if (true || obj.frameDecodedTimeMs - obj.frameSubmittedTimeMs > ${maxDt}) {
+    const baseMs = obj.frameSubmittedTimeMs;
+    const renderMs = obj.frameRenderedTimeMs - obj.frameDecodedTimeMs;
+    obj.frameDecodedTimeMs = baseMs + ${maxDt};
+    obj.frameRenderedTimeMs = obj.frameDecodedTimeMs + renderMs;
+    obj.expectedDisplayTime = obj.frameRenderedTimeMs;
+    arguments[0] = obj;
+  }
 } catch (e) { alert(e) }
 `;
   return str = PatcherUtils.insertAt(str, index, code), str;
@@ -5826,7 +5835,7 @@ try {
  "playVibration",
  "alwaysShowStreamHud",
  "injectStreamMenuUseEffect",
- "patchStreamMetadata",
+ getGlobalPref("stream.video.preventResolutionDrops") && "patchStreamMetadata",
  getGlobalPref("audio.volume.booster.enabled") && !getGlobalPref("stream.video.combineAudio") && "patchAudioMediaStream",
  getGlobalPref("audio.volume.booster.enabled") && getGlobalPref("stream.video.combineAudio") && "patchCombinedAudioVideoMediaStream",
  getGlobalPref("ui.feedbackDialog.disabled") && "skipFeedbackDialog",
@@ -7280,6 +7289,7 @@ class SettingsDialog extends NavigationDialog {
    "stream.video.resolution",
    "stream.video.codecProfile",
    "stream.video.maxBitrate",
+   "stream.video.preventResolutionDrops",
    "audio.volume.booster.enabled",
    "screenshot.applyFilters",
    "audio.mic.onPlaying",

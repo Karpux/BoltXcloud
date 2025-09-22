@@ -213,6 +213,7 @@ export class SettingsDialog extends NavigationDialog {
             GlobalPref.STREAM_RESOLUTION,
             GlobalPref.STREAM_CODEC_PROFILE,
             GlobalPref.STREAM_MAX_VIDEO_BITRATE,
+            GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS,
 
             GlobalPref.AUDIO_VOLUME_CONTROL_ENABLED,
 

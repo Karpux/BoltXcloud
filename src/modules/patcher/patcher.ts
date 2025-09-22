@@ -1248,16 +1248,18 @@ ${subsVar} = subs;
             return false;
         }
 
-        const fakeDtMs = 1;
+        const maxDt = 10;
         const code = `
 try {
     const obj = arguments[0];
-    const baseMs = obj.frameSubmittedTimeMs;
-    const renderMs = obj.frameRenderedTimeMs - obj.frameDecodedTimeMs;
-    obj.frameDecodedTimeMs = baseMs + ${fakeDtMs};
-    obj.frameRenderedTimeMs = obj.frameDecodedTimeMs + renderMs;
-    obj.expectedDisplayTime = obj.frameRenderedTimeMs;
-    arguments[0] = obj;
+    if (true || obj.frameDecodedTimeMs - obj.frameSubmittedTimeMs > ${maxDt}) {
+        const baseMs = obj.frameSubmittedTimeMs;
+        const renderMs = obj.frameRenderedTimeMs - obj.frameDecodedTimeMs;
+        obj.frameDecodedTimeMs = baseMs + ${maxDt};
+        obj.frameRenderedTimeMs = obj.frameDecodedTimeMs + renderMs;
+        obj.expectedDisplayTime = obj.frameRenderedTimeMs;
+        arguments[0] = obj;
+    }
 } catch (e) { alert(e) }
 `;
         str = PatcherUtils.insertAt(str, index, code);
@@ -1409,7 +1411,7 @@ let STREAM_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
 
     'injectStreamMenuUseEffect',
 
-    'patchStreamMetadata',
+    getGlobalPref(GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS) && 'patchStreamMetadata',
 
     // 'exposeEventTarget',
 
