@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.7.4
+// @version      6.7.5-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -153,7 +153,7 @@ class UserAgent {
  }
  static updateStorage(profile, custom) {
   let config = UserAgent.#config;
-  if (config.profile = profile, profile === "custom" && typeof custom !== "undefined") config.custom = custom;
+  if (config.profile = profile, profile === "custom" && typeof custom < "u") config.custom = custom;
   window.localStorage.setItem(UserAgent.STORAGE_KEY, JSON.stringify(config));
  }
  static getDefault() {
@@ -195,7 +195,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.7.4", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.7.5-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -936,7 +936,7 @@ function createElement(elmName, props, ..._) {
  }
  for (let i = 2, size = arguments.length;i < size; i++) {
   let arg = arguments[i];
-  if (arg !== null && arg !== !1 && typeof arg !== "undefined") $elm.append(arg);
+  if (arg !== null && arg !== !1 && typeof arg < "u") $elm.append(arg);
  }
  return $elm;
 }
@@ -1233,7 +1233,7 @@ class BaseSettingsStorage {
  validateValue(action, key, value) {
   let def = this.definitions[key];
   if (!def) return value;
-  if (typeof value === "undefined" || value === null) value = def.default;
+  if (typeof value > "u" || value === null) value = def.default;
   if (def.transformValue && action === "get") value = def.transformValue.get.call(def, value);
   if ("min" in def) value = Math.max(def.min, value);
   if ("max" in def) value = Math.min(def.max, value);
@@ -3235,7 +3235,7 @@ class PointerClient {
   BxLogger.info(this.LOG_TAG, "constructor()");
  }
  start(port, mkbHandler) {
-  if (!port) throw new Error("PointerServer port is 0");
+  if (!port) throw Error("PointerServer port is 0");
   this.mkbHandler = mkbHandler, this.socket = new WebSocket(`ws://localhost:${port}`), this.socket.binaryType = "arraybuffer", this.socket.addEventListener("open", (event) => {
    BxLogger.info(this.LOG_TAG, "connected");
   }), this.socket.addEventListener("error", (event) => {
@@ -3370,7 +3370,7 @@ class MkbPopup {
 class NativeMkbHandler extends MkbHandler {
  static instance;
  static getInstance() {
-  if (typeof NativeMkbHandler.instance === "undefined") if (NativeMkbHandler.isAllowed()) NativeMkbHandler.instance = new NativeMkbHandler;
+  if (typeof NativeMkbHandler.instance > "u") if (NativeMkbHandler.isAllowed()) NativeMkbHandler.instance = new NativeMkbHandler;
    else NativeMkbHandler.instance = null;
   return NativeMkbHandler.instance;
  }
@@ -3441,7 +3441,7 @@ class NativeMkbHandler extends MkbHandler {
  }
  toggle(force) {
   let setEnable;
-  if (typeof force !== "undefined") setEnable = force;
+  if (typeof force < "u") setEnable = force;
   else setEnable = !this.enabled;
   if (setEnable) document.documentElement.requestPointerLock();
   else document.exitPointerLock();
@@ -3676,7 +3676,7 @@ class PointerLockMouseDataProvider extends MouseDataProvider {
 class EmulatedMkbHandler extends MkbHandler {
  static instance;
  static getInstance() {
-  if (typeof EmulatedMkbHandler.instance === "undefined") if (EmulatedMkbHandler.isAllowed()) EmulatedMkbHandler.instance = new EmulatedMkbHandler;
+  if (typeof EmulatedMkbHandler.instance > "u") if (EmulatedMkbHandler.isAllowed()) EmulatedMkbHandler.instance = new EmulatedMkbHandler;
    else EmulatedMkbHandler.instance = null;
   return EmulatedMkbHandler.instance;
  }
@@ -3692,7 +3692,7 @@ class EmulatedMkbHandler extends MkbHandler {
   hapticActuators: null,
   mapping: "standard",
   axes: [0, 0, 0, 0],
-  buttons: new Array(17).fill(null).map(() => ({ pressed: !1, value: 0 })),
+  buttons: Array(17).fill(null).map(() => ({ pressed: !1, value: 0 })),
   timestamp: performance.now(),
   vibrationActuator: null
  };
@@ -3771,7 +3771,7 @@ class EmulatedMkbHandler extends MkbHandler {
   if (!this.isPolling || !this.PRESET) return;
   if (window.BX_STREAM_SETTINGS.xCloudPollingMode !== "none") return;
   let buttonIndex = this.PRESET.mapping[e.code || e.key];
-  if (typeof buttonIndex === "undefined") return;
+  if (typeof buttonIndex > "u") return;
   if (e.repeat) return;
   e.preventDefault(), this.pressButton(buttonIndex, isKeyDown);
  };
@@ -3782,14 +3782,14 @@ class EmulatedMkbHandler extends MkbHandler {
  };
  handleMouseClick(data) {
   let mouseButton;
-  if (typeof data.mouseButton !== "undefined") mouseButton = data.mouseButton;
-  else if (typeof data.pointerButton !== "undefined") mouseButton = PointerToMouseButton[data.pointerButton];
+  if (typeof data.mouseButton < "u") mouseButton = data.mouseButton;
+  else if (typeof data.pointerButton < "u") mouseButton = PointerToMouseButton[data.pointerButton];
   let key = {
    code: "Mouse" + mouseButton
   };
   if (!this.PRESET) return;
   let buttonIndex = this.PRESET.mapping[key.code];
-  if (typeof buttonIndex === "undefined") return;
+  if (typeof buttonIndex > "u") return;
   this.pressButton(buttonIndex, data.pressed);
  }
  handleMouseMove(data) {
@@ -3815,7 +3815,7 @@ class EmulatedMkbHandler extends MkbHandler {
   let key = {
    code
   }, buttonIndex = this.PRESET.mapping[key.code];
-  if (typeof buttonIndex === "undefined") return !1;
+  if (typeof buttonIndex > "u") return !1;
   if (this.prevWheelCode === null || this.prevWheelCode === key.code) this.wheelStoppedTimeoutId && clearTimeout(this.wheelStoppedTimeoutId), this.pressButton(buttonIndex, !0);
   return this.wheelStoppedTimeoutId = window.setTimeout(() => {
    this.prevWheelCode = null, this.pressButton(buttonIndex, !1);
@@ -3823,7 +3823,7 @@ class EmulatedMkbHandler extends MkbHandler {
  }
  async toggle(force) {
   if (!this.initialized) return;
-  if (typeof force !== "undefined") this.enabled = force;
+  if (typeof force < "u") this.enabled = force;
   else this.enabled = !this.enabled;
   if (this.enabled) try {
     await document.body.requestPointerLock({ unadjustedMovement: !0 });
@@ -5760,6 +5760,13 @@ try {
 } catch (e) { alert(e) }
 `;
   return str = PatcherUtils.insertAt(str, index, code), str;
+ },
+ disablePauseOnWindowBlur(str) {
+  let index = str.indexOf("},this.onFocusChanged=");
+  if (index >= 0 && (index = PatcherUtils.indexOf(str, "=>{", index, 30)), index < 0) return !1;
+  let varName = PatcherUtils.getVariableNameBefore(str, index);
+  if (!varName) return !1;
+  return str = PatcherUtils.insertAt(str, index + 3, `try { ${varName} = "focus"; } catch (xxx) {}`), str;
  }
 }, PATCH_ORDERS = PatcherUtils.filterPatches([
  ...AppInterface && getGlobalPref("nativeMkb.mode") === "on" ? [
@@ -5835,6 +5842,7 @@ try {
  "playVibration",
  "alwaysShowStreamHud",
  "injectStreamMenuUseEffect",
+ "disablePauseOnWindowBlur",
  getGlobalPref("stream.video.preventResolutionDrops") && "patchStreamMetadata",
  getGlobalPref("audio.volume.booster.enabled") && !getGlobalPref("stream.video.combineAudio") && "patchAudioMediaStream",
  getGlobalPref("audio.volume.booster.enabled") && getGlobalPref("stream.video.combineAudio") && "patchCombinedAudioVideoMediaStream",
@@ -6273,7 +6281,7 @@ class BxDualNumberStepper extends HTMLInputElement {
      let tmp = value.split(",");
      from = parseInt(tmp[0]), to = parseInt(tmp[1]);
     } else if (Array.isArray(value)) [from, to] = value;
-    if (typeof from !== "undefined" && typeof to !== "undefined") BxDualNumberStepper.setValues.call(self, [from, to]);
+    if (typeof from < "u" && typeof to < "u") BxDualNumberStepper.setValues.call(self, [from, to]);
    }
   }), self;
  }
@@ -6386,7 +6394,7 @@ class ControllerCustomizationsManagerDialog extends BaseProfileManagerDialog {
     };
     for (let dir in directions) {
      let idx = directions[dir];
-     if (typeof this.selectsOrder[idx] === "undefined") continue;
+     if (typeof this.selectsOrder[idx] > "u") continue;
      let $targetSelect = this.selectsMap[this.selectsOrder[idx]];
      setNearby($select, {
       [dir]: $targetSelect
@@ -6474,7 +6482,7 @@ class ControllerCustomizationsManagerDialog extends BaseProfileManagerDialog {
    let $select = selectsMap[buttonIndex];
    if (!$select) continue;
    let mappedButton = presetData.mapping[buttonIndex];
-   $select.value = typeof mappedButton === "undefined" ? "" : mappedButton.toString(), $select.disabled = isDefaultPreset, BxEvent.dispatch($select, "input", {
+   $select.value = typeof mappedButton > "u" ? "" : mappedButton.toString(), $select.disabled = isDefaultPreset, BxEvent.dispatch($select, "input", {
     ignoreOnChange: !0,
     manualTrigger: !0
    });
@@ -7644,7 +7652,7 @@ class SettingsDialog extends NavigationDialog {
   this.$btnGlobalReload.disabled = !0, this.$btnGlobalReload.firstElementChild.textContent = t("settings-reloading"), this.hide(), FullscreenText.getInstance().show(t("settings-reloading")), window.location.reload();
  }
  isSupportedVariant(requiredVariants) {
-  if (typeof requiredVariants === "undefined") return !0;
+  if (typeof requiredVariants > "u") return !0;
   return requiredVariants = typeof requiredVariants === "string" ? [requiredVariants] : requiredVariants, requiredVariants.includes(SCRIPT_VARIANT);
  }
  onTabClicked = (e) => {
@@ -7751,7 +7759,7 @@ class SettingsDialog extends NavigationDialog {
   if (typeof note === "function") note = note();
   if (typeof unsupportedNote === "function") unsupportedNote = unsupportedNote();
   if (settingTabContent.label && setting.pref) {
-   if (prefDefinition?.suggest) typeof prefDefinition.suggest.lowest !== "undefined" && (this.suggestedSettings.lowest[setting.pref] = prefDefinition.suggest.lowest), typeof prefDefinition.suggest.highest !== "undefined" && (this.suggestedSettings.highest[setting.pref] = prefDefinition.suggest.highest);
+   if (prefDefinition?.suggest) typeof prefDefinition.suggest.lowest < "u" && (this.suggestedSettings.lowest[setting.pref] = prefDefinition.suggest.lowest), typeof prefDefinition.suggest.highest < "u" && (this.suggestedSettings.highest[setting.pref] = prefDefinition.suggest.highest);
   }
   if (experimental) if (label = "🧪 " + label, !note) note = t("experimental");
    else note = `${t("experimental")}: ${note}`;
@@ -8121,7 +8129,7 @@ class TrueAchievements {
    if ($container) xboxTitleId = getReactProps($container).children.props.data.data.xboxTitleId;
   } catch (e) {}
   if (!xboxTitleId) xboxTitleId = this.getStreamXboxTitleId();
-  if (typeof xboxTitleId !== "undefined") xboxTitleId = xboxTitleId.toString();
+  if (typeof xboxTitleId < "u") xboxTitleId = xboxTitleId.toString();
   if (this.updateIds(xboxTitleId), document.body.dataset.mediaType === "tv") $div.appendChild(this.$link);
   else $div.appendChild(this.$button);
   $parent.appendChild($div);
@@ -8703,7 +8711,7 @@ class RemotePlayDialog extends NavigationDialog {
 class RemotePlayManager {
  static instance;
  static getInstance() {
-  if (typeof RemotePlayManager.instance === "undefined") if (!getGlobalPref("block.features").includes("remote-play")) RemotePlayManager.instance = new RemotePlayManager;
+  if (typeof RemotePlayManager.instance > "u") if (!getGlobalPref("block.features").includes("remote-play")) RemotePlayManager.instance = new RemotePlayManager;
    else RemotePlayManager.instance = null;
   return RemotePlayManager.instance;
  }
@@ -9399,7 +9407,7 @@ function preloadFonts() {
 class MouseCursorHider {
  static instance;
  static getInstance() {
-  if (typeof MouseCursorHider.instance === "undefined") if (!getGlobalPref("mkb.enabled") && getGlobalPref("mkb.cursor.hideIdle")) MouseCursorHider.instance = new MouseCursorHider;
+  if (typeof MouseCursorHider.instance > "u") if (!getGlobalPref("mkb.enabled") && getGlobalPref("mkb.cursor.hideIdle")) MouseCursorHider.instance = new MouseCursorHider;
    else MouseCursorHider.instance = null;
   return MouseCursorHider.instance;
  }
@@ -9653,7 +9661,7 @@ class StreamPlayerManager {
   (this.canvasPlayer || this.videoPlayer).updateOptions(options, refreshPlayer);
  }
  getPlayerElement(elementType) {
-  if (typeof elementType === "undefined") elementType = this.playerType === "default" ? "video" : "canvas";
+  if (typeof elementType > "u") elementType = this.playerType === "default" ? "video" : "canvas";
   if (elementType !== "video") return this.canvasPlayer?.getCanvas();
   return this.$video;
  }
@@ -9666,7 +9674,7 @@ class StreamPlayerManager {
   this.resizePlayer();
  }
  getVideoPlayerFilterStyle() {
-  throw new Error("Method not implemented.");
+  throw Error("Method not implemented.");
  }
  cleanUpCanvasPlayer() {
   this.canvasPlayer?.destroy(), this.canvasPlayer = null;
@@ -9702,7 +9710,7 @@ function patchVideoApi() {
 }
 function patchRtcCodecs() {
  if (getGlobalPref("stream.video.codecProfile") === "default") return;
- if (typeof RTCRtpTransceiver === "undefined" || !("setCodecPreferences" in RTCRtpTransceiver.prototype)) return !1;
+ if (typeof RTCRtpTransceiver > "u" || !("setCodecPreferences" in RTCRtpTransceiver.prototype)) return !1;
 }
 function patchRtcPeerConnection() {
  let nativeCreateDataChannel = RTCPeerConnection.prototype.createDataChannel;
@@ -9963,7 +9971,7 @@ class RendererAction extends BaseGameBarAction {
 class GameBar {
  static instance;
  static getInstance() {
-  if (typeof GameBar.instance === "undefined") if (getGlobalPref("gameBar.position") !== "off") GameBar.instance = new GameBar;
+  if (typeof GameBar.instance > "u") if (getGlobalPref("gameBar.position") !== "off") GameBar.instance = new GameBar;
    else GameBar.instance = null;
   return GameBar.instance;
  }
@@ -10189,7 +10197,7 @@ var VIBRATION_DATA_MAP = {
 class DeviceVibrationManager {
  static instance;
  static getInstance() {
-  if (typeof DeviceVibrationManager.instance === "undefined") if (STATES.browser.capabilities.deviceVibration) DeviceVibrationManager.instance = new DeviceVibrationManager;
+  if (typeof DeviceVibrationManager.instance > "u") if (STATES.browser.capabilities.deviceVibration) DeviceVibrationManager.instance = new DeviceVibrationManager;
    else DeviceVibrationManager.instance = null;
   return DeviceVibrationManager.instance;
  }
@@ -10284,10 +10292,10 @@ class StreamUiHandler {
   let $btnCloseHud = document.querySelector("button[class*=StreamMenu-module__backButton]");
   if (!$btnCloseHud) return;
   let { $btnRefresh, $btnHome } = StreamUiHandler;
-  if (typeof $btnRefresh === "undefined") $btnRefresh = StreamUiHandler.cloneCloseButton($btnCloseHud, BxIcon.REFRESH, "bx-stream-refresh-button", () => {
+  if (typeof $btnRefresh > "u") $btnRefresh = StreamUiHandler.cloneCloseButton($btnCloseHud, BxIcon.REFRESH, "bx-stream-refresh-button", () => {
     confirm(t("confirm-reload-stream")) && window.location.reload();
    });
-  if (typeof $btnHome === "undefined") $btnHome = StreamUiHandler.cloneCloseButton($btnCloseHud, BxIcon.HOME, "bx-stream-home-button", () => {
+  if (typeof $btnHome > "u") $btnHome = StreamUiHandler.cloneCloseButton($btnCloseHud, BxIcon.HOME, "bx-stream-home-button", () => {
     confirm(t("back-to-home-confirm")) && (window.location.href = window.location.href.substring(0, 31));
    });
   if ($btnRefresh && $btnHome) $btnCloseHud.insertAdjacentElement("afterend", $btnRefresh), $btnRefresh.insertAdjacentElement("afterend", $btnHome);
@@ -10301,11 +10309,11 @@ class StreamUiHandler {
    let $gripHandle = document.querySelector("#StreamHud button[class^=GripHandle]");
    if ($gripHandle && $gripHandle.ariaExpanded === "true") $gripHandle.dispatchEvent(new PointerEvent("pointerdown")), $gripHandle.click(), $gripHandle.dispatchEvent(new PointerEvent("pointerdown")), $gripHandle.click();
   }, $btnStreamSettings = StreamUiHandler.$btnStreamSettings;
-  if (typeof $btnStreamSettings === "undefined") $btnStreamSettings = StreamUiHandler.cloneStreamHudButton($orgButton, t("better-xcloud"), BxIcon.BETTER_XCLOUD), $btnStreamSettings?.addEventListener("click", (e) => {
+  if (typeof $btnStreamSettings > "u") $btnStreamSettings = StreamUiHandler.cloneStreamHudButton($orgButton, t("better-xcloud"), BxIcon.BETTER_XCLOUD), $btnStreamSettings?.addEventListener("click", (e) => {
     hideGripHandle(), e.preventDefault(), SettingsDialog.getInstance().show();
    }), StreamUiHandler.$btnStreamSettings = $btnStreamSettings;
   let streamStats = StreamStats.getInstance(), $btnStreamStats = StreamUiHandler.$btnStreamStats;
-  if (typeof $btnStreamStats === "undefined") $btnStreamStats = StreamUiHandler.cloneStreamHudButton($orgButton, t("stream-stats"), BxIcon.STREAM_STATS), $btnStreamStats?.addEventListener("click", async (e) => {
+  if (typeof $btnStreamStats > "u") $btnStreamStats = StreamUiHandler.cloneStreamHudButton($orgButton, t("stream-stats"), BxIcon.STREAM_STATS), $btnStreamStats?.addEventListener("click", async (e) => {
     hideGripHandle(), e.preventDefault(), await streamStats.toggle();
     let btnStreamStatsOn = !streamStats.isHidden() && !streamStats.isGlancing();
     $btnStreamStats.classList.toggle("bx-stream-menu-button-on", btnStreamStatsOn);
@@ -10361,7 +10369,7 @@ if (window.location.pathname.includes("/auth/msa")) {
    return;
   }
   return nativePushState.apply(this, arguments);
- }, new Error("[Better xCloud] Refreshing the page after logging in");
+ }, Error("[Better xCloud] Refreshing the page after logging in");
 }
 BxLogger.info("readyState", document.readyState);
 if (BX_FLAGS.SafariWorkaround && document.readyState !== "loading") {
@@ -10377,9 +10385,9 @@ if (BX_FLAGS.SafariWorkaround && document.readyState !== "loading") {
  let $fragment = document.createDocumentFragment();
  throw $fragment.appendChild(CE("style", !1, css)), $fragment.appendChild(CE("div", {
   class: "bx-reload-overlay"
- }, CE("div", !1, CE("p", !1, t("load-failed-message")), $secondaryAction))), document.documentElement.appendChild($fragment), isSafari && window.location.reload(!0), new Error("[Better xCloud] Executing workaround for Safari");
+ }, CE("div", !1, CE("p", !1, t("load-failed-message")), $secondaryAction))), document.documentElement.appendChild($fragment), isSafari && window.location.reload(!0), Error("[Better xCloud] Executing workaround for Safari");
 }
-if (!window.location.pathname.match(/^\/[a-zA-Z]{2}-[a-zA-Z]{2}\/play/)) throw new Error("[Better xCloud] Not xCloud page");
+if (!window.location.pathname.match(/^\/[a-zA-Z]{2}-[a-zA-Z]{2}\/play/)) throw Error("[Better xCloud] Not xCloud page");
 window.addEventListener("load", (e) => {
  window.setTimeout(() => {
   if (document.body.classList.contains("legacyBackground")) window.stop(), window.location.reload(!0);

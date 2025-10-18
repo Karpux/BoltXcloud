@@ -1266,6 +1266,26 @@ try {
         return str;
     },
 
+    /**
+     * Disable pausing the stream when the window loses focus
+     */
+    disablePauseOnWindowBlur(str: string) {
+        let index = str.indexOf('},this.onFocusChanged=');
+        (index >= 0) && (index = PatcherUtils.indexOf(str, '=>{', index, 30));
+        if (index < 0) {
+            return false;
+        }
+
+        const varName = PatcherUtils.getVariableNameBefore(str, index);
+        if (!varName) {
+            return false;
+        }
+
+        // Set varName to "focus"
+        str = PatcherUtils.insertAt(str, index + 3, `try { ${varName} = "focus"; } catch (xxx) {}`);
+        return str;
+    },
+
     /*
     patchBasicGameInfo(str: string) {
         let index = str.indexOf('.ChildXboxTitleIds,offerings');
@@ -1410,6 +1430,7 @@ let STREAM_PAGE_PATCH_ORDERS = PatcherUtils.filterPatches([
     'alwaysShowStreamHud',
 
     'injectStreamMenuUseEffect',
+    'disablePauseOnWindowBlur',
 
     getGlobalPref(GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS) && 'patchStreamMetadata',
 
