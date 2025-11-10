@@ -32,6 +32,8 @@ export class XcloudInterceptor {
         // Asia
         JapanEast: ['🇯🇵', 'asia'],
         KoreaCentral: ['🇰🇷', 'asia'],
+        CentralIndia: ['🇮🇳', 'asia'],
+        SouthIndia: ['🇮🇳', 'asia'],
 
         // Australia
         AustraliaEast: ['🇦🇺', 'australia'],
@@ -73,6 +75,7 @@ export class XcloudInterceptor {
         // Get server list
         const serverRegex = /\/\/(\w+)\./;
         const serverExtra = XcloudInterceptor.SERVER_EXTRA_INFO;
+        const serverOrder = Object.keys(serverExtra);
 
         let region: ServerRegion;
         for (region of obj.offeringSettings.regions) {
@@ -98,6 +101,10 @@ export class XcloudInterceptor {
             region.shortName = shortName.toUpperCase();
             STATES.serverRegions[region.name] = Object.assign({}, region);
         }
+
+        STATES.serverRegions =  Object.fromEntries(
+            serverOrder.filter(k => k in STATES.serverRegions).map(k => [k, STATES.serverRegions[k]])
+        );
 
         const preferredRegion = getPreferredServerRegion();
         if (preferredRegion && preferredRegion in STATES.serverRegions) {
