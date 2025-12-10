@@ -23,6 +23,7 @@ export class XcloudInterceptor {
         SouthCentralUS: ['🇺🇸', 'america-north'],
         WestUS: ['🇺🇸', 'america-north'],
         WestUS2: ['🇺🇸', 'america-north'],
+        WestUS3: ['🇺🇸', 'america-north'],
         MexicoCentral: ['🇲🇽', 'america-north'],
 
         // South America
