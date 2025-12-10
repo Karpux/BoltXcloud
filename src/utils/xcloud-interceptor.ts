@@ -62,7 +62,7 @@ export class XcloudInterceptor {
         }
         if (response.status !== 200) {
             // Unsupported region
-            BxEventBus.Script.emit('xcloud.server', { status: 'unavailable' });
+            !STATES.serverRegions && BxEventBus.Script.emit('xcloud.server', { status: 'unavailable' });
             return response;
         }
 

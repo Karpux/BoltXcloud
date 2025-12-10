@@ -9089,6 +9089,7 @@ class XcloudInterceptor {
   SouthCentralUS: ["🇺🇸", "america-north"],
   WestUS: ["🇺🇸", "america-north"],
   WestUS2: ["🇺🇸", "america-north"],
+  WestUS3: ["🇺🇸", "america-north"],
   MexicoCentral: ["🇲🇽", "america-north"],
   BrazilSouth: ["🇧🇷", "america-south"],
   ChileCentral: ["🇨🇱", "america-south"],
@@ -9115,7 +9116,7 @@ class XcloudInterceptor {
    BxEventBus.Script.emit("xcloud.server", { status: "error" });
    return;
   }
-  if (response.status !== 200) return BxEventBus.Script.emit("xcloud.server", { status: "unavailable" }), response;
+  if (response.status !== 200) return !STATES.serverRegions && BxEventBus.Script.emit("xcloud.server", { status: "unavailable" }), response;
   let obj = await response.clone().json();
   RemotePlayManager.getInstance()?.setXcloudToken(obj.gsToken);
   let serverRegex = /\/\/(\w+)\./, serverExtra = XcloudInterceptor.SERVER_EXTRA_INFO, serverOrder = Object.keys(serverExtra), region;
@@ -9124,7 +9125,7 @@ class XcloudInterceptor {
    if (region.isDefault) STATES.selectedRegion = Object.assign({}, region);
    let match = serverRegex.exec(region.baseUri);
    if (match) if (shortName = match[1], serverExtra[regionName]) shortName = serverExtra[regionName][0] + " " + shortName, region.contintent = serverExtra[regionName][1];
-    else region.contintent = "other", BX_FLAGS.Debug && alert("New server: " + shortName);
+    else region.contintent = "other", serverOrder.push(regionName), BX_FLAGS.Debug && alert("New server: " + shortName);
    region.shortName = shortName.toUpperCase(), STATES.serverRegions[region.name] = Object.assign({}, region);
   }
   STATES.serverRegions = Object.fromEntries(serverOrder.filter((k) => (k in STATES.serverRegions)).map((k) => [k, STATES.serverRegions[k]]));
