@@ -781,7 +781,7 @@ export class SettingsDialog extends NavigationDialog {
             const region = STATES.serverRegions[regionName];
             let value = regionName;
 
-            let label = `${region.shortName} - ${regionName}`;
+            let label = `${region.shortName} - ${region.displayName ?? regionName}`;
             if (region.isDefault) {
                 label += ` (${t('default')})`;
                 value = 'default';

@@ -15,35 +15,35 @@ import { BxEventBus } from "./bx-event-bus";
 import { getGlobalPref } from "./pref-utils";
 
 export class XcloudInterceptor {
-    private static readonly SERVER_EXTRA_INFO: Record<string, [string, ServerContinent]> = {
+    private static readonly SERVER_EXTRA_INFO: Record<string, [string, string, ServerContinent]> = {
         // North America
-        EastUS: ['🇺🇸', 'america-north'],
-        EastUS2: ['🇺🇸', 'america-north'],
-        NorthCentralUs: ['🇺🇸', 'america-north'],
-        SouthCentralUS: ['🇺🇸', 'america-north'],
-        WestUS: ['🇺🇸', 'america-north'],
-        WestUS2: ['🇺🇸', 'america-north'],
-        WestUS3: ['🇺🇸', 'america-north'],
-        MexicoCentral: ['🇲🇽', 'america-north'],
+        EASTUS: ['🇺🇸', 'East US', 'america-north'],
+        EASTUS2: ['🇺🇸', 'East US 2', 'america-north'],
+        NORTHCENTRALUS: ['🇺🇸', 'North Central US', 'america-north'],
+        SOUTHCENTRALUS: ['🇺🇸', 'South Central US', 'america-north'],
+        WESTUS: ['🇺🇸', 'West US', 'america-north'],
+        WESTUS2: ['🇺🇸', 'West US 2', 'america-north'],
+        WESTUS3: ['🇺🇸', 'West US 3', 'america-north'],
+        MEXICOCENTRAL: ['🇲🇽', 'Mexico Central', 'america-north'],
 
         // South America
-        BrazilSouth: ['🇧🇷', 'america-south'],
-        ChileCentral: ['🇨🇱', 'america-south'],
+        BRAZILSOUTH: ['🇧🇷', 'Brazil South', 'america-south'],
+        CHILECENTRAL: ['🇨🇱', 'Chile Central', 'america-south'],
 
         // Asia
-        JapanEast: ['🇯🇵', 'asia'],
-        KoreaCentral: ['🇰🇷', 'asia'],
-        CentralIndia: ['🇮🇳', 'asia'],
-        SouthIndia: ['🇮🇳', 'asia'],
+        JAPANEAST: ['🇯🇵', 'Japan East', 'asia'],
+        KOREACENTRAL: ['🇰🇷', 'Korea Central', 'asia'],
+        CENTRALINDIA: ['🇮🇳', 'Central India', 'asia'],
+        SOUTHINDIA: ['🇮🇳', 'South India', 'asia'],
 
         // Australia
-        AustraliaEast: ['🇦🇺', 'australia'],
-        AustraliaSouthEast: ['🇦🇺', 'australia'],
+        AUSTRALIAEAST: ['🇦🇺', 'Australia East', 'australia'],
+        AUSTRALIASOUTHEAST: ['🇦🇺', 'Australia South East', 'australia'],
 
         // Europe
-        SwedenCentral: ['🇸🇪', 'europe'],
-        UKSouth: ['🇬🇧', 'europe'],
-        WestEurope: ['🇳🇱', 'europe'],
+        SWEDENCENTRAL: ['🇸🇪', 'Sweden Central', 'europe'],
+        UKSOUTH: ['🇬🇧', 'UK South', 'europe'],
+        WESTEUROPE: ['🇳🇱', 'West Europe', 'europe'],
     };
 
     private static async handleLogin(request: RequestInfo | URL, init?: RequestInit) {
@@ -80,7 +80,7 @@ export class XcloudInterceptor {
 
         let region: ServerRegion;
         for (region of obj.offeringSettings.regions) {
-            const regionName = region.name as keyof typeof serverExtra;
+            const regionName = region.name.toUpperCase() as keyof typeof serverExtra;
             let shortName = region.name;
 
             if (region.isDefault) {
@@ -91,12 +91,14 @@ export class XcloudInterceptor {
             if (match) {
                 shortName = match[1] as string;
                 if (serverExtra[regionName]) {
-                    shortName = serverExtra[regionName][0] + ' ' + shortName;
-                    region.contintent = serverExtra[regionName][1];
+                    const info = serverExtra[regionName];
+                    shortName = info[0] + ' ' + shortName;
+                    region.displayName = info[1];
+                    region.contintent = info[2];
                 } else {
                     region.contintent = 'other';
                     serverOrder.push(regionName);
-                    BX_FLAGS.Debug && alert('New server: ' + shortName);
+                    BX_FLAGS.Debug && alert('New server: ' + regionName);
                 }
             }
 

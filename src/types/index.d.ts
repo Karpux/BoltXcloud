@@ -18,6 +18,7 @@ type ServerRegion = {
     isDefault: boolean;
     name: string;
     shortName: string;
+    displayName: string;
 
     contintent: ServerContinent;
 };

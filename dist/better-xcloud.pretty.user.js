@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.7.5
+// @version      6.7.6-beta
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -195,7 +195,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.7.5", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.7.6-beta", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -7705,7 +7705,7 @@ class SettingsDialog extends NavigationDialog {
    setGlobalPref(setting.pref, e.target.value, "ui"), this.onGlobalSettingChanged(e);
   }), setting.options = {};
   for (let regionName in STATES.serverRegions) {
-   let region = STATES.serverRegions[regionName], value = regionName, label = `${region.shortName} - ${regionName}`;
+   let region = STATES.serverRegions[regionName], value = regionName, label = `${region.shortName} - ${region.displayName ?? regionName}`;
    if (region.isDefault) {
     if (label += ` (${t("default")})`, value = "default", selectedValue === regionName) selectedValue = "default";
    }
@@ -9083,25 +9083,25 @@ class StreamBadges {
 }
 class XcloudInterceptor {
  static SERVER_EXTRA_INFO = {
-  EastUS: ["🇺🇸", "america-north"],
-  EastUS2: ["🇺🇸", "america-north"],
-  NorthCentralUs: ["🇺🇸", "america-north"],
-  SouthCentralUS: ["🇺🇸", "america-north"],
-  WestUS: ["🇺🇸", "america-north"],
-  WestUS2: ["🇺🇸", "america-north"],
-  WestUS3: ["🇺🇸", "america-north"],
-  MexicoCentral: ["🇲🇽", "america-north"],
-  BrazilSouth: ["🇧🇷", "america-south"],
-  ChileCentral: ["🇨🇱", "america-south"],
-  JapanEast: ["🇯🇵", "asia"],
-  KoreaCentral: ["🇰🇷", "asia"],
-  CentralIndia: ["🇮🇳", "asia"],
-  SouthIndia: ["🇮🇳", "asia"],
-  AustraliaEast: ["🇦🇺", "australia"],
-  AustraliaSouthEast: ["🇦🇺", "australia"],
-  SwedenCentral: ["🇸🇪", "europe"],
-  UKSouth: ["🇬🇧", "europe"],
-  WestEurope: ["🇳🇱", "europe"]
+  EASTUS: ["🇺🇸", "East US", "america-north"],
+  EASTUS2: ["🇺🇸", "East US 2", "america-north"],
+  NORTHCENTRALUS: ["🇺🇸", "North Central US", "america-north"],
+  SOUTHCENTRALUS: ["🇺🇸", "South Central US", "america-north"],
+  WESTUS: ["🇺🇸", "West US", "america-north"],
+  WESTUS2: ["🇺🇸", "West US 2", "america-north"],
+  WESTUS3: ["🇺🇸", "West US 3", "america-north"],
+  MEXICOCENTRAL: ["🇲🇽", "Mexico Central", "america-north"],
+  BRAZILSOUTH: ["🇧🇷", "Brazil South", "america-south"],
+  CHILECENTRAL: ["🇨🇱", "Chile Central", "america-south"],
+  JAPANEAST: ["🇯🇵", "Japan East", "asia"],
+  KOREACENTRAL: ["🇰🇷", "Korea Central", "asia"],
+  CENTRALINDIA: ["🇮🇳", "Central India", "asia"],
+  SOUTHINDIA: ["🇮🇳", "South India", "asia"],
+  AUSTRALIAEAST: ["🇦🇺", "Australia East", "australia"],
+  AUSTRALIASOUTHEAST: ["🇦🇺", "Australia South East", "australia"],
+  SWEDENCENTRAL: ["🇸🇪", "Sweden Central", "europe"],
+  UKSOUTH: ["🇬🇧", "UK South", "europe"],
+  WESTEUROPE: ["🇳🇱", "West Europe", "europe"]
  };
  static async handleLogin(request, init) {
   let bypassServer = getGlobalPref("server.bypassRestriction");
@@ -9121,11 +9121,13 @@ class XcloudInterceptor {
   RemotePlayManager.getInstance()?.setXcloudToken(obj.gsToken);
   let serverRegex = /\/\/(\w+)\./, serverExtra = XcloudInterceptor.SERVER_EXTRA_INFO, serverOrder = Object.keys(serverExtra), region;
   for (region of obj.offeringSettings.regions) {
-   let { name: regionName, name: shortName } = region;
+   let regionName = region.name.toUpperCase(), shortName = region.name;
    if (region.isDefault) STATES.selectedRegion = Object.assign({}, region);
    let match = serverRegex.exec(region.baseUri);
-   if (match) if (shortName = match[1], serverExtra[regionName]) shortName = serverExtra[regionName][0] + " " + shortName, region.contintent = serverExtra[regionName][1];
-    else region.contintent = "other", serverOrder.push(regionName), BX_FLAGS.Debug && alert("New server: " + shortName);
+   if (match) if (shortName = match[1], serverExtra[regionName]) {
+     let info = serverExtra[regionName];
+     shortName = info[0] + " " + shortName, region.displayName = info[1], region.contintent = info[2];
+    } else region.contintent = "other", serverOrder.push(regionName), BX_FLAGS.Debug && alert("New server: " + regionName);
    region.shortName = shortName.toUpperCase(), STATES.serverRegions[region.name] = Object.assign({}, region);
   }
   STATES.serverRegions = Object.fromEntries(serverOrder.filter((k) => (k in STATES.serverRegions)).map((k) => [k, STATES.serverRegions[k]]));
