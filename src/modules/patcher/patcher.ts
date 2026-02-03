@@ -1595,7 +1595,7 @@ export class Patcher {
 
                 BX_FLAGS.Debug && console.time(LOG_TAG);
                 try {
-                    chunkData[chunkId] = eval(patchedFuncStr);
+                    chunkData[chunkId] = eval('(function ' + patchedFuncStr.replace(/^\d+/, '') + ')');
                 } catch (e: unknown) {
                     if (e instanceof Error) {
                         BxLogger.error(LOG_TAG, 'Error', appliedPatches, e.message, patchedFuncStr);
