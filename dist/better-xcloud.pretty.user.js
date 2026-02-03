@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better xCloud
 // @namespace    https://github.com/redphx
-// @version      6.7.6
+// @version      6.7.7
 // @description  Improve Xbox Cloud Gaming (xCloud) experience
 // @author       redphx
 // @license      MIT
@@ -195,7 +195,7 @@ class UserAgent {
   });
  }
 }
-var SCRIPT_VERSION = "6.7.6", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
+var SCRIPT_VERSION = "6.7.7", SCRIPT_VARIANT = "full", AppInterface = window.AppInterface;
 UserAgent.init();
 var userAgent = window.navigator.userAgent.toLowerCase(), isTv = userAgent.includes("smart-tv") || userAgent.includes("smarttv") || /\baft.*\b/.test(userAgent), isVr = window.navigator.userAgent.includes("VR") && window.navigator.userAgent.includes("OculusBrowser"), browserHasTouchSupport = "ontouchstart" in window || navigator.maxTouchPoints > 0, userAgentHasTouchSupport = !isTv && !isVr && browserHasTouchSupport, STATES = {
  supportedRegion: !0,
@@ -5911,7 +5911,7 @@ class Patcher {
    if (modified) {
     BxLogger.info(LOG_TAG2, `✅ [${chunkId}] ${chunkAppliedPatches.join(", ")}`), PATCH_ORDERS.length && BxLogger.info(LOG_TAG2, "Remaining patches", PATCH_ORDERS), BX_FLAGS.Debug && console.time(LOG_TAG2);
     try {
-     chunkData[chunkId] = eval(patchedFuncStr);
+     chunkData[chunkId] = eval("(function " + patchedFuncStr.replace(/^\d+/, "") + ")");
     } catch (e) {
      if (e instanceof Error) BxLogger.error(LOG_TAG2, "Error", appliedPatches, e.message, patchedFuncStr);
     }
