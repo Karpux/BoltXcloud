@@ -77,7 +77,11 @@ if (window.location.pathname.includes('/auth/msa')) {
 
 BxLogger.info('readyState', document.readyState);
 
-if (isFullVersion() && BX_FLAGS.SafariWorkaround && UserAgent.isSafari() && !UserAgent.isMobile() && document.readyState !== 'loading') {
+const originalUserAgent = window.navigator.orgUserAgent || window.navigator.userAgent;
+const isSafariWorkaroundTarget = /safari/i.test(originalUserAgent)
+    && !/chrom|android/i.test(originalUserAgent);
+
+if (isFullVersion() && BX_FLAGS.SafariWorkaround && isSafariWorkaroundTarget && document.readyState !== 'loading') {
     // Stop loading
     window.stop();
 
