@@ -2,19 +2,19 @@ import type { BaseSettingsStorage } from "@/utils/settings-storages/base-setting
 import type { BlockFeature, CodecProfile, DeviceVibrationMode, GameBarPosition, LoadingScreenRocket, NativeMkbMode, StreamPlayerType, StreamResolution, StreamStat, StreamStatPosition, StreamVideoProcessing, StreamVideoProcessingMode, TouchControllerMode, TouchControllerStyleCustom, TouchControllerStyleStandard, UiLayout, UiSection, UiTheme, VideoPosition, VideoPowerPreference, VideoRatio } from "./pref-values"
 
 export const enum StorageKey {
-    GLOBAL = 'BetterXcloud',
-    STREAM = 'BetterXcloud.Stream',
+    GLOBAL = 'BoltXcloud',
+    STREAM = 'BoltXcloud.Stream',
 
-    LOCALE = 'BetterXcloud.Locale',
-    LOCALE_TRANSLATIONS = 'BetterXcloud.Locale.Translations',
-    PATCHES_CACHE = 'BetterXcloud.Patches.Cache',
-    PATCHES_SIGNATURE = 'BetterXcloud.Patches.Cache.Signature',
-    USER_AGENT = 'BetterXcloud.UserAgent',
+    LOCALE = 'BoltXcloud.Locale',
+    LOCALE_TRANSLATIONS = 'BoltXcloud.Locale.Translations',
+    PATCHES_CACHE = 'BoltXcloud.Patches.Cache',
+    PATCHES_SIGNATURE = 'BoltXcloud.Patches.Cache.Signature',
+    USER_AGENT = 'BoltXcloud.UserAgent',
 
-    GH_PAGES_COMMIT_HASH = 'BetterXcloud.GhPages.CommitHash',
-    LIST_CUSTOM_TOUCH_LAYOUTS = 'BetterXcloud.GhPages.CustomTouchLayouts',
-    LIST_FORCE_NATIVE_MKB = 'BetterXcloud.GhPages.ForceNativeMkb',
-    LIST_LOCAL_CO_OP = 'BetterXcloud.GhPages.LocalCoOp',
+    GH_PAGES_COMMIT_HASH = 'BoltXcloud.GhPages.CommitHash',
+    LIST_CUSTOM_TOUCH_LAYOUTS = 'BoltXcloud.GhPages.CustomTouchLayouts',
+    LIST_FORCE_NATIVE_MKB = 'BoltXcloud.GhPages.ForceNativeMkb',
+    LIST_LOCAL_CO_OP = 'BoltXcloud.GhPages.LocalCoOp',
 }
 
 

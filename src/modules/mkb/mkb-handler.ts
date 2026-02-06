@@ -27,7 +27,7 @@ const PointerToMouseButton = {
     4: 1,
 }
 
-export const VIRTUAL_GAMEPAD_ID = 'Better xCloud Virtual Controller';
+export const VIRTUAL_GAMEPAD_ID = 'Bolt Xcloud Virtual Controller';
 
 class WebSocketMouseDataProvider extends MouseDataProvider {
     private pointerClient: PointerClient | undefined

@@ -32,13 +32,13 @@ export class TouchController {
                 target: '/streaming/touchcontrols/showlayoutv2',
                 type: 'Message',
             }),
-            origin: 'better-xcloud',
+            origin: 'bolt-xcloud',
         });
 
     /*
     static readonly #EVENT_HIDE_CONTROLLER = new MessageEvent('message', {
             data: '{"content":"","target":"/streaming/touchcontrols/hide","type":"Message"}',
-            origin: 'better-xcloud',
+            origin: 'bolt-xcloud',
         });
     */
 
@@ -329,7 +329,7 @@ export class TouchController {
 
             let focused = false;
             dataChannel.addEventListener('message', (msg: MessageEvent) => {
-                if (msg.origin === 'better-xcloud' || typeof msg.data !== 'string') {
+                if (msg.origin === 'bolt-xcloud' || typeof msg.data !== 'string') {
                     return;
                 }
 

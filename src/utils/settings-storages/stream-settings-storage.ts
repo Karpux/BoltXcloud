@@ -1,6 +1,7 @@
 import { StreamPref, StorageKey, type PrefTypeMap } from "@/enums/pref-keys";
 import { DeviceVibrationMode, StreamPlayerType, StreamVideoProcessing, VideoPowerPreference, VideoRatio, VideoPosition, StreamStat, StreamStatPosition, StreamVideoProcessingMode } from "@/enums/pref-values";
 import { STATES } from "../global";
+import { BX_FLAGS } from "../bx-flags";
 import { KeyboardShortcutDefaultId } from "../local-db/keyboard-shortcuts-table";
 import { MkbMappingDefaultPresetId } from "../local-db/mkb-mapping-presets-table";
 import { t } from "../translation";
@@ -17,6 +18,10 @@ import { WebGPUPlayer } from "@/modules/player/webgpu/webgpu-player";
 
 
 export class StreamSettingsStorage extends BaseSettingsStorage<StreamPref> {
+    private static readonly IS_SMART_TV = BX_FLAGS.DeviceInfo.deviceType === 'android-tv'
+        || BX_FLAGS.DeviceInfo.deviceType === 'webos'
+        || STATES.userAgent.isTv;
+
     static readonly DEFINITIONS: SettingDefinitions<StreamPref> = {
         [StreamPref.DEVICE_VIBRATION_MODE]: {
             requiredVariants: 'full',
@@ -193,7 +198,7 @@ export class StreamSettingsStorage extends BaseSettingsStorage<StreamPref> {
         },
         [StreamPref.VIDEO_POWER_PREFERENCE]: {
             label: t('renderer-configuration'),
-            default: VideoPowerPreference.DEFAULT,
+            default: StreamSettingsStorage.IS_SMART_TV ? VideoPowerPreference.LOW_POWER : VideoPowerPreference.DEFAULT,
             options: {
                 [VideoPowerPreference.DEFAULT]: t('default'),
                 [VideoPowerPreference.LOW_POWER]: t('battery-saving'),
@@ -205,7 +210,7 @@ export class StreamSettingsStorage extends BaseSettingsStorage<StreamPref> {
         },
         [StreamPref.VIDEO_MAX_FPS]: {
             label: t('limit-fps'),
-            default: 60,
+            default: StreamSettingsStorage.IS_SMART_TV ? 30 : 60,
             min: 10,
             max: 60,
             params: {

@@ -166,7 +166,7 @@ type XcloudGamepad = {
     Dirty: boolean;
     Virtual: boolean;
 
-    // Only in Better xCloud
+    // Only in Bolt Xcloud
     LeftStickAxes?: any;
     RightStickAxes?: any;
     Share?: any;

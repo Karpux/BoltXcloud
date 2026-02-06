@@ -989,7 +989,7 @@ export class SettingsDialog extends NavigationDialog {
 
             let label = section.label;
 
-            // If label is "Better xCloud" => create a link to Releases page
+            // If label is "Bolt Xcloud" => create a link to Releases page
             if (label === t('better-xcloud')) {
                 label += ' ' + SCRIPT_VERSION;
 

@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Better xCloud (Lite)
+// @name         Bolt Xcloud (Lite)
 // @namespace    https://github.com/redphx
 // @version      [[VERSION]]
 // @description  Improve Xbox Cloud Gaming (xCloud) experience

@@ -68,7 +68,7 @@ if (window.location.pathname.includes('/auth/msa')) {
         return nativePushState.apply(this, arguments);
     }
     // Stop processing the script
-    throw new Error('[Better xCloud] Refreshing the page after logging in');
+    throw new Error('[Bolt Xcloud] Refreshing the page after logging in');
 }
 
 BxLogger.info('readyState', document.readyState);
@@ -146,12 +146,12 @@ if (isFullVersion() && BX_FLAGS.SafariWorkaround && document.readyState !== 'loa
     isSafari && window.location.reload(true);
 
     // Stop processing the script
-    throw new Error('[Better xCloud] Executing workaround for Safari');
+    throw new Error('[Bolt Xcloud] Executing workaround for Safari');
 }
 
 // Make sure it only run on /play
 if (!window.location.pathname.match(/^\/[a-zA-Z]{2}-[a-zA-Z]{2}\/play/)) {
-    throw new Error('[Better xCloud] Not xCloud page');
+    throw new Error('[Bolt Xcloud] Not xCloud page');
 }
 
 
@@ -327,7 +327,7 @@ BxEventBus.Stream.on('dataChannelCreated', payload => {
     }
 
     dataChannel.addEventListener('message', async (msg: MessageEvent) => {
-        if (msg.origin === 'better-xcloud' || typeof msg.data !== 'string') {
+        if (msg.origin === 'bolt-xcloud' || typeof msg.data !== 'string') {
             return;
         }
 

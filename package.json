@@ -1,5 +1,5 @@
 {
-  "name": "better-xcloud",
+  "name": "bolt-xcloud",
   "module": "src/index.ts",
   "type": "module",
   "sideEffects": false,

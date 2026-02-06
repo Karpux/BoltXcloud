@@ -19,7 +19,7 @@ export function patchHistoryMethod(type: 'pushState' | 'replaceState') {
 
 export function onHistoryChanged(e: PopStateEvent) {
     // @ts-ignore
-    if (e && e.arguments && e.arguments[0] && e.arguments[0].origin === 'better-xcloud') {
+    if (e && e.arguments && e.arguments[0] && e.arguments[0].origin === 'bolt-xcloud') {
         return;
     }
 

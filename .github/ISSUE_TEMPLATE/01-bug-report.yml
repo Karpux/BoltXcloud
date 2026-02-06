@@ -36,7 +36,7 @@ body:
   - type: dropdown
     id: question_02
     attributes:
-      label: "The bug doesn't happen when you disable Better xCloud script"
+      label: "The bug doesn't happen when you disable Bolt Xcloud script"
       options:
         - "No"
         - "Yes"
@@ -46,7 +46,7 @@ body:
   - type: dropdown
     id: question_03
     attributes:
-      label: "Previous Better xCloud versions didn't have this bug (name which one)"
+      label: "Previous Bolt Xcloud versions didn't have this bug (name which one)"
       options:
         - "No"
         - "Yes"
@@ -98,8 +98,8 @@ body:
   - type: input
     id: extension_version
     attributes:
-      label: "Better xCloud Version"
-      description: "What is the version of Better xCloud?"
+      label: "Bolt Xcloud Version"
+      description: "What is the version of Bolt Xcloud?"
       placeholder: "e.g., 3.5.0"
     validations:
       required: true

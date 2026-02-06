@@ -144,7 +144,7 @@ export function clearAllData() {
         }
 
         // Delete key
-        if (key.startsWith('BetterXcloud') || key.startsWith('better_xcloud')) {
+        if (key.startsWith('BoltXcloud') || key.startsWith('BetterXcloud') || key.startsWith('better_xcloud')) {
             localStorage.removeItem(key);
         }
     }
@@ -152,6 +152,7 @@ export function clearAllData() {
     // Delete IndexedDB database
     try {
         indexedDB.deleteDatabase(LocalDb.DB_NAME);
+        indexedDB.deleteDatabase('BetterXcloud');
     } catch (e) {};
 
     alert(t('clear-data-success'));

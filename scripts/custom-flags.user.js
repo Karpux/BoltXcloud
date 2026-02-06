@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Better xCloud - Custom flags
+// @name         Bolt Xcloud - Custom flags
 // @namespace    https://github.com/redphx
 // @version      1.0.0
-// @description  Customize Better xCloud script
+// @description  Customize Bolt Xcloud script
 // @author       redphx
 // @license      MIT
 // @match        https://www.xbox.com/*/play*
@@ -12,12 +12,12 @@
 'use strict';
 
 /*
-Make sure this script is being loaded before the Better xCloud script.
+Make sure this script is being loaded before the Bolt Xcloud script.
 
 How to:
-1. Uninstall Better xCloud script.
+1. Uninstall Bolt Xcloud script.
 2. Install this script.
-3. Reinstall Better xCloud script. All your settings are still there.
+3. Reinstall Bolt Xcloud script. All your settings are still there.
 */
 
 // Change this to `false` if you want to temporary disable the script

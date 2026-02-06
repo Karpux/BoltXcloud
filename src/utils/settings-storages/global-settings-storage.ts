@@ -12,6 +12,10 @@ import { CodecProfile, StreamResolution, TouchControllerMode, TouchControllerSty
 import { GhPagesUtils } from "../gh-pages";
 import { BxEventBus } from "../bx-event-bus";
 
+const isSmartTv = BX_FLAGS.DeviceInfo.deviceType === 'android-tv'
+    || BX_FLAGS.DeviceInfo.deviceType === 'webos'
+    || STATES.userAgent.isTv;
+
 
 function getSupportedCodecProfiles() {
     const options: PartialRecord<CodecProfile, string> = {
@@ -139,7 +143,7 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
         },
         [GlobalPref.STREAM_RESOLUTION]: {
             label: t('target-resolution'),
-            default: 'auto',
+            default: isSmartTv ? StreamResolution.DIM_720P : 'auto',
             options: {
                 auto: t('default'),
                 [StreamResolution.DIM_720P]: '720p',
@@ -189,7 +193,7 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
 
         [GlobalPref.UI_SKIP_SPLASH_VIDEO]: {
             label: t('skip-splash-video'),
-            default: false,
+            default: isSmartTv,
         },
         [GlobalPref.UI_HIDE_SYSTEM_MENU_ICON]: {
             label: '⣿ ' + t('hide-system-menu-icon'),
@@ -198,7 +202,7 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
         [GlobalPref.UI_IMAGE_QUALITY]: {
             requiredVariants: 'full',
             label: t('image-quality'),
-            default: 90,
+            default: isSmartTv ? 50 : 90,
             min: 10,
             max: 90,
             params: {
@@ -227,7 +231,7 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
             requiredVariants: 'full',
 
             label: t('combine-audio-video-streams'),
-            default: false,
+            default: isSmartTv,
             experimental: true,
             note: t('combine-audio-video-streams-summary'),
         },
@@ -306,7 +310,7 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
             requiredVariants: 'full',
             label: t('bitrate-video-maximum'),
             note: '⚠️ ' + t('unexpected-behavior'),
-            default: 0,
+            default: isSmartTv ? 3 * 1024 * 1000 : 0,
             min: 1024 * 100,
             max: 15 * 1024 * 1000,
             transformValue: {
@@ -417,7 +421,7 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
 
         [GlobalPref.UI_REDUCE_ANIMATIONS]: {
             label: t('reduce-animations'),
-            default: false,
+            default: isSmartTv,
         },
 
         [GlobalPref.LOADING_SCREEN_GAME_ART]: {
@@ -447,7 +451,7 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
         [GlobalPref.UI_LAYOUT]: {
             requiredVariants: 'full',
             label: t('layout'),
-            default: UiLayout.DEFAULT,
+            default: isSmartTv ? UiLayout.TV : UiLayout.DEFAULT,
             options: {
                 [UiLayout.DEFAULT]: t('default'),
                 [UiLayout.NORMAL]: t('normal'),

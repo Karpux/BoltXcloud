@@ -49,7 +49,7 @@ $this$.toggleLocalCoOp = (enable: boolean) => {
         }
 
         // Ignore virtual controller
-        if (gamepad.id.includes('Better xCloud')) {
+        if (gamepad.id.includes('Bolt Xcloud')) {
             continue;
         }
 

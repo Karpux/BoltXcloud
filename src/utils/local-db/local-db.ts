@@ -3,7 +3,7 @@ export class LocalDb {
     public static getInstance = () => LocalDb.instance ?? (LocalDb.instance = new LocalDb());
     // private readonly LOG_TAG = 'LocalDb';
 
-    static readonly DB_NAME = 'BetterXcloud';
+    static readonly DB_NAME = 'BoltXcloud';
     static readonly DB_VERSION = 4;
 
     static readonly TABLE_VIRTUAL_CONTROLLERS = 'virtual_controllers';
