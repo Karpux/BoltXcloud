@@ -39,6 +39,9 @@ export const enum GlobalPref {
     USER_AGENT_PROFILE = 'userAgent.profile',
 
     PERFORMANCE_PROFILE = 'performance.profile',
+    NETWORK_PROFILE = 'network.profile',
+    VIDEO_PROFILE = 'video.profile',
+    CONTROLLER_RESPONSE = 'controller.response',
 
     TOUCH_CONTROLLER_MODE = 'touchController.mode',
     TOUCH_CONTROLLER_AUTO_OFF = 'touchController.autoOff',
@@ -77,6 +80,7 @@ export const enum GlobalPref {
     UI_HIDE_SYSTEM_MENU_ICON = 'ui.systemMenu.hideHandle',
     UI_REDUCE_ANIMATIONS = 'ui.reduceAnimations',
     UI_IMAGE_QUALITY = 'ui.imageQuality',
+    UI_COMPACT = 'ui.compact',
     UI_THEME = 'ui.theme',
 
     AUDIO_MIC_ON_PLAYING = 'audio.mic.onPlaying',
@@ -115,6 +119,9 @@ export type GlobalPrefTypeMap = {
     [GlobalPref.STREAM_RESOLUTION]: StreamResolution;
     [GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS]: boolean;
     [GlobalPref.PERFORMANCE_PROFILE]: string;
+    [GlobalPref.NETWORK_PROFILE]: string;
+    [GlobalPref.VIDEO_PROFILE]: string;
+    [GlobalPref.CONTROLLER_RESPONSE]: string;
     [GlobalPref.TOUCH_CONTROLLER_AUTO_OFF]: boolean;
     [GlobalPref.TOUCH_CONTROLLER_DEFAULT_OPACITY]: number;
     [GlobalPref.TOUCH_CONTROLLER_MODE]: TouchControllerMode;
@@ -128,6 +135,7 @@ export type GlobalPrefTypeMap = {
     [GlobalPref.UI_HIDE_SYSTEM_MENU_ICON]: boolean;
     [GlobalPref.UI_IMAGE_QUALITY]: number;
     [GlobalPref.UI_LAYOUT]: UiLayout;
+    [GlobalPref.UI_COMPACT]: boolean;
     [GlobalPref.UI_REDUCE_ANIMATIONS]: boolean;
     [GlobalPref.UI_SCROLLBAR_HIDE]: boolean;
     [GlobalPref.UI_SIMPLIFY_STREAM_MENU]: boolean;
@@ -252,6 +260,9 @@ export const ALL_PREFS: {
         GlobalPref.STREAM_RESOLUTION,
         GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS,
         GlobalPref.PERFORMANCE_PROFILE,
+        GlobalPref.NETWORK_PROFILE,
+        GlobalPref.VIDEO_PROFILE,
+        GlobalPref.CONTROLLER_RESPONSE,
         GlobalPref.TOUCH_CONTROLLER_AUTO_OFF,
         GlobalPref.TOUCH_CONTROLLER_DEFAULT_OPACITY,
         GlobalPref.TOUCH_CONTROLLER_MODE,
@@ -265,6 +276,7 @@ export const ALL_PREFS: {
         GlobalPref.UI_HIDE_SYSTEM_MENU_ICON,
         GlobalPref.UI_IMAGE_QUALITY,
         GlobalPref.UI_LAYOUT,
+        GlobalPref.UI_COMPACT,
         GlobalPref.UI_REDUCE_ANIMATIONS,
         GlobalPref.UI_SCROLLBAR_HIDE,
         GlobalPref.UI_SIMPLIFY_STREAM_MENU,

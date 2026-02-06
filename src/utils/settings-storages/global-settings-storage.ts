@@ -15,7 +15,12 @@ import { BxEventBus } from "../bx-event-bus";
 const isSmartTv = BX_FLAGS.DeviceInfo.deviceType === 'android-tv'
     || BX_FLAGS.DeviceInfo.deviceType === 'webos'
     || STATES.userAgent.isTv;
+const isMobile = UserAgent.isMobile();
 const defaultPerformanceProfile = 'auto';
+const defaultNetworkProfile = isSmartTv ? 'low' : (isMobile ? 'balanced' : 'auto');
+const defaultVideoProfile = isSmartTv ? 'soft' : 'balanced';
+const defaultControllerResponse = isSmartTv ? 'stable' : 'balanced';
+const defaultCompactUi = isSmartTv || isMobile;
 
 
 function getSupportedCodecProfiles() {
@@ -100,6 +105,42 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
                 pc: t('profile-pc'),
                 android: t('profile-android'),
             },
+        },
+        [GlobalPref.NETWORK_PROFILE]: {
+            label: t('network-profile'),
+            note: t('network-profile-note'),
+            default: defaultNetworkProfile,
+            options: {
+                auto: t('auto'),
+                low: t('profile-low'),
+                balanced: t('profile-balanced'),
+                high: t('profile-high'),
+            },
+        },
+        [GlobalPref.VIDEO_PROFILE]: {
+            label: t('video-profile'),
+            note: t('video-profile-note'),
+            default: defaultVideoProfile,
+            options: {
+                soft: t('profile-soft'),
+                balanced: t('profile-balanced'),
+                sharp: t('profile-sharp'),
+            },
+        },
+        [GlobalPref.CONTROLLER_RESPONSE]: {
+            label: t('controller-response'),
+            note: t('controller-response-note'),
+            default: defaultControllerResponse,
+            options: {
+                stable: t('profile-stable'),
+                balanced: t('profile-balanced'),
+                fast: t('profile-fast'),
+            },
+        },
+        [GlobalPref.UI_COMPACT]: {
+            label: t('compact-ui'),
+            note: t('compact-ui-note'),
+            default: defaultCompactUi,
         },
         [GlobalPref.SERVER_REGION]: {
             label: t('region'),

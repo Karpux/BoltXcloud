@@ -32,6 +32,7 @@ import { getGlobalPref, getPrefInfo, getStreamPref, isStreamPref, setGlobalPref,
 import { SettingsManager } from "@/modules/settings-manager";
 import { StreamStats } from "@/modules/stream/stream-stats";
 import { Toast } from "@/utils/toast";
+import { applyCompactUi, applyControllerResponse, applyNetworkProfile, applyVideoProfile, type ControllerResponse, type NetworkProfile, type VideoProfile } from "@/utils/smart-presets";
 
 
 type SettingTabSectionItem = Partial<{
@@ -197,6 +198,18 @@ export class SettingsDialog extends NavigationDialog {
             },
             {
                 pref: GlobalPref.PERFORMANCE_PROFILE,
+            },
+            {
+                pref: GlobalPref.NETWORK_PROFILE,
+            },
+            {
+                pref: GlobalPref.VIDEO_PROFILE,
+            },
+            {
+                pref: GlobalPref.CONTROLLER_RESPONSE,
+            },
+            {
+                pref: GlobalPref.UI_COMPACT,
             },
             $parent => {
                 $parent.appendChild(CE('div', {
@@ -921,6 +934,22 @@ export class SettingsDialog extends NavigationDialog {
                 $control = SettingElement.fromPref(GlobalPref.PERFORMANCE_PROFILE, (e: Event, value: string) => {
                     applyPerformanceProfile(value as PerformanceProfile, 'ui');
                     this.onGlobalSettingChanged(e);
+                });
+            } else if (pref === GlobalPref.NETWORK_PROFILE) {
+                $control = SettingElement.fromPref(GlobalPref.NETWORK_PROFILE, (e: Event, value: string) => {
+                    applyNetworkProfile(value as NetworkProfile);
+                });
+            } else if (pref === GlobalPref.VIDEO_PROFILE) {
+                $control = SettingElement.fromPref(GlobalPref.VIDEO_PROFILE, (e: Event, value: string) => {
+                    applyVideoProfile(value as VideoProfile);
+                });
+            } else if (pref === GlobalPref.CONTROLLER_RESPONSE) {
+                $control = SettingElement.fromPref(GlobalPref.CONTROLLER_RESPONSE, (e: Event, value: string) => {
+                    applyControllerResponse(value as ControllerResponse);
+                });
+            } else if (pref === GlobalPref.UI_COMPACT) {
+                $control = SettingElement.fromPref(GlobalPref.UI_COMPACT, (e: Event, value: boolean) => {
+                    applyCompactUi(value);
                 });
             } else if (pref === GlobalPref.USER_AGENT_PROFILE) {
                 $control = SettingElement.fromPref(GlobalPref.USER_AGENT_PROFILE, (e: Event) => {

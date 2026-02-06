@@ -209,6 +209,10 @@
     .bx-top-buttons .bx-button {
         min-height: 44px;
     }
+
+    .bx-smart-actions-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .bx-settings-row {
@@ -273,6 +277,20 @@
 
 .bx-filter-hide {
     display: none !important;
+}
+
+html.bx-compact-ui {
+    .bx-settings-row {
+        padding: 10px 8px;
+    }
+
+    .bx-settings-row > span.bx-settings-label {
+        font-size: 13px;
+    }
+
+    .bx-settings-dialog-note {
+        font-size: 11px;
+    }
 }
 
 .bx-settings-dialog-note {

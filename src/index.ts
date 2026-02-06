@@ -50,9 +50,11 @@ import { TrueAchievements } from "./utils/true-achievements";
 import { localRedirect } from "./modules/ui/ui";
 import { handleDeepLink } from "./utils/deep-link";
 import { PerformanceProfileManager } from "./utils/performance-profile";
+import { applyCompactUi } from "./utils/smart-presets";
 
 SettingsManager.getInstance();
 PerformanceProfileManager.getInstance().start();
+applyCompactUi();
 
 // Handle login page
 if (window.location.pathname.includes('/auth/msa')) {
@@ -301,6 +303,12 @@ BxEventBus.Script.on('ui.guideAchievementDetail.rendered', () => {
     const $elm = document.querySelector('#gamepass-dialog-root div[class^=AchievementDetailPage-module]');
     if ($elm) {
         TrueAchievements.getInstance().injectAchievementDetailPage($elm as HTMLElement);
+    }
+});
+
+BxEventBus.Script.on('setting.changed', ({ settingKey }) => {
+    if (settingKey === GlobalPref.UI_COMPACT) {
+        applyCompactUi();
     }
 });
 
