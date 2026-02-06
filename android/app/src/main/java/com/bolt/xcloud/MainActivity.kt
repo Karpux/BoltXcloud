@@ -46,10 +46,7 @@ class MainActivity : AppCompatActivity() {
             override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
                 appendLog("console", "${consoleMessage.message()} (${consoleMessage.lineNumber()})")
                 if (!hasReloadedOnChunkError && consoleMessage.message().contains("ChunkLoadError", true)) {
-                    hasReloadedOnChunkError = true
-                    appendLog("auto", "Reloading after ChunkLoadError")
-                    webView.clearCache(true)
-                    webView.reload()
+                    handleChunkLoadError("console", consoleMessage.message())
                 }
                 return super.onConsoleMessage(consoleMessage)
             }
@@ -95,16 +92,51 @@ class MainActivity : AppCompatActivity() {
                 if (window.__BOLT_DIAG__) return;
                 window.__BOLT_DIAG__ = true;
                 window.addEventListener('error', function(e) {
-                    try { BoltBridge.log('js', e.message || 'Unknown error'); } catch(_) {}
+                    try {
+                        var msg = e && e.message ? e.message : 'Unknown error';
+                        BoltBridge.log('js', msg);
+                        if (String(msg).indexOf('ChunkLoadError') !== -1) {
+                            BoltBridge.chunkError(String(msg));
+                        }
+                    } catch(_) {}
                 });
                 window.addEventListener('unhandledrejection', function(e) {
-                    try { BoltBridge.log('promise', String(e.reason || 'Unknown rejection')); } catch(_) {}
+                    try {
+                        var reason = String(e.reason || 'Unknown rejection');
+                        BoltBridge.log('promise', reason);
+                        if (reason.indexOf('ChunkLoadError') !== -1) {
+                            BoltBridge.chunkError(reason);
+                        }
+                    } catch(_) {}
                 });
                 const orgLog = console.log;
                 console.log = function() {
                     try { BoltBridge.log('log', Array.from(arguments).join(' ')); } catch(_) {}
                     return orgLog.apply(console, arguments);
                 };
+            })();
+        """.trimIndent()
+        webView.evaluateJavascript(js, null)
+    }
+
+    private fun handleChunkLoadError(source: String, message: String) {
+        if (hasReloadedOnChunkError) return
+        hasReloadedOnChunkError = true
+        appendLog("auto", "Reloading after ChunkLoadError ($source)")
+        webView.clearCache(true)
+        val js = """
+            (async function() {
+                try {
+                    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map(r => r.unregister()));
+                    }
+                    if (window.caches && caches.keys) {
+                        const keys = await caches.keys();
+                        await Promise.all(keys.map(k => caches.delete(k)));
+                    }
+                } catch (e) {}
+                location.reload();
             })();
         """.trimIndent()
         webView.evaluateJavascript(js, null)
@@ -140,6 +172,11 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface
         fun log(tag: String, message: String) {
             appendLog(tag, message)
+        }
+
+        @JavascriptInterface
+        fun chunkError(message: String) {
+            handleChunkLoadError("js", message)
         }
     }
 
