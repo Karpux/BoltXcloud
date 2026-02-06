@@ -30,6 +30,8 @@ import { MkbExtraSettings } from "./settings/mkb-extra";
 import { BxEventBus } from "@/utils/bx-event-bus";
 import { getGlobalPref, getPrefInfo, getStreamPref, isStreamPref, setGlobalPref, STORAGE } from "@/utils/pref-utils";
 import { SettingsManager } from "@/modules/settings-manager";
+import { StreamStats } from "@/modules/stream/stream-stats";
+import { Toast } from "@/utils/toast";
 
 
 type SettingTabSectionItem = Partial<{
@@ -194,6 +196,48 @@ export class SettingsDialog extends NavigationDialog {
             },
             {
                 pref: GlobalPref.PERFORMANCE_PROFILE,
+            },
+            $parent => {
+                $parent.appendChild(CE('div', {
+                    class: 'bx-smart-actions bx-sub-content-box',
+                },
+                    CE('div', { class: 'bx-smart-actions-title' }, t('smart-actions')),
+                    CE('div', { class: 'bx-smart-actions-note' }, t('smart-actions-note')),
+                    CE('div', { class: 'bx-smart-actions-grid' },
+                        createButton({
+                            label: t('smart-profile-auto'),
+                            icon: BxIcon.REFRESH,
+                            style: ButtonStyle.PRIMARY | ButtonStyle.FULL_WIDTH | ButtonStyle.FOCUSABLE,
+                            onClick: () => this.applyProfileFromAction('auto'),
+                        }),
+                        createButton({
+                            label: t('smart-profile-tv'),
+                            icon: BxIcon.DISPLAY,
+                            style: ButtonStyle.FROSTED | ButtonStyle.FULL_WIDTH | ButtonStyle.FOCUSABLE,
+                            onClick: () => this.applyProfileFromAction('tv'),
+                        }),
+                        createButton({
+                            label: t('smart-profile-android'),
+                            icon: BxIcon.POWER,
+                            style: ButtonStyle.FROSTED | ButtonStyle.FULL_WIDTH | ButtonStyle.FOCUSABLE,
+                            onClick: () => this.applyProfileFromAction('android'),
+                        }),
+                        createButton({
+                            label: t('smart-profile-pc'),
+                            icon: BxIcon.STREAM_SETTINGS,
+                            style: ButtonStyle.GHOST | ButtonStyle.FULL_WIDTH | ButtonStyle.FOCUSABLE,
+                            onClick: () => this.applyProfileFromAction('pc'),
+                        }),
+                        createButton({
+                            label: t('smart-toggle-stats'),
+                            icon: BxIcon.STREAM_STATS,
+                            style: ButtonStyle.GHOST | ButtonStyle.FULL_WIDTH | ButtonStyle.FOCUSABLE,
+                            onClick: () => {
+                                StreamStats.getInstance().toggle();
+                            },
+                        }),
+                    ),
+                ));
             },
             GlobalPref.SERVER_BYPASS_RESTRICTION,
             GlobalPref.UI_CONTROLLER_FRIENDLY,
@@ -1068,6 +1112,19 @@ export class SettingsDialog extends NavigationDialog {
         }
 
         return $tabContent;
+    }
+
+    private applyProfileFromAction(profile: PerformanceProfile) {
+        setGlobalPref(GlobalPref.PERFORMANCE_PROFILE, profile, 'ui');
+        applyPerformanceProfile(profile, 'ui');
+
+        const $select = this.$container?.querySelector<HTMLSelectElement>('#bx_setting_performance-profile');
+        if ($select) {
+            $select.value = profile;
+            $select.dispatchEvent(new Event('input'));
+        }
+
+        Toast.show(t('performance-profile'), t('profile-applied', profile));
     }
 
 
