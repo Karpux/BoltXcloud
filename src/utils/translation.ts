@@ -231,6 +231,7 @@ const Texts = {
     "performance": "Performance",
     "performance-profile": "Performance profile",
     "performance-profile-note": "Switching profiles overwrites related stream and UI settings.",
+    "auto-profile-switched": "Auto switched to {0}",
     "profile-tv": "TV (Ultra light)",
     "profile-pc": "PC (Quality)",
     "profile-android": "Android (Balanced)",

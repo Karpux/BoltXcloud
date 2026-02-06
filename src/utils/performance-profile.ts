@@ -4,6 +4,8 @@ import { BxLogger } from "@/utils/bx-logger";
 import { STATES } from "@/utils/global";
 import { getGlobalPref, setGlobalPref, setStreamPref } from "@/utils/pref-utils";
 import { StreamStatsCollector } from "@/utils/stream-stats-collector";
+import { Toast } from "@/utils/toast";
+import { t } from "@/utils/translation";
 import { GlobalPref, StreamPref } from "@/enums/pref-keys";
 import { StreamResolution, StreamStat, StreamVideoProcessing, StreamVideoProcessingMode, UiLayout, VideoPowerPreference } from "@/enums/pref-values";
 
@@ -226,6 +228,7 @@ export class PerformanceProfileManager {
         this.lastSwitchAt = now;
         this.candidate = null;
         this.candidateCount = 0;
+        Toast.show(t('performance-profile'), t('auto-profile-switched', this.lastApplied));
         BxLogger.info('PerformanceProfile', 'auto-switched', this.lastApplied);
     }
 }
