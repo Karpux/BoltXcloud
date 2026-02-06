@@ -77,7 +77,7 @@ if (window.location.pathname.includes('/auth/msa')) {
 
 BxLogger.info('readyState', document.readyState);
 
-if (isFullVersion() && BX_FLAGS.SafariWorkaround && document.readyState !== 'loading') {
+if (isFullVersion() && BX_FLAGS.SafariWorkaround && UserAgent.isSafari() && document.readyState !== 'loading') {
     // Stop loading
     window.stop();
 
