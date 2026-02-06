@@ -6,9 +6,10 @@
 // @author       redphx
 // @license      MIT
 // @match        https://www.xbox.com/*/play*
+// @include     https://www.xbox.com/en-US/play*
 // @match        https://www.xbox.com/*/auth/msa?*loggedIn*
 // @exclude      https://www.xbox.com/*/xbox-game-pass/play-day-one
-// @run-at       document-start
+// @run-at       document-end
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/Karpux/BoltXcloud/main/bolt-xcloud.meta.js
 // @downloadURL  https://raw.githubusercontent.com/Karpux/BoltXcloud/main/bolt-xcloud.user.js
