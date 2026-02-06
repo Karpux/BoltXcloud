@@ -27,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         webView = findViewById(R.id.webview)
         val logsButton = findViewById<android.widget.Button>(R.id.logs_button)
 
+        WebView.setWebContentsDebuggingEnabled(true)
+
         val settings = webView.settings
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
@@ -47,7 +49,9 @@ class MainActivity : AppCompatActivity() {
         }
         webView.webViewClient = object : WebViewClient() {
             override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
-                appendLog("web", "${error.errorCode}: ${error.description}")
+                if (request.isForMainFrame) {
+                    appendLog("web", "${error.errorCode}: ${error.description}")
+                }
                 super.onReceivedError(view, request, error)
             }
 
@@ -94,8 +98,9 @@ class MainActivity : AppCompatActivity() {
     private fun injectScript() {
         val script = assets.open("bolt-xcloud.user.js").bufferedReader().use { it.readText() }
         val cleaned = script.replace(Regex("(?s)// ==UserScript==.*?// ==/UserScript=="), "")
-        val wrapped = "(function(){if(window.__BOLT_XCLOUD_INJECTED__){return;}" +
-            "window.__BOLT_XCLOUD_INJECTED__=true;" + cleaned + "})();"
+        val wrapped = "(function(){try{if(window.__BOLT_XCLOUD_INJECTED__){return;}" +
+            "window.__BOLT_XCLOUD_INJECTED__=true;" + cleaned +
+            "}catch(e){try{BoltBridge.log('inject', e && e.stack ? e.stack : String(e));}catch(_){}}})();"
 
         webView.evaluateJavascript(wrapped, null)
     }
