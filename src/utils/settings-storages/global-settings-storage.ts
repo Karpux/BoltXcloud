@@ -15,10 +15,7 @@ import { BxEventBus } from "../bx-event-bus";
 const isSmartTv = BX_FLAGS.DeviceInfo.deviceType === 'android-tv'
     || BX_FLAGS.DeviceInfo.deviceType === 'webos'
     || STATES.userAgent.isTv;
-const isAndroidDevice = BX_FLAGS.DeviceInfo.deviceType === 'android'
-    || BX_FLAGS.DeviceInfo.deviceType === 'android-handheld'
-    || BX_FLAGS.DeviceInfo.deviceType === 'android-tv';
-const defaultPerformanceProfile = isSmartTv ? 'tv' : (isAndroidDevice ? 'android' : 'pc');
+const defaultPerformanceProfile = 'auto';
 
 
 function getSupportedCodecProfiles() {

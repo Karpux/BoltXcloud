@@ -49,8 +49,10 @@ import { StreamUiHandler } from "./modules/stream/stream-ui";
 import { TrueAchievements } from "./utils/true-achievements";
 import { localRedirect } from "./modules/ui/ui";
 import { handleDeepLink } from "./utils/deep-link";
+import { PerformanceProfileManager } from "./utils/performance-profile";
 
 SettingsManager.getInstance();
+PerformanceProfileManager.getInstance().start();
 
 // Handle login page
 if (window.location.pathname.includes('/auth/msa')) {
