@@ -15,6 +15,10 @@ import { BxEventBus } from "../bx-event-bus";
 const isSmartTv = BX_FLAGS.DeviceInfo.deviceType === 'android-tv'
     || BX_FLAGS.DeviceInfo.deviceType === 'webos'
     || STATES.userAgent.isTv;
+const isAndroidDevice = BX_FLAGS.DeviceInfo.deviceType === 'android'
+    || BX_FLAGS.DeviceInfo.deviceType === 'android-handheld'
+    || BX_FLAGS.DeviceInfo.deviceType === 'android-tv';
+const defaultPerformanceProfile = isSmartTv ? 'tv' : (isAndroidDevice ? 'android' : 'pc');
 
 
 function getSupportedCodecProfiles() {
@@ -88,6 +92,17 @@ export class GlobalSettingsStorage extends BaseSettingsStorage<GlobalPref> {
             label: t('language'),
             default: localStorage.getItem(StorageKey.LOCALE) || 'en-US',
             options: SUPPORTED_LANGUAGES,
+        },
+        [GlobalPref.PERFORMANCE_PROFILE]: {
+            label: t('performance-profile'),
+            note: t('performance-profile-note'),
+            default: defaultPerformanceProfile,
+            options: {
+                auto: t('auto'),
+                tv: t('profile-tv'),
+                pc: t('profile-pc'),
+                android: t('profile-android'),
+            },
         },
         [GlobalPref.SERVER_REGION]: {
             label: t('region'),

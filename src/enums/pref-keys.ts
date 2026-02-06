@@ -38,6 +38,8 @@ export const enum GlobalPref {
 
     USER_AGENT_PROFILE = 'userAgent.profile',
 
+    PERFORMANCE_PROFILE = 'performance.profile',
+
     TOUCH_CONTROLLER_MODE = 'touchController.mode',
     TOUCH_CONTROLLER_AUTO_OFF = 'touchController.autoOff',
     TOUCH_CONTROLLER_DEFAULT_OPACITY = 'touchController.opacity.default',
@@ -112,6 +114,7 @@ export type GlobalPrefTypeMap = {
     [GlobalPref.STREAM_PREFERRED_LOCALE]: StreamPreferredLocale;
     [GlobalPref.STREAM_RESOLUTION]: StreamResolution;
     [GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS]: boolean;
+    [GlobalPref.PERFORMANCE_PROFILE]: string;
     [GlobalPref.TOUCH_CONTROLLER_AUTO_OFF]: boolean;
     [GlobalPref.TOUCH_CONTROLLER_DEFAULT_OPACITY]: number;
     [GlobalPref.TOUCH_CONTROLLER_MODE]: TouchControllerMode;
@@ -248,6 +251,7 @@ export const ALL_PREFS: {
         GlobalPref.STREAM_PREFERRED_LOCALE,
         GlobalPref.STREAM_RESOLUTION,
         GlobalPref.STREAM_PREVENT_RESOLUTION_DROPS,
+        GlobalPref.PERFORMANCE_PROFILE,
         GlobalPref.TOUCH_CONTROLLER_AUTO_OFF,
         GlobalPref.TOUCH_CONTROLLER_DEFAULT_OPACITY,
         GlobalPref.TOUCH_CONTROLLER_MODE,

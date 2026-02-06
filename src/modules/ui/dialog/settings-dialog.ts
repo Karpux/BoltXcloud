@@ -16,6 +16,7 @@ import { UserAgent } from "@/utils/user-agent";
 import { BX_FLAGS } from "@/utils/bx-flags";
 import { clearAllData, copyToClipboard } from "@/utils/utils";
 import { GlobalPref, StorageKey, StreamPref, type AnyPref } from "@/enums/pref-keys";
+import { StreamResolution, UiLayout, StreamVideoProcessing, StreamVideoProcessingMode, VideoPowerPreference } from "@/enums/pref-values";
 import { SettingElement } from "@/utils/setting-element";
 import type { SettingDefinition, SuggestedSettingProfile } from "@/types/setting-definition";
 import { FullscreenText } from "../fullscreen-text";
@@ -26,7 +27,7 @@ import { ControllerExtraSettings } from "./settings/controller-extra";
 import { SuggestionsSetting } from "./settings/suggestions";
 import { MkbExtraSettings } from "./settings/mkb-extra";
 import { BxEventBus } from "@/utils/bx-event-bus";
-import { getGlobalPref, getPrefInfo, getStreamPref, isStreamPref, setGlobalPref, STORAGE } from "@/utils/pref-utils";
+import { getGlobalPref, getPrefInfo, getStreamPref, isStreamPref, setGlobalPref, setStreamPref, STORAGE } from "@/utils/pref-utils";
 import { SettingsManager } from "@/modules/settings-manager";
 
 
@@ -45,6 +46,8 @@ type SettingTabSectionItem = Partial<{
     params: any;
     requiredVariants?: BuildVariant | Array<BuildVariant>;
 }>
+
+type PerformanceProfile = 'auto' | 'tv' | 'pc' | 'android';
 
 type SettingTabSection = {
     group: 'general' | 'server' | 'stream' | 'game-bar' | 'mkb' | 'touch-control' | 'loading-screen' | 'ui' | 'other' | 'advanced' | 'footer'
@@ -188,6 +191,9 @@ export class SettingsDialog extends NavigationDialog {
             {
                 pref: GlobalPref.SCRIPT_LOCALE,
                 multiLines: true,
+            },
+            {
+                pref: GlobalPref.PERFORMANCE_PROFILE,
             },
             GlobalPref.SERVER_BYPASS_RESTRICTION,
             GlobalPref.UI_CONTROLLER_FRIENDLY,
@@ -862,6 +868,11 @@ export class SettingsDialog extends NavigationDialog {
 
                     this.onGlobalSettingChanged(e);
                 });
+            } else if (pref === GlobalPref.PERFORMANCE_PROFILE) {
+                $control = SettingElement.fromPref(GlobalPref.PERFORMANCE_PROFILE, (e: Event, value: string) => {
+                    this.applyPerformanceProfile(value as PerformanceProfile);
+                    this.onGlobalSettingChanged(e);
+                });
             } else if (pref === GlobalPref.USER_AGENT_PROFILE) {
                 $control = SettingElement.fromPref(GlobalPref.USER_AGENT_PROFILE, (e: Event) => {
                     const $target = e.target as HTMLSelectElement;
@@ -1057,6 +1068,71 @@ export class SettingsDialog extends NavigationDialog {
         }
 
         return $tabContent;
+    }
+
+    private getAutoPerformanceProfile(): PerformanceProfile {
+        const deviceType = BX_FLAGS.DeviceInfo.deviceType;
+        if (deviceType === 'android-tv' || deviceType === 'webos' || STATES.userAgent.isTv) {
+            return 'tv';
+        }
+
+        if (deviceType === 'android' || deviceType === 'android-handheld') {
+            return 'android';
+        }
+
+        return 'pc';
+    }
+
+    private applyPerformanceProfile(profile: PerformanceProfile) {
+        const resolved = profile === 'auto' ? this.getAutoPerformanceProfile() : profile;
+
+        if (resolved === 'tv') {
+            setGlobalPref(GlobalPref.UI_LAYOUT, UiLayout.TV, 'ui');
+            setGlobalPref(GlobalPref.UI_REDUCE_ANIMATIONS, true, 'ui');
+            setGlobalPref(GlobalPref.UI_IMAGE_QUALITY, 50, 'ui');
+            setGlobalPref(GlobalPref.STREAM_RESOLUTION, StreamResolution.DIM_720P, 'ui');
+            setGlobalPref(GlobalPref.STREAM_MAX_VIDEO_BITRATE, 3 * 1024 * 1000, 'ui');
+            setGlobalPref(GlobalPref.STREAM_COMBINE_SOURCES, true, 'ui');
+            setGlobalPref(GlobalPref.UI_SKIP_SPLASH_VIDEO, true, 'ui');
+
+            setStreamPref(StreamPref.VIDEO_MAX_FPS, 30, 'ui');
+            setStreamPref(StreamPref.VIDEO_POWER_PREFERENCE, VideoPowerPreference.LOW_POWER, 'ui');
+            setStreamPref(StreamPref.VIDEO_PROCESSING, StreamVideoProcessing.USM, 'ui');
+            setStreamPref(StreamPref.VIDEO_PROCESSING_MODE, StreamVideoProcessingMode.PERFORMANCE, 'ui');
+            setStreamPref(StreamPref.VIDEO_SHARPNESS, 0, 'ui');
+            return;
+        }
+
+        if (resolved === 'android') {
+            setGlobalPref(GlobalPref.UI_LAYOUT, UiLayout.DEFAULT, 'ui');
+            setGlobalPref(GlobalPref.UI_REDUCE_ANIMATIONS, true, 'ui');
+            setGlobalPref(GlobalPref.UI_IMAGE_QUALITY, 70, 'ui');
+            setGlobalPref(GlobalPref.STREAM_RESOLUTION, StreamResolution.DIM_720P, 'ui');
+            setGlobalPref(GlobalPref.STREAM_MAX_VIDEO_BITRATE, 5 * 1024 * 1000, 'ui');
+            setGlobalPref(GlobalPref.STREAM_COMBINE_SOURCES, true, 'ui');
+            setGlobalPref(GlobalPref.UI_SKIP_SPLASH_VIDEO, true, 'ui');
+
+            setStreamPref(StreamPref.VIDEO_MAX_FPS, 50, 'ui');
+            setStreamPref(StreamPref.VIDEO_POWER_PREFERENCE, VideoPowerPreference.LOW_POWER, 'ui');
+            setStreamPref(StreamPref.VIDEO_PROCESSING, StreamVideoProcessing.USM, 'ui');
+            setStreamPref(StreamPref.VIDEO_PROCESSING_MODE, StreamVideoProcessingMode.PERFORMANCE, 'ui');
+            setStreamPref(StreamPref.VIDEO_SHARPNESS, 0, 'ui');
+            return;
+        }
+
+        setGlobalPref(GlobalPref.UI_LAYOUT, UiLayout.DEFAULT, 'ui');
+        setGlobalPref(GlobalPref.UI_REDUCE_ANIMATIONS, false, 'ui');
+        setGlobalPref(GlobalPref.UI_IMAGE_QUALITY, 90, 'ui');
+        setGlobalPref(GlobalPref.STREAM_RESOLUTION, 'auto', 'ui');
+        setGlobalPref(GlobalPref.STREAM_MAX_VIDEO_BITRATE, 0, 'ui');
+        setGlobalPref(GlobalPref.STREAM_COMBINE_SOURCES, false, 'ui');
+        setGlobalPref(GlobalPref.UI_SKIP_SPLASH_VIDEO, false, 'ui');
+
+        setStreamPref(StreamPref.VIDEO_MAX_FPS, 60, 'ui');
+        setStreamPref(StreamPref.VIDEO_POWER_PREFERENCE, VideoPowerPreference.HIGH_PERFORMANCE, 'ui');
+        setStreamPref(StreamPref.VIDEO_PROCESSING, StreamVideoProcessing.USM, 'ui');
+        setStreamPref(StreamPref.VIDEO_PROCESSING_MODE, StreamVideoProcessingMode.QUALITY, 'ui');
+        setStreamPref(StreamPref.VIDEO_SHARPNESS, 2, 'ui');
     }
 
     private setupDialog() {
