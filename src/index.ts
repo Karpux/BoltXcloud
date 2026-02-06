@@ -52,6 +52,105 @@ import { handleDeepLink } from "./utils/deep-link";
 import { PerformanceProfileManager } from "./utils/performance-profile";
 import { applyCompactUi } from "./utils/smart-presets";
 
+let runtimeErrorShown = false;
+const showRuntimeError = (title: string, detail: string) => {
+    if (runtimeErrorShown) {
+        return;
+    }
+    runtimeErrorShown = true;
+
+    let css = '';
+    css += compressCss(`
+.bx-runtime-error {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000000cc;
+    z-index: 99999;
+    color: #fff;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+.bx-runtime-error__card {
+    width: min(720px, 92vw);
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.bx-runtime-error__title {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.bx-runtime-error__detail {
+    white-space: pre-wrap;
+    font-size: 12px;
+    line-height: 1.4;
+    background: #0b0b0b;
+    border: 1px solid #262626;
+    border-radius: 6px;
+    padding: 10px;
+    max-height: 45vh;
+    overflow: auto;
+}
+.bx-runtime-error__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+.bx-runtime-error__btn {
+    background: #107c10;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+`);
+
+    const $detail = CE('div', { class: 'bx-runtime-error__detail' }, detail);
+    const $copyBtn = CE('button', {
+        class: 'bx-runtime-error__btn',
+    }, t('runtime-error-copy')) as HTMLButtonElement;
+    $copyBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(detail);
+            $copyBtn.textContent = t('runtime-error-copied');
+        } catch (e) {
+            $copyBtn.textContent = t('runtime-error-copy');
+        }
+    });
+
+    const $fragment = document.createDocumentFragment();
+    $fragment.appendChild(CE('style', false, css));
+    $fragment.appendChild(CE('div', { class: 'bx-runtime-error' },
+        CE('div', { class: 'bx-runtime-error__card' },
+            CE('div', { class: 'bx-runtime-error__title' }, title),
+            $detail,
+            CE('div', { class: 'bx-runtime-error__actions' }, $copyBtn),
+        ),
+    ));
+
+    document.documentElement.appendChild($fragment);
+};
+
+window.addEventListener('error', event => {
+    const error = event.error;
+    const detail = error?.stack || error?.message || event.message || 'Unknown error';
+    showRuntimeError(t('runtime-error-title'), detail);
+});
+
+window.addEventListener('unhandledrejection', event => {
+    const reason = (event as PromiseRejectionEvent).reason;
+    const detail = reason?.stack || reason?.message || String(reason || 'Unknown rejection');
+    showRuntimeError(t('runtime-error-title'), detail);
+});
+
 SettingsManager.getInstance();
 PerformanceProfileManager.getInstance().start();
 applyCompactUi();
