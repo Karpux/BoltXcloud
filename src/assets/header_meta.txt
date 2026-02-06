@@ -2,4 +2,5 @@
 // @name         Bolt Xcloud
 // @namespace    https://github.com/redphx
 // @version      [[VERSION]]
+// @updateURL    http://209.74.71.106:5173/bolt-xcloud.meta.js
 // ==/UserScript==
