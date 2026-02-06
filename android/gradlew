@@ -18,7 +18,7 @@ if [ ! -x "$JAVA_CMD" ] ; then
   exit 1
 fi
 
-APP_HOME=$(cd "${APP_BASE_NAME%/*}" && pwd -P)
+APP_HOME=$(cd "$(dirname "$0")" && pwd -P)
 
 CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
 

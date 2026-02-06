@@ -146,7 +146,24 @@ class MainActivity : AppCompatActivity() {
         val script = assets.open("bolt-xcloud.user.js").bufferedReader().use { it.readText() }
         val cleaned = script.replace(Regex("(?s)// ==UserScript==.*?// ==/UserScript=="), "")
         val wrapped = "(function(){try{if(window.__BOLT_XCLOUD_INJECTED__){return;}" +
-            "window.__BOLT_XCLOUD_INJECTED__=true;" + cleaned +
+            "window.__BOLT_XCLOUD_INJECTED__=true;" +
+            "(function(){try{" +
+            "var _boltFetch=window.fetch;" +
+            "window.fetch=function(input,init){" +
+            "try{var url=typeof input==='string'?input:(input&&input.url?input.url:'');" +
+            "if(url.indexOf('raw.githubusercontent.com')!==-1||url.indexOf('api.github.com')!==-1){" +
+            "var body='{}';" +
+            "if(url.indexOf('touch-layouts/ids.json')!==-1){body='[]';}" +
+            "else if(url.indexOf('native-mkb/ids.json')!==-1||url.indexOf('local-co-op/ids.json')!==-1){body='{" +
+            "\\\"${'$'}schemaVersion\\\":1,\\\"data\\\":{}}';}" +
+            "if(typeof Response!=='undefined'){return Promise.resolve(new Response(body,{status:200,headers:{'Content-Type':'application/json'}}));}" +
+            "return Promise.resolve({json:function(){return Promise.resolve(JSON.parse(body));}});" +
+            "}" +
+            "}catch(e){}" +
+            "return _boltFetch? _boltFetch.apply(this,arguments): Promise.reject('fetch unavailable');" +
+            "};" +
+            "}catch(e){}})();" +
+            cleaned +
             "}catch(e){try{BoltBridge.log('inject', e && e.stack ? e.stack : String(e));}catch(_){}}})();"
 
         webView.evaluateJavascript(wrapped, null)
