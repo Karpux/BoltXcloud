@@ -1,15 +1,12 @@
 <div align="center">
-    <img src="https://raw.githubusercontent.com/redphx/better-xcloud/refs/heads/typescript/resources/logos/better-xcloud.png" width="256"/>  
+    <img src="https://raw.githubusercontent.com/Karpux/BoltXcloud/main/assets/bolt-xcloud.png" width="256"/>  
     <h1>Bolt Xcloud</h1>
-    <!-- Latest Version Badge -->
-    <a href="https://github.com/redphx/better-xcloud/releases"><img src="https://img.shields.io/github/v/release/redphx/better-xcloud?label=latest" alt="Latest version" /></a>
-    <!-- Total Downloads Badge -->
-    <a href="https://github.com/redphx/better-xcloud/releases"><img src="https://img.shields.io/github/downloads/redphx/better-xcloud/total?color=%23e15f2c" alt="Total downloads" /></a>
-    <!-- Total Stars Badge -->
-    <a href="https://github.com/redphx/better-xcloud/stargazers"><img src="https://img.shields.io/github/stars/redphx/better-xcloud?color=%23cca400" alt="Total stars" /></a>
+    <a href="https://github.com/Karpux/BoltXcloud"><img src="https://img.shields.io/github/stars/Karpux/BoltXcloud?color=%2331d26c" alt="Stars" /></a>
+    <a href="https://github.com/Karpux/BoltXcloud"><img src="https://img.shields.io/github/last-commit/Karpux/BoltXcloud?color=%230aa54e" alt="Last commit" /></a>
+    <a href="https://github.com/Karpux/BoltXcloud"><img src="https://img.shields.io/github/issues/Karpux/BoltXcloud?color=%23141812" alt="Issues" /></a>
 </div>
 
-### Improve Xbox Cloud Gaming (xCloud) experience on [xbox.com/play](https://www.xbox.com/play). It also allows you to use Remote Play on the xCloud website.  
+### Optimiza Xbox Cloud Gaming (xCloud) en [xbox.com/play](https://www.xbox.com/play) con un perfil ultra ligero para Smart TV.
 
 > [!WARNING]
 > I only provide Bolt Xcloud on the official repos. Don't download it from anywhere else  
@@ -25,29 +22,26 @@
 - Windows
 - macOS
 - Linux, SteamOS (including Steam Deck)
-- Android, Android TV (including Meta Quest VR Headsets): [redphx/better-xcloud-android](https://github.com/redphx/better-xcloud-android)
+- Android, Android TV
 - iOS, iPadOS
 
 This script makes me spend more time with xCloud, and I hope the same thing happens to you.  
 If you like this project please give it a 🌟. Thank you 🙏.
 
-## How to install
-Visit the [home page](https://better-xcloud.github.io) to know how to install Bolt Xcloud on your device.
+## Install
+- One click install: [bolt-xcloud.user.js](https://raw.githubusercontent.com/Karpux/BoltXcloud/main/bolt-xcloud.user.js)
+- Requires: Tampermonkey or Violentmonkey
+- Open: https://www.xbox.com/play
 
-## Full documentations
-- For the full details please visit: [**better-xcloud.github.io**](https://better-xcloud.github.io)  
-- [Demo video](https://youtu.be/hyp69Jrb2sQ)
+## Docs
+- Landing: `index.html`
+- Userscript: `bolt-xcloud.user.js`
 
-⚠️ Please DO NOT report **Bolt Xcloud**'s bugs on [/r/xcloud subreddit](https://reddit.com/r/xcloud/). Report bugs in [Issues](https://github.com/redphx/better-xcloud/issues) or [Telegram channel](https://t.me/betterxcloud) instead.
+⚠️ Please DO NOT report **Bolt Xcloud**'s bugs on [/r/xcloud subreddit](https://reddit.com/r/xcloud/). Report bugs in [Issues](https://github.com/Karpux/BoltXcloud/issues) instead.
 
-## Donation
-If you think this project is useful and want to support future developments, please consider making a donate via [my Ko-fi page](https://ko-fi.com/redphx).  
-Or you can give this project a star, that's also helpful.  
-Thank you.  
-
-## Translation  
-Help translating **Bolt Xcloud** to another languagues using [Crowdin](https://crowdin.com/project/better-xcloud).  
-Use [this post](https://github.com/redphx/better-xcloud/discussions/131) for discussion. 
+## Notes
+- Preset: Ultra ligero (720p, 30 FPS, 3 Mbps)
+- UI: animaciones reducidas y menor carga grafica
 
 ## Acknowledgements  
 - The mouse controlling feature is heavily inspired by the "Mouse spinning" feature in [Yuzu emulator](https://github.com/yuzu-emu/yuzu-mainline)
