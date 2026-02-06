@@ -9,7 +9,7 @@
 // @match        https://www.xbox.com/*/auth/msa?*loggedIn*
 // @run-at       document-end
 // @grant        none
-// @updateURL    http://209.74.71.106:5173/bolt-xcloud.meta.js
-// @downloadURL  http://209.74.71.106:5173/bolt-xcloud.user.js
+// @updateURL    https://raw.githubusercontent.com/Karpux/BoltXcloud/main/bolt-xcloud.meta.js
+// @downloadURL  https://raw.githubusercontent.com/Karpux/BoltXcloud/main/bolt-xcloud.user.js
 // ==/UserScript==
 "use strict";

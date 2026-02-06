@@ -10,8 +10,8 @@
 // @exclude      https://www.xbox.com/*/xbox-game-pass/play-day-one
 // @run-at       document-start
 // @grant        none
-// @updateURL    http://209.74.71.106:5173/bolt-xcloud.meta.js
-// @downloadURL  http://209.74.71.106:5173/bolt-xcloud.user.js
+// @updateURL    https://raw.githubusercontent.com/Karpux/BoltXcloud/main/bolt-xcloud.meta.js
+// @downloadURL  https://raw.githubusercontent.com/Karpux/BoltXcloud/main/bolt-xcloud.user.js
 // ==/UserScript==
 "use strict";
 class BxLogger {static info = (tag, ...args) => BX_FLAGS.Debug && BxLogger.log("#008746", tag, ...args);static warning = (tag, ...args) => BX_FLAGS.Debug && BxLogger.log("#c1a404", tag, ...args);static error = (tag, ...args) => BxLogger.log("#c10404", tag, ...args);static log(color, tag, ...args) {console.log("%c[BxC]", `color:${color};font-weight:bold;`, tag, "//", ...args);}}
