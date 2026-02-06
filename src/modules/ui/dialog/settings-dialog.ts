@@ -80,6 +80,7 @@ export class SettingsDialog extends NavigationDialog {
     private readonly LOG_TAG = 'SettingsNavigationDialog';
 
     $container!: HTMLElement;
+    private $searchInput?: HTMLInputElement;
     private $tabs!: HTMLElement;
     private $tabContents!: HTMLElement;
 
@@ -760,6 +761,10 @@ export class SettingsDialog extends NavigationDialog {
         }
 
         $svg.classList.add('bx-active');
+
+        if (this.$searchInput) {
+            this.applySearchFilter(this.$searchInput.value);
+        }
     }
 
     private renderTab(settingTab: SettingTab) {
@@ -1194,6 +1199,7 @@ export class SettingsDialog extends NavigationDialog {
                 },
                 // Render global/per-game settings selection
                 this.$streamSettingsSelection = SettingsManager.getInstance().getStreamSettingsSelection(),
+                this.createSearchBar(),
 
                 $tabContents = CE('div', {
                     class: 'bx-settings-tab-content',
@@ -1246,6 +1252,69 @@ export class SettingsDialog extends NavigationDialog {
 
         // Select first tab
         $tabs.firstElementChild!.dispatchEvent(new Event('click'));
+    }
+
+    private createSearchBar() {
+        const $input = CE('input', {
+            type: 'search',
+            class: 'bx-settings-search-input',
+            placeholder: t('settings-search-placeholder'),
+            autocomplete: 'off',
+            tabindex: 0,
+        }) as HTMLInputElement;
+
+        $input.addEventListener('input', () => {
+            this.applySearchFilter($input.value);
+        });
+
+        this.$searchInput = $input;
+
+        return CE('div', {
+            class: 'bx-settings-search',
+        }, $input);
+    }
+
+    private applySearchFilter(query: string) {
+        const $tab = this.$tabContents.querySelector<HTMLElement>('div[data-tab-group]:not(.bx-gone)');
+        if (!$tab) {
+            return;
+        }
+
+        const normalized = query.trim().toLowerCase();
+        const rows = Array.from($tab.querySelectorAll<HTMLElement>('.bx-settings-row'));
+        for (const row of rows) {
+            const label = row.querySelector<HTMLElement>('.bx-settings-label')?.textContent || '';
+            const note = row.querySelector<HTMLElement>('.bx-settings-dialog-note')?.textContent || '';
+            const matches = !normalized || (`${label} ${note}`.toLowerCase().includes(normalized));
+            row.classList.toggle('bx-filter-hide', !matches);
+        }
+
+        const children = Array.from($tab.children) as HTMLElement[];
+        let currentHeader: HTMLElement | null = null;
+        let hasVisibleRow = false;
+        const finalizeSection = () => {
+            if (!currentHeader) {
+                return;
+            }
+            currentHeader.classList.toggle('bx-filter-hide', !hasVisibleRow && !!normalized);
+        };
+
+        for (const child of children) {
+            if (child.tagName.toLowerCase() === 'h2') {
+                finalizeSection();
+                currentHeader = child;
+                hasVisibleRow = false;
+                continue;
+            }
+
+            if (child.classList.contains('bx-settings-row')) {
+                if (!child.classList.contains('bx-filter-hide')) {
+                    hasVisibleRow = true;
+                }
+            }
+        }
+
+        finalizeSection();
     }
 
     focusTab(tabId: SettingTabGroup) {

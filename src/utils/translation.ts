@@ -240,6 +240,7 @@ const Texts = {
     "smart-profile-android": "Balance for Android",
     "smart-profile-pc": "Quality for PC",
     "smart-toggle-stats": "Toggle stream stats",
+    "settings-search-placeholder": "Search settings",
     "profile-tv": "TV (Ultra light)",
     "profile-pc": "PC (Quality)",
     "profile-android": "Android (Balanced)",
