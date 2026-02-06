@@ -26,8 +26,9 @@
         <span class="mono">xbox.com/play</span>.
       </p>
       <div class="hero-cta">
-        <a class="btn primary" href="bolt-xcloud.user.js" download>Instalar Bolt Xcloud</a>
+        <a class="btn primary" href="bolt-xcloud.user.js">Instalar Bolt Xcloud</a>
         <a class="btn ghost" href="#instalacion">Ver instrucciones</a>
+        <a class="btn ghost" href="https://www.xbox.com/play" target="_blank" rel="noreferrer">Abrir xCloud</a>
       </div>
       <div class="hero-metrics">
         <div>
@@ -48,13 +49,27 @@
     <main>
       <section class="panel" id="instalacion">
         <h2>Instalacion rapida</h2>
-        <ol class="steps">
-          <li>Instala <strong>Tampermonkey</strong> o <strong>Violentmonkey</strong> en tu navegador.</li>
-          <li>Haz clic en <strong>Instalar Bolt Xcloud</strong> y acepta el script.</li>
-          <li>Abre <span class="mono">https://www.xbox.com/play</span> y entra a tu cuenta.</li>
-        </ol>
-        <div class="note">
-          Si ya usabas Better xCloud, puedes limpiar datos en los ajustes del script.
+        <div class="install-grid">
+          <div>
+            <ol class="steps">
+              <li>Instala <strong>Tampermonkey</strong> o <strong>Violentmonkey</strong> en tu navegador.</li>
+              <li>Haz clic en <strong>Instalar Bolt Xcloud</strong> y acepta el script.</li>
+              <li>Abre <span class="mono">https://www.xbox.com/play</span> y entra a tu cuenta.</li>
+            </ol>
+            <div class="note">
+              Si ya usabas Better xCloud, puedes limpiar datos en los ajustes del script.
+            </div>
+          </div>
+          <div class="install-actions">
+            <div class="chip">Auto instalacion</div>
+            <a class="btn primary" href="bolt-xcloud.user.js">Instalar Bolt Xcloud</a>
+            <a class="btn ghost" href="bolt-xcloud.user.js" download>Descargar .user.js</a>
+            <div class="install-links">
+              <span class="muted">Extensiones recomendadas</span>
+              <a href="https://www.tampermonkey.net/" target="_blank" rel="noreferrer">Tampermonkey</a>
+              <a href="https://violentmonkey.github.io/" target="_blank" rel="noreferrer">Violentmonkey</a>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -72,6 +87,24 @@
           <div class="card">
             <h3>Audio estable</h3>
             <p>Audio y video combinados para evitar desincronizacion en dispositivos limitados.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="automatizaciones">
+        <h2>Automatizaciones</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Auto actualizacion</h3>
+            <p>Tu manager de userscripts actualiza Bolt Xcloud cuando subes un build nuevo.</p>
+          </div>
+          <div class="card">
+            <h3>Instalar en un click</h3>
+            <p>El boton de instalacion abre el flujo directo de Tampermonkey o Violentmonkey.</p>
+          </div>
+          <div class="card">
+            <h3>Acceso rapido a xCloud</h3>
+            <p>Boton directo a <span class="mono">xbox.com/play</span> para entrar al juego sin buscar.</p>
           </div>
         </div>
       </section>

@@ -203,6 +203,52 @@ h2 {
   padding-left: 18px;
 }
 
+.install-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+
+.install-actions {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(9, 15, 12, 0.6);
+}
+
+.chip {
+  align-self: start;
+  justify-self: start;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.install-links {
+  display: grid;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.install-links a {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(118, 171, 145, 0.35);
+  width: fit-content;
+}
+
+.install-links a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
 .note {
   margin-top: 18px;
   padding: 14px 16px;
@@ -290,6 +336,9 @@ footer {
   .hero-cta {
     flex-direction: column;
     align-items: stretch;
+  }
+  .install-actions {
+    padding: 16px;
   }
   .download {
     flex-direction: column;
