@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+APP_NAME="Gradle"
+APP_BASE_NAME=$(basename "$0")
+
+DEFAULT_JVM_OPTS=""
+JAVA_OPTS="${JAVA_OPTS:-}"
+GRADLE_OPTS="${GRADLE_OPTS:-}"
+
+if [ -n "$JAVA_HOME" ] ; then
+  JAVA_CMD="$JAVA_HOME/bin/java"
+else
+  JAVA_CMD="java"
+fi
+
+if [ ! -x "$JAVA_CMD" ] ; then
+  echo "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH." >&2
+  exit 1
+fi
+
+APP_HOME=$(cd "${APP_BASE_NAME%/*}" && pwd -P)
+
+CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+
+exec "$JAVA_CMD" $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
