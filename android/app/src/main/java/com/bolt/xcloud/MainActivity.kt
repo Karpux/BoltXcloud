@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private val logBuffer = StringBuilder()
+    private var hasReloadedOnChunkError = false
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         webView = findViewById(R.id.webview)
         val logsButton = findViewById<android.widget.Button>(R.id.logs_button)
+        val resetButton = findViewById<android.widget.Button>(R.id.reset_button)
 
         WebView.setWebContentsDebuggingEnabled(true)
 
@@ -33,8 +35,7 @@ class MainActivity : AppCompatActivity() {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.mediaPlaybackRequiresUserGesture = false
-        settings.cacheMode = WebSettings.LOAD_DEFAULT
-        settings.userAgentString = settings.userAgentString + " BoltXcloud"
+        settings.cacheMode = WebSettings.LOAD_NO_CACHE
 
         CookieManager.getInstance().setAcceptCookie(true)
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
@@ -44,6 +45,12 @@ class MainActivity : AppCompatActivity() {
         webView.webChromeClient = object : WebChromeClient() {
             override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
                 appendLog("console", "${consoleMessage.message()} (${consoleMessage.lineNumber()})")
+                if (!hasReloadedOnChunkError && consoleMessage.message().contains("ChunkLoadError", true)) {
+                    hasReloadedOnChunkError = true
+                    appendLog("auto", "Reloading after ChunkLoadError")
+                    webView.clearCache(true)
+                    webView.reload()
+                }
                 return super.onConsoleMessage(consoleMessage)
             }
         }
@@ -69,6 +76,14 @@ class MainActivity : AppCompatActivity() {
 
         logsButton.setOnClickListener {
             showLogs()
+        }
+
+        resetButton.setOnClickListener {
+            appendLog("action", "Reset WebView")
+            hasReloadedOnChunkError = false
+            webView.clearCache(true)
+            webView.clearHistory()
+            webView.loadUrl("https://www.xbox.com/en-US/play")
         }
 
         webView.loadUrl("https://www.xbox.com/en-US/play")
